@@ -1,0 +1,8 @@
+body {font-family: Arial, sans-serif;}
+
+div.container {height: 100%; width: 100%; overflow: hidden; display: flex; flex-direction: column; align-items: center; align-content: center; }
+
+h2.seo {font-size: 4em; letter-spacing: 0.1em; font-weight: bold; margin-bottom: 0; }
+h1.seo {font-size: 1.5em; font-weight: normal; }
+
+span.asset_link {display: block; margin-bottom: 10%; }

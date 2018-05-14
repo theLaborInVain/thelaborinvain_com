@@ -1,0 +1,26 @@
+
+body {font-family: 'Ruca'; font-size: 35px; }
+
+h1, h2 {font-family: 'Poiret One'; text-transform: uppercase; text-align: center; }
+h1.seo {font-size: 2em; }
+h2.seo {font-size: 2.5em;}
+
+a {color: #CC0033;}
+a:visited {color: #990033;}
+
+.container {margin: 0 auto; width: 90%; margin-top: 5%; border: 0.1em solid #ccc; padding-bottom: 5%; position: relative; }
+.container::after { content: ""; background: url('/images/COLOURBOX11504476.jpg'); opacity: 0.5; top: 0; left: 0; bottom: 0; right: 0; position: absolute; z-index: -1; background-size: 95%; }
+.content_container {width: 90%; padding: 2%; margin: 0 auto; background-color: #fff; margin-bottom: 5%; }
+
+/* tablet breakpoint */
+@media only screen and (min-width: 700px) and (max-resolution: 3dppx) {
+	body {font-size: 25px; }
+	.container {width: 70%; }
+}
+
+/* wide res breakpoint */
+@media only screen and (min-width: 1050px) and (orientation: landscape) {
+	body {font-size: 11pt; }
+
+	.container {width: 50%; }
+}
