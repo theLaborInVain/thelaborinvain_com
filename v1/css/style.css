@@ -1,16 +1,19 @@
 
-body {font-family: 'Ruca'; font-size: 35px; }
+body {font-family: 'Ruda'; font-size: 30px; background-color: #f4f4eA; }
 
 h1, h2 {font-family: 'Poiret One'; text-transform: uppercase; text-align: center; }
 h1.seo {font-size: 2em; }
 h2.seo {font-size: 2.5em;}
+h3.motto {font-size: 1.2em; text-align: center; font-family: 'Special Elite', cursive; color: #999; }
 
-a {color: #CC0033;}
-a:visited {color: #990033;}
+a {color: #090D0D;}
+a:visited {color: #666;}
 
-.container {margin: 0 auto; width: 90%; margin-top: 5%; border: 0.1em solid #ccc; padding-bottom: 5%; position: relative; }
+.container {margin: 0 auto; width: 90%; margin-top: 5%; border: 0.2em solid #A7A596; padding-bottom: 5%; position: relative; border-left-color: #bDbEaF; border-top-color: #bDbEaF}
 .container::after { content: ""; background: url('/images/COLOURBOX11504476.jpg'); opacity: 0.5; top: 0; left: 0; bottom: 0; right: 0; position: absolute; z-index: -1; background-size: 95%; }
 .content_container {width: 90%; padding: 2%; margin: 0 auto; background-color: #fff; margin-bottom: 5%; }
+
+.link_button {display: inline-block; margin: 2%; background-color: #B4E8C1; background: radial-gradient(#BAEBD6, #5FE0C1); padding: 2%; border: 0.1em solid #BCAC57; border-top-color: #DED788; border-left-color: #DED788; font-weight: bold; }
 
 /* tablet breakpoint */
 @media only screen and (min-width: 700px) and (max-resolution: 3dppx) {
