@@ -13,7 +13,9 @@ a:visited {color: #666;}
 .container::after { content: ""; background: url('/images/COLOURBOX11504476.jpg'); opacity: 0.5; top: 0; left: 0; bottom: 0; right: 0; position: absolute; z-index: -1; background-size: 95%; }
 .content_container {width: 90%; padding: 2%; margin: 0 auto; background-color: #fff; margin-bottom: 5%; }
 
-.link_button {display: inline-block; margin: 2%; background-color: #B4E8C1; background: radial-gradient(#BAEBD6, #5FE0C1); padding: 2%; border: 0.1em solid #BCAC57; border-top-color: #DED788; border-left-color: #DED788; font-weight: bold; }
+.content_title {float: right; text-transform: uppercase; color: #FFDF00; font-size: 1.3em; text-shadow: 1px 1px #a7a596; font-family: 'Poiret One'}
+
+.link_button {display: inline-block; margin: 2%; background-color: #B4E8C1; background: radial-gradient(#BAEBD6, #5FE0C1); padding: 2%; border: 0.1em solid #BCAC57; border-top-color: #DED788; border-left-color: #DED788; font-weight: bold; white-space: nowrap; text-align: center; }
 
 /* tablet breakpoint */
 @media only screen and (min-width: 700px) and (max-resolution: 3dppx) {
