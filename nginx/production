@@ -1,12 +1,17 @@
 server {
     ### no-www redirect
-    listen 80;
     server_name www.thelaborinvain.com;
     rewrite  ^  http://thelaborinvain.com$request_uri? permanent;
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/thelaborinvain.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/thelaborinvain.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
 }
 
 server {
-    listen   80;
     server_name  thelaborinvain.com;
 
     access_log  /var/log/nginx/thelaborinvain.com.access.log;
@@ -35,5 +40,31 @@ server {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
+
 }
 
+server {
+    if ($host = www.thelaborinvain.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    server_name www.thelaborinvain.com;
+    return 404; # managed by Certbot
+
+
+}
+
+server {
+    if ($host = thelaborinvain.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen   80;
+    server_name  thelaborinvain.com;
+    return 404; # managed by Certbot
+
+
+}
