@@ -1,0 +1,209 @@
+{% extends "admin.html" %}
+
+{% block content %}
+
+
+
+<div class="assets_container">
+
+    <!-- posts admin -->
+    <div class="asset_column">
+        <button class="create_new" ng-click="ui.show_posts_asset_creator_modal = true">+ New Post</button>
+
+        <ul class="edit_post_picker" ng-if="assets.posts !== null">
+            <li
+                ng-repeat="post in assets.posts"
+            >
+                <div class="edit_post_thumbnail_container">
+                    <img class="edit_post_thumbnail" ng-src="/images/{a post.hero_image.base_name a}" />
+                </div>
+                <div class="edit_post_details">
+                    <b>{a post.title a}</b><br/>
+                    Published: {a post.published_on.$date|date:'yyyy-MM-dd' a}<br/>
+                    Created: {a post.created_on.$date|date:'yyyy-MM-dd' a}<br/>
+                </div>
+            </li>
+        </ul>
+
+        <div
+            class="asset_column_loader"
+            ng-if="assets.posts === null"
+        >
+            <img class="loading_spinner" src="/static/media/loading_io.gif" />
+            <div>Loading Posts...</div>
+            <div>show modal? {a ui.show_posts_asset_creator_modal a}</div>
+        </div>
+    </div>
+
+    <!-- images admin -->
+    <div class="asset_column">
+
+        <button
+            class="create_new"
+            ng-click="ui.show_image_asset_creator_modal = true"
+        >
+            New Image
+        </button>
+
+        <ul class="asset_corral" ng-if="assets.images !== null">
+            <li
+                ng-repeat="image in assets.images"
+                ng-mouseover="image.show_detail = true"
+                ng-mouseleave="image.show_detail = undefined"
+            >
+                <div class="asset_detail_top" ng-if="image.show_detail">
+                    {a image.base_name a}
+                </div>
+                <img
+                    class="asset_corral_image"
+                    ng-src="/images/{a image.base_name a}" 
+                    ng-click="image.show_rm_image_control = true"
+                />
+                <div class="asset_detail_bottom" ng-if="image.show_detail">
+                    {a image.created_on.$date|date:'yyyy-MM-dd HH:mm:ss' a}
+                </div>
+
+                <div
+                    class="asset_creator_modal rm_image_control"
+                    ng-if="image.show_rm_image_control"
+                >
+                    <div class="asset_creator_inner rm_images">
+
+                        <img
+                            class="rm_image_preview"
+                            ng-src="/images/{a image.base_name a}"
+                        />
+                        <div>{a image.base_name a}</div>
+
+                        <form ng-init="rm_url='/rm/images/' + image._id.$oid" action="{a rm_url a}" method='GET'>
+                            <button type="submit" class="rm_image_button">REMOVE</button>
+                        </form>
+
+                        <button
+                            ng-click="image.show_rm_image_control = false"
+                        >
+                            Close
+                        </button>
+
+                    </div>
+                </div>
+
+            </li>
+        </ul>
+        <div
+            class="asset_column_loader"
+            ng-if="assets.images === null"
+        >
+            <img class="loading_spinner" src="/static/media/loading_io.gif" />
+            <div>Loading Images...</div>
+            <div>show modal? {a ui.show_image_asset_creator_modal a}</div>
+        </div>
+    </div>
+
+</div> <!-- assets_container -->
+
+
+<!-- modals for creating content below -->
+
+<div
+    class="asset_creator_modal"
+    ng-if="ui.show_posts_asset_creator_modal"
+>
+    <div class="asset_creator_inner new_post">
+
+        <input
+            type="text"
+            class="new_post_title"
+            ng-model="new_post.title"
+            placeholder="Post Title"
+        />
+
+        <div class="hero_image_controls">
+            <div class="hero_image_preview_text">
+                <input
+                    type="text"
+                    class="new_post_hero_image"
+                    ng-model="new_post.hero_image"
+                    placeholder="Hero image OID"
+                    disabled
+                />
+                <div>
+                    <code ng-if="!new_post.hero_image_preview">file_name</code>
+                    <code>{a new_post.hero_image_preview.base_name a}</code>
+                </div>
+                <div>
+                    <i>Uploaded:</i> {a new_post.hero_image_preview.created_on.$date|date: 'yyyy-MM-dd HH:mm:ss'a}
+                </div>
+                <div>
+                    <i>Modified:</i> {a new_post.hero_image_preview.updated_on.$date|date: 'yyyy-MM-dd HH:mm:ss'a}
+                </div>
+            </div>
+            <div class="hero_image_preview_img">
+                <img ng-src="/images/{a new_post.hero_image_preview.base_name a}" />
+            </div>
+        </div>
+       
+        <b>Hero Image:</b>
+
+        <ul class="asset_corral thumbnail_picker">
+            <li
+                ng-repeat="image in assets.images"
+            >
+                <img
+                    class="asset_corral_image"
+                    ng-src="/images/{a image.base_name a}" 
+                    ng-click="new_post.hero_image = image._id.$oid; new_post.hero_image_preview = image"
+                />
+            </li>
+        </ul>
+
+        <button
+            class="create_new_post"
+            ng-click="createNewPost()"
+            ng-disabled="new_post.title === null && new_post.hero_image === null"
+            ng-class="{
+                'active': new_post.title !== null && new_post.hero_image !== null,
+            }"
+        >
+            Create New Post!
+        </button>
+
+        <button
+            ng-click="ui.show_posts_asset_creator_modal = false"
+        >
+            close
+        </button>
+
+        </div>
+    </div>
+</div><!-- asset_creator_modal -->
+
+<div
+    class="asset_creator_modal"
+    ng-if="ui.show_image_asset_creator_modal"
+>
+    <div class="asset_creator_inner upload_images">
+        <form method="POST" action="/upload" enctype="multipart/form-data">
+            <input
+                name='file[]'
+                type="file"
+                multiple
+            />
+
+            <button
+                type="submit"
+             >
+                Upload Images!
+            </button>
+        </form>
+
+        <button
+            ng-click="ui.show_image_asset_creator_modal = false"
+        >
+            close
+        </button>
+    </div>
+</div><!-- asset_creator_modal -->
+
+
+{% endblock %}

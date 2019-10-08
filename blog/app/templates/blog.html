@@ -1,0 +1,7 @@
+{% extends "index.html" %}
+
+{% block content %}
+    {% for post in posts %}
+    <div><p>{{ post.title }}: <b>{{ post.hero_image }}</b></p></div>
+    {% endfor %}
+{% endblock %}

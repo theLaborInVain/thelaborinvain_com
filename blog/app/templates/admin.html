@@ -1,0 +1,41 @@
+<html ng-app="TLVBlog" ng-controller="rootController">
+    <head>
+
+        <title>TLV Blog - Administration</title>
+
+        <!-- JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
+
+        <script src="/static/js/blogAdmin.js?v={{ VERSION }}"></script>
+
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="/static/css/adminStyle.css?v={{ VERSION }}">
+
+    </head>
+
+	<body>
+
+		<div class="nav_bar">
+			<div><a href="{{ url_for('index') }}">Index</a></div>
+			<div><a href="{{ url_for('logout') }}">Logout</a></div>
+		</div>
+
+
+		{% block content %}{% endblock %}
+
+
+		<div class="user_management">
+			<img class="admin_avatar" src="{{ current_user.get_avatar(80) }}">
+            <div class="user_info">
+                <div>{{ current_user.email }}</div>
+                <div>panel: v{{ VERSION }}</div>
+            </div>
+            <div>
+                Blog stats:
+            </div>
+		</div>
+
+	
+	</body>
+
+</html>
