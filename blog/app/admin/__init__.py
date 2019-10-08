@@ -23,7 +23,6 @@ class AdministrationObject():
         """ Adds a new user to MDB using the model method. Returns it. """
         return models.User(name=name, email=email, password=password)
 
-
     #
     #   GET/SET methods
     #
@@ -31,3 +30,12 @@ class AdministrationObject():
     def dump_users(self):
         """ Dumps all user records. """
         return app.config['MDB'].users.find()
+
+
+    def initialize(self):
+        """ Purges all posts and images from the DB and filesystem. """
+
+        app.config['MDB'].posts.remove()
+        app.config['MDB'].images.remove()
+
+

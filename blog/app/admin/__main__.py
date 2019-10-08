@@ -29,6 +29,8 @@ if __name__ == "__main__":
         help="Create a new user", action='store_true',)
     parser.add_option("--list_users", dest="list_users", default=False,
         help="Dump a list of users", action='store_true',)
+    parser.add_option("--initialize", action="store_true", dest="initialize",
+        default=False, help="Burn it down. Start over.")
     parser.add_option("-q", "--quiet", action="store_false", dest="verbose",
         default=True, help="don't print status messages to stdout")
 
@@ -36,10 +38,17 @@ if __name__ == "__main__":
 
     admin_object = admin.AdministrationObject()
 
+    if options.initialize:
+        admin_object.initialize()
+        print('Project Initialized!')
+        sys.exit(0)
+
     if options.add_user:
         admin_object.add_user(*create_user())
 
     if options.list_users:
         for user in admin_object.dump_users():
             print(user)
+
+
 
