@@ -15,7 +15,7 @@ from pymongo import MongoClient
 
 
 class Config(object):
-    VERSION = "0.0.1"
+    VERSION = "0.2.19"
     PORT = 8060
 #    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
     SECRET_KEY = secrets.token_hex(16)

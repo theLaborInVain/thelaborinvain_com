@@ -1,0 +1,94 @@
+{% extends "admin.html" %}
+
+{% block content %}
+
+    <div
+        class="edit_post_container"
+        ng-controller="editPostController"
+        ng-init="loadPost('{{post._id}}')"
+    >
+
+        <div class="edit_post_left_column">
+            <div class="edit_post_hero_container">
+                <img ng-src="/images/{a post.hero_image.base_name a}"/>
+                <code>
+                    {a post.hero_image.base_name a}
+                </code>
+            </div>
+            <div class="edit_post_attachments">
+
+				<div class="edit_post_attachments_toggler">
+					<div
+						class="toggler toggle_hero"
+						ng-click="edit_post_ui.attachments_toggler = 'hero'"
+						ng-class="{
+							'active': edit_post_ui.attachments_toggler === 'hero',
+						}"
+					>	
+						Change Hero
+					</div>
+					<div
+						class="toggler toggle_attachments"
+						ng-click="edit_post_ui.attachments_toggler = 'attachments'"
+						ng-class="{
+							'active': edit_post_ui.attachments_toggler === 'attachments',
+						}"
+					>	
+						Edit Attachments
+					</div>
+				</div>
+
+				<ul
+					class="asset_corral edit_post"
+					ng-if="assets.images !== null && assets.images.length > 0"
+					ng-class="{
+						'toggle_hero': edit_post_ui.attachments_toggler === 'hero',
+						'toggle_attachments': edit_post_ui.attachments_toggler === 'attachments',
+					}"
+				>
+		            <li
+						ng-repeat="image in assets.images"
+					>
+	            	    <img
+            	    	    class="asset_corral_image"
+	        	            ng-src="/images/{a image.base_name a}"
+							ng-click="toggleImage(image._id.$oid)"
+    		            />
+					</li>
+				</ul>
+
+            </div>
+        </div>
+
+        <div class="edit_post_middle_column">
+            <textarea
+                type="text"
+                class="edit_post_body"
+                placeholder="Body text goes here!"
+                ng-model="post.body"
+            /></textarea>
+        </div>
+
+        <div class="edit_post_right_column">
+            <div class="edit_post_publish_controls">
+                <button
+                    ng-click="savePost()"
+                >
+                    Save
+                </button>
+                <button
+                    ng-click="savePost()"
+                >
+                    Publish
+                </button>
+                <button
+                    ng-click="savePost()"
+                >
+                    DELETE
+                </button>
+            </div>
+        </div>
+
+    </div><!-- edit_post_container -->
+
+{% endblock %}

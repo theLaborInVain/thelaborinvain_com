@@ -13,6 +13,7 @@
         <ul class="edit_post_picker" ng-if="assets.posts !== null">
             <li
                 ng-repeat="post in assets.posts"
+                ng-click="goToURL('/edit_post/' + post._id.$oid)"
             >
                 <div class="edit_post_thumbnail_container">
                     <img class="edit_post_thumbnail" ng-src="/images/{a post.hero_image.base_name a}" />
@@ -45,7 +46,7 @@
             New Image
         </button>
 
-        <ul class="asset_corral" ng-if="assets.images !== null">
+        <ul class="asset_corral" ng-if="assets.images !== null && assets.images.length > 0">
             <li
                 ng-repeat="image in assets.images"
                 ng-mouseover="image.show_detail = true"

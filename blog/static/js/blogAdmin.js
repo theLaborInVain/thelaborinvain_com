@@ -28,6 +28,11 @@ app.controller("rootController", function($scope, $http) {
         hero_image_preview: undefined,
     }
 
+    $scope.goToURL = function(url) {
+        // lets us use ng-click link an anchor tag
+        location.replace(url)
+    };
+
     $scope.createNewPost = function() {
         var reqUrl = "/create_post"
 
@@ -86,4 +91,53 @@ app.controller("rootController", function($scope, $http) {
 
     $scope.init();
 
+});
+
+
+// root Controller starts here
+app.controller("editPostController", function($scope, $http) {
+
+    $scope.edit_post_ui = {
+        attachments_toggler: 'hero', 
+    };
+
+    $scope.update_hero = function(image_oid) {
+        // change the post hero image; reload
+        if (image_oid === $scope.post.hero_image._id.$oid) {
+            console.warn('This is already the hero image!');
+        } else {
+            console.warn('would change hero');
+        };
+ 
+    };
+
+
+    $scope.toggleImage = function(image_oid) {
+        if ($scope.edit_post_ui.attachments_toggler === 'hero') {
+            $scope.update_hero(image_oid)
+        };
+    };
+
+    $scope.loadPost = function(post_oid){
+
+        var req_url = "/get/post/" + post_oid;
+        console.time(req_url);
+        $http({
+            method : "GET",
+            url : req_url,
+        }).then(function mySuccess(response) {
+            $scope.post = response.data;
+            console.timeEnd(req_url);
+        }, function myError(response) {
+            console.error(response.data);
+            console.timeEnd(req_url);
+        });
+
+    };
+
+    $scope.init = function() {
+        console.info('editPostController initialized!')
+    };
+
+    $scope.init()
 });

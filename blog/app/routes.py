@@ -53,6 +53,20 @@ def get_assets(collection):
     )
 
 
+@app.route('/get/post/<post_oid>')
+def get_post(post_oid):
+    """ Gets a single post, returns its serialization. """
+
+    return flask.Response(
+        response=json.dumps(
+            posts.Post(_id=ObjectId(post_oid)).serialize(),
+            default=json_util.default
+        ),
+        status=200,
+        mimetype='application/json'
+    )
+
+
 @app.route('/static/<sub_dir>/<path:path>')
 def route_to_static(path, sub_dir):
     """ The webserver will do this when deployed; this is for dev. """
@@ -131,6 +145,14 @@ def create_post():
 
 
 @flask_login.login_required
+@app.route('/edit_post/<post_oid>')
+def edit_post(post_oid):
+    """ Pulls a post for editing in the webapp. """
+    post_object = posts.Post(_id=ObjectId(post_oid))
+    return flask.render_template('admin_edit.html', post=post_object.serialize(), **app.config)
+
+
+@flask_login.login_required
 @app.route('/rm/<collection>/<asset_oid>', methods=['GET'])
 def rm_one_asset(collection, asset_oid):
     """ Removes a single asset. """
@@ -159,7 +181,7 @@ def upload_file():
     processed = 0
     for in_file in flask.request.files.getlist('file[]'):
         if allowed_file(in_file.filename):
-            image_obj = models.Image(raw_upload=in_file)
+            image_obj = models.images.Image(raw_upload=in_file)
             processed += 1
 
     msg = "Uploaded %s files successfully!" % processed

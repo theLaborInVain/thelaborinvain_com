@@ -13,7 +13,7 @@ from bson.objectid import ObjectId
 
 # application imports
 from app import app, models
-
+from app.models import images
 
 #
 #   Helper Methods
@@ -28,10 +28,8 @@ def get(count=10, return_type=None):
     # now, loop through them and fancy them up
     output = []
     for post in posts:
-        post['hero_image'] = app.config['MDB'].images.find_one(
-            {'_id': post['hero_image']}
-        )
-        output.append(post)
+        post_object = Post(_id=post['_id'])
+        output.append(post_object.serialize())
 
     return output
 
@@ -47,13 +45,24 @@ class Post(models.Model):
         self.mdb = app.config['MDB'][self.collection]
 
         self.data_model = {
+            # content
             'title': str,
+            'body': str,
+            'tags': list,
             'hero_image': ObjectId,
+            'hero_caption': str,        # just a string
+            'attachments': list,        # list of image oids
+            'captions': dict,           # key: oid, value: caption
+
+            # meta
             'created_on': datetime,
             'updated_on': datetime,
+            'published_on': datetime,
+            'published': bool,
         }
 
         self.load()
+
 
     def __repr__(self):
         return '<Post {}>'.format(self.title)
@@ -78,3 +87,15 @@ class Post(models.Model):
             self.logger.warn('Created post! %s' % self)
         else:
             raise AttributeError('New post record could not be saved!')
+
+
+    def serialize(self):
+        """ Returns a fancy version of a post. """
+
+        output = self.record
+
+        output['hero_image'] = images.expand_image(output['hero_image'])
+
+        return output
+
+
