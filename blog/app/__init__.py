@@ -3,6 +3,8 @@
     This is where we initialize the app. Try to keep it clean, OK?
 
 """
+# standard lib
+import os
 
 # second party
 from flask import Flask
@@ -20,6 +22,7 @@ from config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
 app.config['MDB'].users.create_index([('email', pymongo.TEXT),], unique=True)
+app.config['UPLOADS'] = os.path.join(app.root_path, '..', 'uploads/')
 
 login = LoginManager(app)
 login.login_view = 'login'

@@ -7,15 +7,32 @@
         ng-controller="editPostController"
         ng-init="loadPost('{{post._id}}')"
     >
+        <span ng-if="post._id.$oid !== undefined" ng-init="loadAttachments()"></span>
 
         <div class="edit_post_left_column">
             <div class="edit_post_hero_container">
-                <img ng-src="/images/{a post.hero_image.base_name a}"/>
                 <code>
                     {a post.hero_image.base_name a}
                 </code>
+                <img ng-src="/images/{a post.hero_image.base_name a}"/>
+                <input
+                    type="text"
+                    class="edit_post_hero_caption"
+                    placeholder="Hero Image caption text goes here!"
+                    ng-model="post.hero_caption"
+                    ng-blur="test(); updatePost({hero_caption: post.hero_caption})"
+                />
             </div>
             <div class="edit_post_attachments">
+
+                <div class="edit_post_attachments_inventory">
+                    <div
+                        class="attachment_container"
+                        ng-repeat="attachment in attachments"
+                    >
+                        {a attachment a}
+                    </div>
+                </div>
 
 				<div class="edit_post_attachments_toggler">
 					<div
@@ -66,6 +83,7 @@
                 class="edit_post_body"
                 placeholder="Body text goes here!"
                 ng-model="post.body"
+                ng-blur="updatePost({body: post.body})"
             /></textarea>
         </div>
 
@@ -77,15 +95,27 @@
                     Save
                 </button>
                 <button
-                    ng-click="savePost()"
+                    ng-if="!post.published"
+                    ng-click="updatePost({published: true})"
                 >
                     Publish
                 </button>
                 <button
-                    ng-click="savePost()"
+                    class="warning_button"
+                    ng-if="post.published"
+                    ng-click="updatePost({published: false})"
+                >
+                    Un-publish
+                </button>
+                <button
+                    class="warning_button"
+                    ng-click="goToURL('/rm/posts/' + post._id.$oid)"
                 >
                     DELETE
                 </button>
+            </div>
+            <div ng-if="post.published">
+                Published: {a post.published_on.$date|date:'yyyy-MM-dd HH:mm:ss' a}
             </div>
         </div>
 

@@ -11,6 +11,7 @@ from hashlib import md5
 import os
 
 # second party
+import flask
 from flask_login import UserMixin
 import pymongo
 from werkzeug.security import safe_str_cmp, generate_password_hash, \
@@ -32,11 +33,17 @@ def load_user(_id):
 #   helpers
 #
 
-def get_asset(collection=None, _id=None):
+def get_asset(collection=None, _id=None, **params):
     """ Gets an asset from a collection, returns it. """
 
     if collection == 'images':
         return models.images.Image(_id=_id)
+    elif collection == 'posts':
+        return models.posts.Post(_id=_id)
+    elif collection == 'post':
+        return models.posts.Post(_id=_id)
+    elif collection == 'attachment':
+        return models.posts.Attachment(_id=_id, **params)
 
     raise ValueError('get_asset() is not supported for %s yet!' % collection)
 
@@ -59,11 +66,36 @@ class Model(object):
             setattr(self, key, value)
 
 
+    def __repr__(self):
+        return '<%s %s>' % (self.collection, self._id)
+
+
+    def new(self):
+        """ Adds a new record to MDB. """
+
+        # sanity check
+        for req_var in self.required_attribs:
+            if req_var not in self.kwargs:
+                err = "The '%s' kwarg is required when creating new %s!"
+                self.logger.error(self.kwargs)
+                raise ValueError(err % (req_var, self.collection))
+
+        # do it
+        self.logger.warn('Creating new %s record!' % self.collection)
+
+        for req_var in self.required_attribs:
+            setattr(self, req_var, self.kwargs[req_var])
+        self.created_on = datetime.now()
+        self._id = self.mdb.insert({})
+
+        self.save()
+
+
     def load(self):
         """ Call this from the subclass objects: it uses self.whatever vars that
         come from their __init__() methods. """
 
-        if '_id' in self.kwargs:
+        if '_id' in self.kwargs and self.kwargs['_id'] is not None:
             self._id = self.kwargs.get('_id')
         else:
             self.new()  #sets self._id
@@ -113,6 +145,28 @@ class Model(object):
             self.logger.info('Saved changes to %s' % self)
         return True
 
+
+    def serialize(self):
+        """ Returns the object's record. """
+        return self.record
+
+
+    def update(self, verbose=True):
+        """ Uses flask.request.json values to update an initialized object.
+        Keys have to be in the self.data_model to be supported. """
+        params = flask.request.json
+        for key, value in params.items():
+            if key in self.data_model.keys():
+                setattr(self, key, self.data_model[key](value))
+        self.save(verbose)
+
+
+    def delete(self):
+        """ Removes the record."""
+
+        self.mdb.remove({'_id': self._id})
+        self.logger.warn('Removed MDB record! %s' % self._id)
+        return True
 
     #
     #   universal/general gets and sets

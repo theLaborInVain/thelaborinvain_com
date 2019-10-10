@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html ng-app="TLVBlog" ng-controller="rootController">
     <head>
 
@@ -21,6 +22,14 @@
 			<div><a href="{{ url_for('logout') }}">Logout</a></div>
 		</div>
 
+        <div id="fullScreenLoading" class="display_none">
+            <img src="/static/media/loading_io.gif"/>
+            <div>Loading...</div>
+        </div>
+
+        <div id="savedPopup" class="hidden">
+            &#x2713;
+        </div>
 
 		{% block content %}{% endblock %}
 

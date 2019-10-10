@@ -53,13 +53,30 @@ def get_assets(collection):
     )
 
 
-@app.route('/get/post/<post_oid>')
-def get_post(post_oid):
-    """ Gets a single post, returns its serialization. """
+@app.route('/<action>/<collection>/<oid>')
+def get_asset(action, collection, oid):
+    """ Generic public, non-auth asset retrieval """
+
+    # attachments are special, they key off of a post
+    if action == 'get' and collection == 'attachments':
+        return flask.Response(
+            response=json.dumps(
+                list(
+                    app.config['MDB'].attachments.find(
+                        {'post_id': ObjectId(oid)}
+                    )
+                ),
+                default=json_util.default
+            ),
+            status=200,
+            mimetype='application/json'
+        )
+
+    asset_object = models.get_asset(collection, ObjectId(oid))
 
     return flask.Response(
         response=json.dumps(
-            posts.Post(_id=ObjectId(post_oid)).serialize(),
+            asset_object.serialize(),
             default=json_util.default
         ),
         status=200,
@@ -127,16 +144,21 @@ def admin():
 
 
 @flask_login.login_required
-@app.route('/create_post', methods=['POST'])
-def create_post():
-    """ Creates a new POST. Returns a 200 and the oid. """
+@app.route('/create/<asset_type>', methods=['POST'])
+def create_post(asset_type):
+    """ Creates a new 'asset_type'. Returns a 200 and the oid. """
     params = flask.request.json
-    post_object = posts.Post(
-        title=params['title'], hero_image=ObjectId(params['hero_image'])
-    )
+
+    if asset_type == 'post':
+        asset_object = posts.Post(
+            title=params['title'], hero_image=ObjectId(params['hero_image'])
+        )
+    else:
+        asset_object = models.get_asset(asset_type, **params)
+
     return flask.Response(
         response=json.dumps(
-            {'_id': post_object._id},
+            {'_id': asset_object._id},
             default=json_util.default
         ),
         status=200,
@@ -145,11 +167,32 @@ def create_post():
 
 
 @flask_login.login_required
-@app.route('/edit_post/<post_oid>')
+@app.route('/edit_post/<post_oid>', methods=['GET', 'POST'])
 def edit_post(post_oid):
     """ Pulls a post for editing in the webapp. """
+
+    # first, make sure we can even get a post to edit
     post_object = posts.Post(_id=ObjectId(post_oid))
-    return flask.render_template('admin_edit.html', post=post_object.serialize(), **app.config)
+
+    # the GET is for editing in the webapp; the POST is for updating MDB
+    if flask.request.method == 'GET':
+        if not flask_login.current_user.is_authenticated:
+            return flask.redirect(flask.url_for('admin'))
+        return flask.render_template(
+            'admin_edit.html',
+            post=post_object.serialize(),
+            **app.config
+            )
+    else:   # if flesk.request.method == 'POST'
+        post_object.update()
+        return flask.Response(
+            response=json.dumps(
+                post_object.serialize(),
+                default=json_util.default
+            ),
+            status=200,
+            mimetype='application/json',
+        )
 
 
 @flask_login.login_required

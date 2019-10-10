@@ -7,8 +7,10 @@
 
 # standard lib
 from datetime import datetime
+from copy import copy
 
 # second party imports
+import flask
 from bson.objectid import ObjectId
 
 # application imports
@@ -34,6 +36,30 @@ def get(count=10, return_type=None):
     return output
 
 
+class Attachment(models.Model):
+    """ Attachments are always associated with a post via post_id. Do not create
+    one with out a post_id. Same-same for image_id: these have to have both. """
+
+    def __init__(self, *args, **kwargs):
+
+        models.Model.__init__(self,  *args, **kwargs)
+        self.collection = 'attachments'
+        self.mdb = app.config['MDB'][self.collection]
+
+        self.data_model = {
+            'post_id': ObjectId,
+            'image_id': ObjectId,
+        }
+
+        self.required_attribs = [
+            'image_id',
+            'post_id',
+        ]
+
+        self.load()
+
+
+
 class Post(models.Model):
     """ Posts are complex objects and this is their base class. Their various
     types are objects that use this model as their base. """
@@ -52,7 +78,7 @@ class Post(models.Model):
             'hero_image': ObjectId,
             'hero_caption': str,        # just a string
             'attachments': list,        # list of image oids
-            'captions': dict,           # key: oid, value: caption
+            'captions': list,           # list of dictionaries
 
             # meta
             'created_on': datetime,
@@ -62,10 +88,6 @@ class Post(models.Model):
         }
 
         self.load()
-
-
-    def __repr__(self):
-        return '<Post {}>'.format(self.title)
 
 
     def new(self):
@@ -92,10 +114,48 @@ class Post(models.Model):
     def serialize(self):
         """ Returns a fancy version of a post. """
 
-        output = self.record
-
+        # expand the hero image
+        output = copy(self.record)
         output['hero_image'] = images.expand_image(output['hero_image'])
 
+        # loop through attachment oids and expand
+        if getattr(self, 'attachments', None) is not None:
+            output['attachments'] = []
+            for attachment_oid in self.attachments:
+                output['attachments'].append(images.expand_image(attachment_oid))
+
         return output
+
+
+    def update(self):
+        """ Calls the parent class update() method, then does some additional
+        stuff required by the post object. """
+
+        was_published = getattr(self, 'published', False)
+
+        # manage the attachments list (of OIDs) before update/save
+        if flask.request.json.get('attachments', None) is not None:
+            self.logger.warn(flask.request.json)
+            setattr(
+                self,
+                'attachments',
+                list(set(
+                    [
+                        ObjectId(a['_id']["$oid"]) for
+                        a in flask.request.json['attachments']
+                    ]
+                ))
+            )
+            del flask.request.json['attachments']
+
+        super().update(verbose=False)
+
+        if not was_published and self.published:
+            self.published_on = datetime.now()
+        elif was_published and not getattr(self, 'published', False):
+            self.published_on = None
+
+
+        self.save()
 
 

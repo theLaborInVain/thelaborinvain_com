@@ -6,7 +6,12 @@
 
 """
 
+# standard lib imports
+import os
+
+# application imports
 from app import app, models, util
+
 
 class AdministrationObject():
     """ The AdministrationObject class definition. """
@@ -35,7 +40,25 @@ class AdministrationObject():
     def initialize(self):
         """ Purges all posts and images from the DB and filesystem. """
 
-        app.config['MDB'].posts.remove()
-        app.config['MDB'].images.remove()
+        print(" - Initializing MDB collections!")
+        collections = ['posts','images']
+        for collection in collections:
+            removed = app.config['MDB'][collection].remove()
+            print("  Removed %s records from %s.%s" % (
+                removed['n'],
+                app.config['MDB'].name,
+                collection,
+                )
+            )
+
+        print(" - Initializing Uploads folder!")
+        for the_file in os.listdir(app.config['UPLOADS']):
+            file_path = os.path.join(app.config['UPLOADS'], the_file)
+            try:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+                    print("  Removed '%s'" % file_path)
+            except Exception as e:
+                raise
 
 

@@ -39,8 +39,9 @@ if __name__ == "__main__":
     admin_object = admin.AdministrationObject()
 
     if options.initialize:
+        print('')
         admin_object.initialize()
-        print('Project Initialized!')
+        print('\n - Project Initialized!\n  exiting...\n')
         sys.exit(0)
 
     if options.add_user:
