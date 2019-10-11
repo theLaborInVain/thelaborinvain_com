@@ -26,12 +26,16 @@ from app.forms import LoginForm
 @app.route('/', methods=['GET','POST'])
 def index():
     """ Get posts, show posts. """
-    return flask.render_template('blog.html', posts=posts.get())
+    return flask.render_template('blog.html', **app.config)
 
 
 @app.route('/get/<collection>')
 def get_assets(collection):
     """ Get JSON of 'collection' assets."""
+
+    # we always want all of the tags
+    if collection == 'tags':
+        count = 666
 
     try:
         count = int(flask.request.args.get('count', default=10))
@@ -59,13 +63,15 @@ def get_asset(action, collection, oid):
 
     # attachments are special, they key off of a post
     if action == 'get' and collection == 'attachments':
+        attachments = app.config['MDB'].attachments.find(
+            {'post_id': ObjectId(oid)}
+        )
+        output = []
+        for attachment in attachments:
+            output.append(posts.Attachment(_id=attachment['_id']).serialize())
         return flask.Response(
             response=json.dumps(
-                list(
-                    app.config['MDB'].attachments.find(
-                        {'post_id': ObjectId(oid)}
-                    )
-                ),
+                output,
                 default=json_util.default
             ),
             status=200,
@@ -167,6 +173,19 @@ def create_post(asset_type):
 
 
 @flask_login.login_required
+@app.route('/update/<asset_type>/<asset_oid>', methods=['POST'])
+def update_asset(asset_type, asset_oid):
+    """ Pulls the asset, calls the update method. """
+    asset_object = models.get_asset(asset_type, ObjectId(asset_oid))
+    asset_object.update()
+    return flask.Response(
+        response=json.dumps(asset_object.serialize(), default=json_util.default),
+        status=200,
+        mimetype='application/json',
+    )
+
+
+@flask_login.login_required
 @app.route('/edit_post/<post_oid>', methods=['GET', 'POST'])
 def edit_post(post_oid):
     """ Pulls a post for editing in the webapp. """
@@ -174,7 +193,8 @@ def edit_post(post_oid):
     # first, make sure we can even get a post to edit
     post_object = posts.Post(_id=ObjectId(post_oid))
 
-    # the GET is for editing in the webapp; the POST is for updating MDB
+    # the GET is for editing in the webapp; the POST 
+    # is for updating MDB
     if flask.request.method == 'GET':
         if not flask_login.current_user.is_authenticated:
             return flask.redirect(flask.url_for('admin'))

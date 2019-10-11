@@ -25,14 +25,6 @@
             </div>
             <div class="edit_post_attachments">
 
-                <div class="edit_post_attachments_inventory">
-                    <div
-                        class="attachment_container"
-                        ng-repeat="attachment in attachments"
-                    >
-                        {a attachment a}
-                    </div>
-                </div>
 
 				<div class="edit_post_attachments_toggler">
 					<div
@@ -57,7 +49,7 @@
 
 				<ul
 					class="asset_corral edit_post"
-					ng-if="assets.images !== null && assets.images.length > 0"
+					ng-if="assets.images !== null && assets.images.length > 0 && attachments !== undefined"
 					ng-class="{
 						'toggle_hero': edit_post_ui.attachments_toggler === 'hero',
 						'toggle_attachments': edit_post_ui.attachments_toggler === 'attachments',
@@ -65,11 +57,17 @@
 				>
 		            <li
 						ng-repeat="image in assets.images"
+                        ng-init="image.is_attached = isAttached(image._id.$oid)"
+                        ng-class="{
+                            'is_attached': image.is_attached,
+                            'is_hero': image._id.$oid === post.hero_image._id.$oid
+                        }"
 					>
 	            	    <img
             	    	    class="asset_corral_image"
 	        	            ng-src="/images/{a image.base_name a}"
 							ng-click="toggleImage(image._id.$oid)"
+                            ng-mouseleave="image.is_attached = isAttached(image._id.$oid)"
     		            />
 					</li>
 				</ul>
@@ -85,6 +83,22 @@
                 ng-model="post.body"
                 ng-blur="updatePost({body: post.body})"
             /></textarea>
+
+            <div class="edit_post_attachments_inventory">
+                <div
+                    class="attachment_container"
+                    ng-repeat="attachment in attachments"
+                >
+                    <img ng-src="/images/{a attachment.image.base_name a}" />
+                    <textarea
+                        ng-model="attachment.caption"
+                        ng-blur="updateAttachment(attachment)"
+                        placeholder="Caption"
+                        class="attachment_caption"
+                    >
+                    </textarea>
+                </div>
+            </div>
         </div>
 
         <div class="edit_post_right_column">
@@ -114,8 +128,37 @@
                     DELETE
                 </button>
             </div>
+            <div class="post_created_on">
+                Created on: 
+                <input
+                    type="date"
+                    ng-value="post.created_on.$date|date:'yyyy-MM-dd'"
+                    ng-model="scratch.whatever"
+                    ng-change="updatePost({created_on: scratch.whatever})"
+                >
+            </div>
             <div ng-if="post.published">
                 Published: {a post.published_on.$date|date:'yyyy-MM-dd HH:mm:ss' a}
+            </div>
+            <div class="tags_container" ng-if="post !== undefined">
+                <div class="tags_corral">
+                    <div
+                        class="tag"
+                        ng-repeat="tag in assets.tags"
+                        ng-click="toggleTag(tag)"
+                        ng-class="{'active': tagAttached(tag) !== false}"
+                    >
+                        {a tag.name a}
+                    </div>
+                </div>
+                <div class="new_tag_widget">
+                    <input type="text" placeholder="new tag" ng-model="scratch.create_new_tag"/>
+                    <button
+                        ng-click="createNewTag()"
+                    > 
+                        +
+                    </button>
+                </div>
             </div>
         </div>
 

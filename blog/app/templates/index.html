@@ -1,8 +1,32 @@
-<html>
+<!DOCTYPE html lang="en">
+<html ng-app="blog" ng-controller="rootController">
+
     <head>
+
         <title>The Labor in Vain - "Bad News Travels Fast"</title>
+
+        <meta name="theme-color" content="#000">
+        <meta name="Description" content="Miniatures, Hobby and Projects Blog for The Labor in Vain, a production company based in Chicago, IL." /> 
+
+        <!-- JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
+
+        <script src="/static/js/blog.js?v={{ VERSION }}"></script>
+
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="/static/css/style.css?v={{ VERSION }}">
+
     </head>
+
     <body>
+		<noscript>Please enable Javascript!</noscript>
+
 		{% block content %}{% endblock %}
+
     </body>
+
+    <a href="https://thelaborinvain.com">
+        <div id="homeLink" title="Link to https://thelaborinvain.com"></div>
+    </a>
+
 </html>

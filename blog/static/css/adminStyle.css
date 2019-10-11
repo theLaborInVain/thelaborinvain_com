@@ -189,24 +189,27 @@ button.create_new {width: 95%; margin: 1em; border-radius: 10px; }
 .edit_post_picker li {
     flex-grow: 1;
     cursor: pointer;
-    max-width: 20vw;
+    max-width: 48%;
     list-style-type: none;
     margin: 0.5vh;
     padding: 2px;
     border: 1px solid #ccc;
     display: flex;
-    flex-direction: row;  
+    flex-direction: row;
+    box-sizing: border-box; 
 }
 .edit_post_thumbnail {
-    height: 10vh;
+    height: 8vh;
 }
 .edit_post_thumbnail_container {
     text-align: center; 
 }
 .edit_post_details {
     margin-left: 1vw; 
-    font-size: 0.8em; 
+    font-size: 0.8em;
 }
+
+.edit_post_details * {font-weight: bold; }
 
 .asset_corral { /* this is a ul */
     display: flex;
@@ -225,8 +228,25 @@ button.create_new {width: 95%; margin: 1em; border-radius: 10px; }
     overflow: hidden;
 }
 .asset_corral.edit_post li {
-    height: 10vh; 
+    height: 10vh;
+    overflow: hide; 
+    filter: grayscale(100%);
+    transition: 3s;  
 }
+.asset_corral.edit_post li.is_attached,
+ .asset_corral.edit_post li.is_hero {
+    filter: grayscale(0%); 
+}
+
+.asset_corral.edit_post li.is_attached::before,
+ .asset_corral.edit_post li.is_hero::before {
+    color: #f00;
+    font-weight: bold; 
+    position: absolute; 
+}
+.asset_corral.edit_post li.is_hero::before {content: "\2605";}
+.asset_corral.edit_post li.is_attached::before {content: "\2713";}
+
 .asset_corral.thumbnail_picker li {
     height: 10vh; 
 }
@@ -258,12 +278,14 @@ button.create_new {width: 95%; margin: 1em; border-radius: 10px; }
 /****** edit post! *********/
 
 .edit_post_container {
+    margin-left: 1vw; 
     margin-top: 5vh;
     margin-bottom: 10vh;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     min-height: 80%;
+    max-width: 1400px; 
 }
 
 .edit_post_left_column {width: 40%; box-sizing: border-box;}
@@ -275,22 +297,29 @@ button.create_new {width: 95%; margin: 1em; border-radius: 10px; }
 .edit_post_hero_container * {margin: 1vh; }
 .edit_post_hero_container img {height: 30vh; border: 2px solid #E49797;}
 .edit_post_hero_caption {border: none; width: 100%; text-align: center;  }
-.attachment_container {margin: 0.4em; display: flex; flex-direction: row; padding: 2px; background: #F9CC9D;}
-
+.edit_post_attachments_inventory {width: 90%; margin: 0 auto; }
+.attachment_container {margin: 0.4em; display: flex; flex-direction: row; padding: 2px; background: #F9CC9D; justify-content: space-evenly; }
+.attachment_container img {height: 4vh; }
+.attachment_caption {width: 100%; border: none; vertical-align: top; padding: 2px; outline: none; padding-left: 0.5vw; }
 .edit_post_attachments_toggler {display: flex; flex-direction: row; padding: 1vh; margin-bottom: -3px; padding-bottom: 0; }
 .toggler {background: #ccc; color: #aaa; padding: 0.7vh; border: 1px solid #666; font-size: 0.8em; cursor: pointer; border-top-left-radius: 5px; border-top-right-radius: 5px; margin-left: 1vw; }
 .toggler.active {color: #000; border-width: 2px; }
 .toggle_hero {border-color: #E49797; background: #E49797;}
 .toggle_attachments {border-color: #F9CC9D; background: #F9CC9D; }
 
-.edit_post_middle_column {width: 40%; display: flex; }
-.edit_post_body {box-sizing: border-box; width: 100%; height: 100%; border: 0; color: #aaa; resize: none; }
+.edit_post_middle_column {width: 40%; display: flex; flex-direction: column; }
+.edit_post_body {box-sizing: border-box; min-height: 50%; height: 100%; border: 0; color: #aaa; resize: none; }
 .edit_post_body:focus {color: #000; outline: none; }
 .edit_post_body.active {color: #000; }
-.edit_post_right_column {width: 20%; display: flex; flex-direction: column; box-sizing: border-box; }
-.edit_post_publish_controls {display: flex; flex-direction: row; justify-content: space-evenly; }
+.edit_post_right_column {width: 20%; display: flex; flex-direction: column; box-sizing: border-box; padding-left: 1vw; }
+.edit_post_publish_controls {display: flex; flex-direction: row; justify-content: space-evenly; margin-bottom: 1vh; }
 .edit_post_publish_controls button {padding: 0.7vw; border-radius: 10px; }
-
+.tags_container {display: flex; flex-direction: column; justify-content: space-evenly; border: 1px solid #ddd; margin-top: 1vh; }
+.tags_corral {display: flex; flex-direction: row; flex-wrap: wrap; }
+.tag {padding: 0.2vw; border: 1px solid #ccc; background: #ddd; color: #eee; margin: 2px; transition: 2s; cursor: pointer; }
+.tag.active {border-color: #FF9900; background: #0c3;}
+.new_tag_widget {padding: 0.2vw; background: #cf0;}
+.new_tag_widget input {font-size:0.8em; padding-left: 2px; }
 
 /****** user mgmt *********/
 .user_management {

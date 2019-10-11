@@ -36,6 +36,21 @@ def get(count=10, return_type=None):
     return output
 
 
+class Tag(models.Model):
+    """ Tags are very simple little guys. """
+
+    def __init__(self, *args, **kwargs):
+
+        models.Model.__init__(self,  *args, **kwargs)
+        self.collection = 'tags'
+        self.mdb = app.config['MDB'][self.collection]
+
+        self.data_model = {'name': str}
+        self.required_attribs = ['name']
+
+        self.load()
+
+
 class Attachment(models.Model):
     """ Attachments are always associated with a post via post_id. Do not create
     one with out a post_id. Same-same for image_id: these have to have both. """
@@ -49,6 +64,7 @@ class Attachment(models.Model):
         self.data_model = {
             'post_id': ObjectId,
             'image_id': ObjectId,
+            'caption': str,
         }
 
         self.required_attribs = [
@@ -58,6 +74,12 @@ class Attachment(models.Model):
 
         self.load()
 
+
+    def serialize(self):
+        """ Expands the image_id onto a pseudo attrib called 'image'. """
+        output = copy(self.record)
+        output['image'] = images.expand_image(output['image_id'])
+        return output
 
 
 class Post(models.Model):
@@ -133,20 +155,21 @@ class Post(models.Model):
 
         was_published = getattr(self, 'published', False)
 
-        # manage the attachments list (of OIDs) before update/save
-        if flask.request.json.get('attachments', None) is not None:
-            self.logger.warn(flask.request.json)
-            setattr(
-                self,
-                'attachments',
-                list(set(
-                    [
-                        ObjectId(a['_id']["$oid"]) for
-                        a in flask.request.json['attachments']
+        # manage the attachments/tags/list (of OIDs) before update/save
+        for attrib in ['attachments', 'tags']:
+            if flask.request.json.get(attrib, None) is not None:
+                self.logger.warn(flask.request.json)
+                setattr(
+                    self,
+                    attrib,
+                    list(set(
+                        [
+                            ObjectId(a["$oid"]) for
+                            a in flask.request.json[attrib]
                     ]
-                ))
-            )
-            del flask.request.json['attachments']
+                    ))
+                )
+                del flask.request.json[attrib]
 
         super().update(verbose=False)
 

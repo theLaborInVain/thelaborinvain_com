@@ -44,6 +44,12 @@ def get_asset(collection=None, _id=None, **params):
         return models.posts.Post(_id=_id)
     elif collection == 'attachment':
         return models.posts.Attachment(_id=_id, **params)
+    elif collection == 'attachments':
+        return models.posts.Attachment(_id=_id, **params)
+    elif collection == 'tag':
+        return models.posts.Tag(_id=_id, **params)
+    elif collection == 'tags':
+        return models.posts.Tag(_id=_id, **params)
 
     raise ValueError('get_asset() is not supported for %s yet!' % collection)
 
@@ -88,7 +94,12 @@ class Model(object):
         self.created_on = datetime.now()
         self._id = self.mdb.insert({})
 
-        self.save()
+        try:
+            self.save()
+        except pymongo.errors.DuplicateKeyError as e:
+            self.mdb.remove({'_id': self._id})
+            self.logger.error(e)
+            raise ValueError('Duplicate key error prevented asset creation!')
 
 
     def load(self):
@@ -157,7 +168,14 @@ class Model(object):
         params = flask.request.json
         for key, value in params.items():
             if key in self.data_model.keys():
-                setattr(self, key, self.data_model[key](value))
+
+                # unfuck javascript-style date strings
+                if self.data_model[key] == datetime:
+                    value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.000Z')
+
+                # set the self.attribute values
+                setattr(self, key, value)
+
         self.save(verbose)
 
 

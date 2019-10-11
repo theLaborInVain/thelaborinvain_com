@@ -1,7 +1,20 @@
 {% extends "index.html" %}
 
 {% block content %}
-    {% for post in posts %}
-    <div><p>{{ post.title }}: <b>{{ post.hero_image }}</b></p></div>
-    {% endfor %}
+
+<ul id="postContainer">
+
+    <li class="post" ng-repeat="post in posts" ng-if="post.published">
+
+        <img
+            loading="lazy"
+            class="hero_image"
+            title="{a post.title a}"
+            ng-src="/images/{a post.hero_image.base_name a}" 
+        />
+
+    </li>
+
+</ul>
+
 {% endblock %}

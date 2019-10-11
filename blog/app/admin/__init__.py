@@ -41,7 +41,7 @@ class AdministrationObject():
         """ Purges all posts and images from the DB and filesystem. """
 
         print(" - Initializing MDB collections!")
-        collections = ['posts','images']
+        collections = ['posts','images','attachments','tags']
         for collection in collections:
             removed = app.config['MDB'][collection].remove()
             print("  Removed %s records from %s.%s" % (

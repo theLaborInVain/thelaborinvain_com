@@ -12,6 +12,8 @@ app.filter('trustedHTML', function($sce) { return $sce.trustAsHtml; } );
 // root Controller starts here
 app.controller("rootController", function($scope, $http) {
 
+    $scope.scratch = {};
+
     $scope.ui = {
         show_image_asset_creator_modal: false,
         show_posts_asset_creator_modal: false,
@@ -21,6 +23,7 @@ app.controller("rootController", function($scope, $http) {
         images: null,
         posts: null,
         attachments: null,
+        tags: null,
     }
 
     $scope.new_post = {
@@ -34,6 +37,7 @@ app.controller("rootController", function($scope, $http) {
         location.replace(url)
     };
 
+
     // sleep time expects milliseconds
     $scope.sleep = function(time) {
         return new Promise((resolve) => setTimeout(resolve, time));
@@ -46,6 +50,26 @@ app.controller("rootController", function($scope, $http) {
         $scope.sleep(3000).then(() => {
             element.classList.remove("visible");
        });
+    };
+
+    $scope.createNewTag = function() {
+        // creates a new tag
+        var reqUrl = '/create/tag';
+        console.time(reqUrl);
+        $http({
+            method : "POST",
+            url: reqUrl,
+            data: {name: $scope.scratch.create_new_tag},
+        }).then(function mySuccess(response) {
+            console.warn("Tag created!");
+            $scope.scratch.create_new_tag = undefined;
+            console.timeEnd(reqUrl);
+            $scope.loadAssets('tags');
+        }, function myError(response) {
+            console.error(response.data);
+            console.timeEnd(reqUrl);
+        });
+
     };
 
     $scope.createNewPost = function() {
@@ -106,6 +130,7 @@ app.controller("rootController", function($scope, $http) {
     };
 
     $scope.init = function() {
+        $scope.loadAssets('tags');
         $scope.loadAssets('images', 20);
         $scope.loadAssets('posts');
         console.info('rootController initialized!')
@@ -146,6 +171,27 @@ app.controller("editPostController", function($scope, $http) {
 
     }
 
+    $scope.updateAttachment = function(attachmentObject) {
+        // POSTs updateDict to the URL for editing posts
+        var req_url = "/update/attachment/" + attachmentObject._id.$oid;
+        console.time(req_url);
+        $http({
+            method : "POST",
+            url : req_url,
+            data: {caption: attachmentObject.caption},
+        }).then(function mySuccess(response) {
+            console.warn('Attachment update successful!');
+            console.warn(response);
+            $scope.flashSavedMessage();
+            $scope.loadPost($scope.post._id.$oid);
+            console.timeEnd(req_url);
+        }, function myError(response) {
+            console.error(response.data);
+            console.timeEnd(req_url);
+        });
+
+    }
+
     $scope.updateHero = function(image_oid) {
         // change the post hero image; reload
         if (image_oid === $scope.post.hero_image._id.$oid) {
@@ -157,20 +203,71 @@ app.controller("editPostController", function($scope, $http) {
  
     };
 
+    $scope.isAttached = function(image_oid) {
+        // returns a bool of whether the image is attached
+        // if true, the value will be the index of the attachment
+        var attached = false;
+        for (i = 0; i < $scope.attachments.length; i++) {
+            if ($scope.attachments[i].image_id.$oid === image_oid) {
+                attached = $scope.attachments[i]._id.$oid;
+            };
+        };
+        return attached
+    };
+
+	$scope.tagAttached = function(tag) {
+        for (i = 0; i < $scope.post.tags.length; i++) {
+            if ($scope.post.tags[i].$oid === tag._id.$oid) {
+                return i;
+            };
+        };
+		return false;
+	};
+
+    $scope.toggleTag = function(tag) {
+        // checks the post to see if the tag is included
+        if ($scope.post.tags === undefined || $scope.post.tags === null || $scope.post.tags.length === 0) {
+            $scope.post.tags = [];
+            $scope.post.tags.push(tag._id);
+            $scope.updatePost({tags: $scope.post.tags})
+            return true;
+        };
+
+        var attached = $scope.tagAttached(tag);
+
+        if (attached !== false) {
+            $scope.post.tags.splice(attached, 1);
+        } else {
+            $scope.post.tags.push(tag._id);
+        };
+
+        $scope.updatePost({tags: $scope.post.tags})
+		$scope.loadAssets('tags');
+
+    };
+
     $scope.toggleImage = function(image_oid) {
         if ($scope.edit_post_ui.attachments_toggler === 'hero') {
             $scope.updateHero(image_oid)
         } else if ($scope.edit_post_ui.attachments_toggler === 'attachments') {
             // loop through attachments in scope; create one if there isn't one
             // with this image OID
-            var attachment_exists = false;
-            for (i = 0; i < $scope.attachments.length; i++) {
-                if ($scope.attachments[i]._id.$oid === image_oid) {
-                    attachment_exists = true;
-                };
-            };
+            var attachment_exists = $scope.isAttached(image_oid);
             if (attachment_exists) {
-                // pass
+                var req_url = "/rm/attachments/" + attachment_exists;
+                console.time(req_url);
+                $http({
+                    method : "GET",
+                    url : req_url,
+                }).then(function mySuccess(response) {
+                    $scope.flashSavedMessage();
+                    console.timeEnd(req_url);
+                    console.warn('Removed attachment!');
+                    $scope.loadAttachments();
+                }, function myError(response) {
+                    console.error(response.data);
+                    console.timeEnd(req_url);
+                });
             } else {
                 var req_url = "/create/attachment";
                 console.time(req_url);
@@ -182,6 +279,7 @@ app.controller("editPostController", function($scope, $http) {
                         image_id: image_oid,
                     }
                 }).then(function mySuccess(response) {
+                    $scope.flashSavedMessage();
                     console.timeEnd(req_url);
                     console.warn(response.data);
                     $scope.loadAttachments();
