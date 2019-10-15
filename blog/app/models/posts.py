@@ -11,6 +11,7 @@ from copy import copy
 
 # second party imports
 import flask
+import flask_login
 from bson.objectid import ObjectId
 
 # application imports
@@ -103,6 +104,7 @@ class Post(models.Model):
             'hero_caption': str,        # just a string
 
             # meta
+            'created_by': ObjectId,
             'created_on': datetime,
             'updated_on': datetime,
             'published_on': datetime,
@@ -125,6 +127,7 @@ class Post(models.Model):
 
         # finally, attribs and save
         self.created_on = datetime.now()
+        self.created_by = flask_login.current_user._id
         self.hero_image = self.kwargs['hero_image']
 
         if self.save(verbose=False):

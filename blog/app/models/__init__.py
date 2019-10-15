@@ -151,6 +151,9 @@ class Model(object):
                     raise
 
         # save and, if verbose, log about it
+
+        # set self.update_on, because most models support it
+        self.updated_on = datetime.now()
         self.mdb.save(record)
         if verbose:
             self.logger.info('Saved changes to %s' % self)

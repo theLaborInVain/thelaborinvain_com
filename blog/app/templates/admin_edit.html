@@ -137,6 +137,52 @@
                     DELETE
                 </button>
             </div>
+
+            <!-- meta data modal -->
+            <button
+                ng-click="ui.show_post_meta_data = true"
+            >
+                post meta data
+            </button>
+
+
+            <div
+                ng-if="ui.show_post_meta_data"
+                ng-click="ui.show_post_meta_data = false"
+                class="modal_outer"
+            >
+                <div class="modal_inner">
+                    <h1>{a post.title a}</h1>
+                    <h2>created: {a post.created_on.$date|date:'yyyy-MM-dd HH:mm:ss' a}</h2>
+                    <table class="post_meta_data_table">
+                        <tr
+                            ng-repeat="key in [
+                                'created_by',
+                                'created_on',
+                                'updated_on',
+                                'published',
+                                'published_on',
+                                'title',
+                                'handle',
+                                'tags',
+                                'hero_image',
+                                'hero_caption',
+                                'lede',
+                                'body',
+                                'html_body',
+                            ]"
+                            ng-class-even="'zebra'"
+                        >
+                            <td class="key">{a key a}</td>
+                            <td>{a post[key] a}</td>
+                        </tr>
+                    </table>
+                    <i>Click anywhere to close!</i>
+                </div>
+            </div>
+
+            <!-- meta data modal -->
+
             <div class="post_created_on">
                 Created on: 
                 <input
