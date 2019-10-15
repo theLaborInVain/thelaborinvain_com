@@ -1,7 +1,9 @@
 #!/bin/bash
 
 #
-#   based on what we did for the admin.sh in the kdm-manager.api project
+#   Use this to run the server in dev mode, e.g. from the CLI.
+#   DO NOT use this script for deployment: all of that happens in the
+#   'deploy' folder off of the project root.
 #
 
 PROJECT_ROOT=/home/toconnell/thelaborinvain_com/blog

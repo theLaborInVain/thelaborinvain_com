@@ -1,3 +1,9 @@
+"""
+
+    This script is used to initialize the app. DO NOT customize.
+
+"""
+
 from app import app
 
 if __name__ == '__main__':

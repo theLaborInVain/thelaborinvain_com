@@ -8,6 +8,7 @@
 # standard lib
 import logging
 import os
+import string
 import sys
 
 # app imports
@@ -57,3 +58,15 @@ def get_logger(log_level=None, log_name=None):
         logger.addHandler(logger_fh)
 
     return logger
+
+
+
+def string_to_handle(s):
+    """ Turns a string into a handle, suitable for use as a URL. """
+
+    s = s.lower()
+    trans_table = str.maketrans('', '', string.punctuation)
+    s = s.translate(trans_table)
+    s = s.replace(" ", "_")
+
+    return s

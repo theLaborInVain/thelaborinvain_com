@@ -2,19 +2,110 @@
 
 {% block content %}
 
-<ul id="postContainer">
+<ul id="postContainer" class="asset_corral">
 
-    <li class="post" ng-repeat="post in posts" ng-if="post.published">
+    <li
+        class="post"
+        ng-repeat="post in posts"
+        ng-if="post.published"
+        ng-click="post.show_index_modal = true"
+    >
 
         <img
             loading="lazy"
-            class="hero_image"
-            title="{a post.title a}"
+            class="hero_image_index_tile"
+            title="{a post.hero_caption a}"
             ng-src="/images/{a post.hero_image.base_name a}" 
         />
 
     </li>
 
-</ul>
+    <!-- modal stuff is separate, so we don't accidentally click it -->
+
+    <div
+        class="modal_outer"
+        ng-repeat="post in posts"
+        ng-if="post.show_index_modal"
+    >
+
+        <div
+            class="modal_inner"
+        >
+            <div
+                class="modal_hero_container"
+                title="{a post.hero_caption a}"
+                style="
+                    background: url(/images/{a post.hero_image.base_name a});
+                    background-repeat: no-repeat;
+                    background-position: center;
+                "
+            />
+
+                <div class="hero_info_container">
+                    <span>{a post.published_on.$date|date:'yyyy-MM-dd' a}</span>
+                    <h1>{a post.title a}</h1>
+                </div>
+                <div class="hero_tags_container" ng-if="tags !== undefined">
+                    <span
+                        class="hero_tag"
+                        ng-repeat="tag_oid in post.tags"
+                        ng-init="tag = getTag(tag_oid)"
+                    >
+                        {a tag.name a}
+                    </span>
+                </div>
+
+            </div>
+
+
+            <!-- clickable region! -->
+            <a ng-href="/b/{a post.handle a}">
+                <div
+                    class="lede_container"
+                    ng-bind-html="post.lede|trustedHTML"
+                >
+                </div>
+
+                <ul
+                    class="asset_corral post_attachment_thumbnails"
+                    ng-init="loadAttachments(post)"
+                >
+                    <li
+                        ng-repeat="attachment in post.attachments"
+                        title="{a attachment.caption a}"
+                    >
+                        <img
+                            loading="lazy"
+                            class="attachment_thumbnail"
+                            ng-src="/images/{a attachment.image.base_name a}" 
+                        />
+                    </li>
+                </ul>
+
+            </a>
+            <!-- clickable region! -->
+
+
+            <button
+                class="modal_close"
+                ng-click="post.show_index_modal = false"
+            >
+                Close
+            </button>
+
+
+        </div><!-- modal inner -->
+
+    </div><!-- modal outer -->
+
+</ul><!-- postContainer -->
+
+
+<div
+    id="homeLink"
+    title="Click to see the About page"
+    ng-click="ui.show_index_about_modal = true"
+>
+</div>
 
 {% endblock %}

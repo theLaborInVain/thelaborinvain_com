@@ -29,18 +29,21 @@ def index():
     return flask.render_template('blog.html', **app.config)
 
 
+@app.route('/b/<post_handle>')
+def get_one_post(post_handle):
+    """ Get one post with the hande 'post_handle'. Return it. """
+    post = app.config['MDB'].posts.find_one({'handle': post_handle})
+    if post is None:
+        return flask.Response(response='Post not found!', status=404)
+    return flask.render_template('post.html', post=posts.Post(_id=post['_id']))
+
+
 @app.route('/get/<collection>')
 def get_assets(collection):
     """ Get JSON of 'collection' assets."""
 
-    # we always want all of the tags
-    if collection == 'tags':
-        count = 666
-
-    try:
-        count = int(flask.request.args.get('count', default=10))
-    except:
-        count = 10
+    params = flask.request.args
+    count = int(params.get('count', app.config['GET_COUNT_DEFAULT']))
 
     results = app.config['MDB'][collection].find().sort(
         'created_on', -1

@@ -12,12 +12,17 @@ app.filter('trustedHTML', function($sce) { return $sce.trustAsHtml; } );
 // root Controller starts here
 app.controller("rootController", function($scope, $http) {
 
-    $scope.scratch = {}
-    $scope.ui = {}
+    $scope.scratch = {};
+
+    $scope.ui = {curDate: new Date()};
 
     $scope.loadAssets = function(asset_type, count) {
 
         var reqUrl = "/get/" + asset_type;
+        if (count !== undefined) {
+          req_url = reqUrl + '?count=' + count
+        }
+
         console.time(reqUrl);
         $http({
             method : "GET",
@@ -31,6 +36,32 @@ app.controller("rootController", function($scope, $http) {
                 console.timeEnd(reqUrl);
             }
         );
+    };
+
+    $scope.loadAttachments = function(post) {
+		// gets attachments for 'post'; adds them to the post obj
+        var req_url = "/get/attachments/" + post._id.$oid;
+        console.time(req_url);
+        $http({
+            method : "GET",
+            url : req_url,
+        }).then(function mySuccess(response) {
+            post.attachments = response.data;
+            console.timeEnd(req_url);
+        }, function myError(response) {
+            console.error(response.data);
+            console.timeEnd(req_url);
+        });
+    };
+
+    $scope.getTag = function(oid) {
+        // returns a tag object; consoles an error if it can't
+        for (i = 0; i < $scope.tags.length; i++) {
+            if ($scope.tags[i]._id.$oid === oid.$oid) {
+                return $scope.tags[i]
+            };
+       };
+       console.error('Could not find tag with OID ' + oid);
     };
 
     $scope.init = function() {

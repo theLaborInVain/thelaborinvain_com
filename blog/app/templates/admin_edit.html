@@ -76,6 +76,15 @@
         </div>
 
         <div class="edit_post_middle_column">
+
+            <textarea
+                type="text"
+                class="edit_post_lede"
+                placeholder="Lede for the post goes here"
+                ng-model="post.lede"
+                ng-blur="updatePost({lede: post.lede})"
+            /></textarea>
+
             <textarea
                 type="text"
                 class="edit_post_body"

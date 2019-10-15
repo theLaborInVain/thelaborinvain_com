@@ -15,9 +15,10 @@ from pymongo import MongoClient
 
 
 class Config(object):
-    VERSION = "0.8.44"
+    VERSION = "0.9.51"
     PORT = 8060
 #    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
     SECRET_KEY = secrets.token_hex(16)
     MDB = MongoClient()['thelaborinvain_blog_v0']
     ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+    GET_COUNT_DEFAULT = 9999

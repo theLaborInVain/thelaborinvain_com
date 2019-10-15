@@ -25,8 +25,38 @@
 
     </body>
 
-    <a href="https://thelaborinvain.com">
-        <div id="homeLink" title="Link to https://thelaborinvain.com"></div>
-    </a>
+    <div class="footer">
+        <i>Bad News Travels Fast</i><br/>
+        &copy; The Labor in Vain, 2018 - {a ui.curDate|date:'yyyy' a}
+    </div>
+
+    <div
+        ng-if="ui.show_index_about_modal"
+        class="modal_outer"
+    >
+        <div class="modal_inner">
+
+            <div
+                class="index_about"
+            >
+                <p class="centered">
+                    <a href="https://thelaborinvain" class="fancy">
+                        https://thelaborinvain.com
+                    </a>
+                </p>
+                <p class="centered"><i>"Bad News Travels Fast"</i></p>
+                <p>The Labor in Vain is a production company in Chicago, IL.</p>
+                <p>This blog is maintained by Timothy O'Connell. Find older posts (from 2018 and 2019) on <a href="https://thelaborinvain.blogspot.com" target="top" class="fancy">the old hobby blog</a>.</p>
+                <p>All content published on this website, to include text, photos, video and other media are the property of The Labor in Vain and may not be reproduced for commercial purposes without consent.</p>
+            </div>
+
+            <button
+                class="close_index_about"
+                ng-click="ui.show_index_about_modal = false"
+            >
+                Back
+            </button>
+        </div><!-- modal_inner -->
+    </div><!-- modal_outer -->
 
 </html>

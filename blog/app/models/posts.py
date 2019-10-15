@@ -14,7 +14,7 @@ import flask
 from bson.objectid import ObjectId
 
 # application imports
-from app import app, models
+from app import app, models, util
 from app.models import images
 
 #
@@ -95,12 +95,12 @@ class Post(models.Model):
         self.data_model = {
             # content
             'title': str,
+            'handle': str,
             'body': str,
+            'lede': str,
             'tags': list,
             'hero_image': ObjectId,
             'hero_caption': str,        # just a string
-            'attachments': list,        # list of image oids
-            'captions': list,           # list of dictionaries
 
             # meta
             'created_on': datetime,
@@ -158,7 +158,6 @@ class Post(models.Model):
         # manage the attachments/tags/list (of OIDs) before update/save
         for attrib in ['attachments', 'tags']:
             if flask.request.json.get(attrib, None) is not None:
-                self.logger.warn(flask.request.json)
                 setattr(
                     self,
                     attrib,
@@ -182,3 +181,9 @@ class Post(models.Model):
         self.save()
 
 
+    def save(self, verbose=True):
+        """ Calls the base class method after creating the handle. """
+
+        date_str = self.created_on.strftime(util.YMDHMS)
+        self.handle = util.string_to_handle(date_str + ' ' + self.title)
+        super().save(verbose)
