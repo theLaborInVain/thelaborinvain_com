@@ -31,39 +31,46 @@
         <div
             class="modal_inner"
         >
-            <div
-                class="modal_hero_container"
-                title="{a post.hero_caption a}"
-                style="
-                    background: url(/images/{a post.hero_image.base_name a});
-                    background-repeat: no-repeat;
-                    background-position: center;
-                "
-            />
-
-                <div class="hero_info_container">
-                    <span>{a post.published_on.$date|date:'yyyy-MM-dd' a}</span>
-                    <h1>{a post.title a}</h1>
-                </div>
-                <div class="hero_tags_container" ng-if="tags !== undefined">
-                    <span
-                        class="hero_tag"
-                        ng-repeat="tag_oid in post.tags"
-                        ng-init="tag = getTag(tag_oid)"
-                    >
-                        {a tag.name a}
-                    </span>
-                </div>
-
-            </div>
-
-
             <!-- clickable region! -->
             <a ng-href="/b/{a post.handle a}">
+
+                <div
+                    class="modal_hero_container"
+                    title="{a post.hero_caption a}"
+                    style="
+                        background: url(/images/{a post.hero_image.base_name a});
+                        background-repeat: no-repeat;
+                        background-position: center;
+                    "
+                />
+
+                    <div class="hero_info_container">
+                        <span>{a post.published_on.$date|date:'yyyy-MM-dd' a}</span>
+                        <h1>{a post.title a}</h1>
+                    </div>
+                    <div class="hero_tags_container" ng-if="tags !== undefined">
+                        <span
+                            class="hero_tag"
+                            ng-repeat="tag_oid in post.tags"
+                            ng-init="tag = getTag(tag_oid)"
+                        >
+                            {a tag.name a}
+                        </span>
+                    </div>
+
+                </div>
+
+
                 <div
                     class="lede_container"
                     ng-bind-html="post.lede|trustedHTML"
                 >
+                </div>
+
+                <div
+                    class="lede_container"
+                >
+                    Tap or click to view the full post!
                 </div>
 
                 <ul

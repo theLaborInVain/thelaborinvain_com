@@ -146,6 +146,11 @@ class Post(models.Model):
             for attachment_oid in self.attachments:
                 output['attachments'].append(images.expand_image(attachment_oid))
 
+        # now, create some HTML from the plaintext
+        html = str(output.get('body', ''))
+        html = "".join(["<p>%s</p>" % p for p in html.split('\n') if p != ''])
+        output['html_body'] = html
+
         return output
 
 
@@ -186,4 +191,4 @@ class Post(models.Model):
 
         date_str = self.created_on.strftime(util.YMDHMS)
         self.handle = util.string_to_handle(date_str + ' ' + self.title)
-        super().save(verbose)
+        return super().save(verbose)

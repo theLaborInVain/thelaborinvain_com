@@ -18,17 +18,19 @@
 
     </head>
 
+    <noscript>Please enable Javascript!</noscript>
+
     <body>
-		<noscript>Please enable Javascript!</noscript>
 
 		{% block content %}{% endblock %}
 
+        <div id="footer">
+            <i>Bad News Travels Fast</i><br/>
+            &copy; The Labor in Vain, 2018 - {a ui.curDate|date:'yyyy' a}
+        </div>
+
     </body>
 
-    <div class="footer">
-        <i>Bad News Travels Fast</i><br/>
-        &copy; The Labor in Vain, 2018 - {a ui.curDate|date:'yyyy' a}
-    </div>
 
     <div
         ng-if="ui.show_index_about_modal"
@@ -58,5 +60,6 @@
             </button>
         </div><!-- modal_inner -->
     </div><!-- modal_outer -->
+
 
 </html>

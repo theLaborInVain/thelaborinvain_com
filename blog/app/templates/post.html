@@ -2,14 +2,78 @@
 
 {% block content %}
 
-    {{ post.title }}
 
+    <div
+        ng-if="post !== undefined"
+        ng-init="loadAttachments(post)"
+        class="post_full_view_container"
+    >
+
+        <p>{a post.lede a}</p>
+
+        <img
+            class="post_full_view_hero"
+            ng-src="/images/{a post.hero_image.base_name a}"
+            alt="{a post.hero_caption a}"
+        />
+
+        <h1 title="Post title">{a post.title a}</h1>
+        <p class="published_on" title="Published on">
+            {a post.published_on.$date|date:'yyyy-MM-dd HH:mm:ss' a}
+        </p>
+
+        <ul class="asset_corral post_full_view_tags">
+            <li
+                ng-repeat="tag_oid in post.tags"
+                ng-init="tag = getTag(tag_oid)"
+            >
+                {a tag.name a}
+            </li>
+        </ul>
+
+        <div
+            class="post_full_view_body"
+            ng-bind-html="post.html_body|trustedHTML"
+        ></div>
+
+        <div
+            class="attachment_container"
+            ng-repeat="attachment in post.attachments"
+        >
+            <img
+                class="post_full_view_attachment"
+                ng-src="/images/{a attachment.image.base_name a}"
+                title="{a attachment.caption a}"
+                alt="{a attachment.caption a}"
+            />
+            <p class="attachment_caption">
+                {a attachment.caption a}
+            </p>
+        </div>
+
+
+
+    </div><!-- post_full_view_container -->
+
+<!--
     <a href="/">
         <div
             id="homeLink"
             title="Link to https://blog.thelaborinvain.com"
         >
+            <span class="back_arrow">
+                &#x27A4;
+            </span>
+
         </div>
     </a>
+-->
+
+    <span
+        ng-init="
+            setPost('{{post_object._id}}')
+        "
+    >
+    </span>
 
 {% endblock %}

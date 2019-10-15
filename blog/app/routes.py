@@ -35,7 +35,7 @@ def get_one_post(post_handle):
     post = app.config['MDB'].posts.find_one({'handle': post_handle})
     if post is None:
         return flask.Response(response='Post not found!', status=404)
-    return flask.render_template('post.html', post=posts.Post(_id=post['_id']))
+    return flask.render_template('post.html', post_object=posts.Post(_id=post['_id']))
 
 
 @app.route('/get/<collection>')
