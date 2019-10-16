@@ -9,6 +9,7 @@ app.config(['$interpolateProvider', function($interpolateProvider) {
 // HTML insertion
 app.filter('trustedHTML', function($sce) { return $sce.trustAsHtml; } );
 
+
 // root Controller starts here
 app.controller("rootController", function($scope, $http) {
 
@@ -171,14 +172,14 @@ app.controller("editPostController", function($scope, $http) {
 
     }
 
-    $scope.updateAttachment = function(attachmentObject) {
+    $scope.updateAttachment = function(attachmentObject, data_dict) {
         // POSTs updateDict to the URL for editing posts
         var req_url = "/update/attachment/" + attachmentObject._id.$oid;
         console.time(req_url);
         $http({
             method : "POST",
             url : req_url,
-            data: {caption: attachmentObject.caption},
+            data: data_dict,
         }).then(function mySuccess(response) {
             console.warn('Attachment update successful!');
             console.warn(response);
@@ -216,6 +217,9 @@ app.controller("editPostController", function($scope, $http) {
     };
 
 	$scope.tagAttached = function(tag) {
+        // checks if a tag is attached to the current post
+        if ($scope.post.tags === null) {return false};
+        if ($scope.post.tags.length < 1) {return false};
         for (i = 0; i < $scope.post.tags.length; i++) {
             if ($scope.post.tags[i].$oid === tag._id.$oid) {
                 return i;

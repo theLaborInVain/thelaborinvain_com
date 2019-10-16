@@ -38,7 +38,7 @@
 
         <div
             class="attachment_container"
-            ng-repeat="attachment in post.attachments"
+            ng-repeat="attachment in post.attachments |orderBy:'sort_order'"
         >
             <img
                 class="post_full_view_attachment"

@@ -96,12 +96,32 @@
             <div class="edit_post_attachments_inventory">
                 <div
                     class="attachment_container"
-                    ng-repeat="attachment in attachments"
+                    ng-repeat="attachment in attachments|orderBy: 'sort_order'"
                 >
+                    <div class="attachment_order_container">
+                        <button
+                            class="incrementer"
+                            ng-click="
+                                attachment.sort_order = attachment.sort_order - 1;
+                                updateAttachment(attachment, {sort_order: attachment.sort_order})
+                            "
+                        >
+                            <div>&#x2039;</div>
+                        </button>
+                        <button
+                            class="decrementer"
+                            ng-click="
+                                attachment.sort_order = attachment.sort_order + 1;
+                                updateAttachment(attachment, {sort_order: attachment.sort_order})
+                            "
+                        >
+                            <div>&#x203a;</div>
+                        </button>
+                    </div>
                     <img ng-src="/images/{a attachment.image.base_name a}" />
                     <textarea
                         ng-model="attachment.caption"
-                        ng-blur="updateAttachment(attachment)"
+                        ng-blur="updateAttachment(attachment, {caption: attachment.caption})"
                         placeholder="Caption"
                         class="attachment_caption"
                     >

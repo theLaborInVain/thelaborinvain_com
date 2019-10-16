@@ -66,6 +66,7 @@ class Attachment(models.Model):
             'post_id': ObjectId,
             'image_id': ObjectId,
             'caption': str,
+            'sort_order': int,
         }
 
         self.required_attribs = [
@@ -74,6 +75,12 @@ class Attachment(models.Model):
         ]
 
         self.load()
+
+
+    def new(self):
+        """ Defauls some attribs. """
+        self.sort_order = 0
+        super().new()
 
 
     def serialize(self):
