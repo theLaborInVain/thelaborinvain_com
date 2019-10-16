@@ -11,11 +11,13 @@
 
         <p>{a post.lede a}</p>
 
-        <img
-            class="post_full_view_hero"
-            ng-src="/images/{a post.hero_image.base_name a}"
-            alt="{a post.hero_caption a}"
-        />
+        <a href="/images/{a post.hero_image.base_name a}">
+            <img
+                class="post_full_view_hero headline"
+                ng-src="/images/{a post.hero_image.base_name a}"
+                alt="{a post.hero_caption a}"
+            />
+        </a>
 
         <h1 title="Post title">{a post.title a}</h1>
         <p class="published_on" title="Published on">
@@ -40,15 +42,17 @@
             class="attachment_container"
             ng-repeat="attachment in post.attachments |orderBy:'sort_order'"
         >
-            <img
-                class="post_full_view_attachment"
-                ng-src="/images/{a attachment.image.base_name a}"
-                title="{a attachment.caption a}"
-                alt="{a attachment.caption a}"
-            />
-            <p class="attachment_caption">
-                {a attachment.caption a}
-            </p>
+            <a href="/images/{a attachment.image.base_name a}">
+                <img
+                    class="post_full_view_attachment"
+                    ng-src="/images/{a attachment.image.base_name a}"
+                    title="{a attachment.caption a}"
+                    alt="{a attachment.caption a}"
+                />
+                <p class="attachment_caption">
+                    {a attachment.caption a}
+                </p>
+            </a>
         </div>
 
 

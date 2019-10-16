@@ -123,7 +123,6 @@ def login():
     """ We handle admin panel logins here. """
 
     form = LoginForm()
-    app.logger.info('validating...')
     if form.validate_on_submit():
 
         def fail():

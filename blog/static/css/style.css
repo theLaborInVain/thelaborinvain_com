@@ -1,7 +1,7 @@
 html, body {height: 100%; }
 html {
     font-family: Arial;
-    font-size: 2.2vh;
+    font-size: 1.9vh;
 }
 
 body {
@@ -174,7 +174,7 @@ p.published_on {text-align: right; margin-top: -1vh; }
     content: "tags";
     margin-top: -4vh; 
     position: absolute;
-    font-size: 0.7em;  
+    font-size: 1em;  
 }
 .asset_corral.post_full_view_tags {
     margin: 1vw;
@@ -193,9 +193,11 @@ p.published_on {text-align: right; margin-top: -1vh; }
     background: #fff; 
 }
 .attachment_caption {
-    font-size: 1.5vh; 
+    font-style: italic; 
+    font-size: 0.8vh; 
     margin-bottom: 3vh;
     margin-top: 0;
     margin-left: 1vw;
     margin-right: 1vw;   
+    text-align: center; 
 }
