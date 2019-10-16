@@ -25,3 +25,7 @@ If you want to actually deploy the blog, do this:
 	ln -s /home/toconnell/thelaborinvain_com/deploy/supervisor.conf /etc/supervisor/conf.d/thelaborinvain_blog
 
 1. reload Nginx and Supervisor and you should be good to go!
+
+### Notes
+
+On Ubuntu/Deb systems, you'll need the `python2-dev` package installed on the OS

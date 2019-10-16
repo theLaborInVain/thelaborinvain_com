@@ -19,7 +19,16 @@ def create_user():
     email = input("  Email? ")
     password = getpass.getpass(prompt='  Password: ', stream=None)
 
-    return name.strip(), email.strip(), password
+    return name.strip(), email.lower().strip(), password
+
+def set_password():
+    """ Gets new user stuff from CLI prompts. High tech shit! """
+
+    print('')
+    email = input("  Email? ")
+    password = getpass.getpass(prompt='  Password: ', stream=None)
+
+    return email.lower().strip(), password
 
 
 if __name__ == "__main__":
@@ -29,6 +38,8 @@ if __name__ == "__main__":
         help="Create a new user", action='store_true',)
     parser.add_option("--list_users", dest="list_users", default=False,
         help="Dump a list of users", action='store_true',)
+    parser.add_option("--set_password", dest="set_password", default=False,
+        help="Interactively set a user's password", action='store_true',)
     parser.add_option("--initialize", action="store_true", dest="initialize",
         default=False, help="Burn it down. Start over.")
     parser.add_option("-q", "--quiet", action="store_false", dest="verbose",
@@ -50,6 +61,9 @@ if __name__ == "__main__":
     if options.list_users:
         for user in admin_object.dump_users():
             print(user)
+
+    if options.set_password:
+        admin_object.set_password(*set_password())
 
 
 

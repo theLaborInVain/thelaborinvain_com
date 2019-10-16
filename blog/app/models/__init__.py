@@ -12,7 +12,7 @@ import os
 
 # second party
 import flask
-from flask_login import UserMixin
+import flask_login
 import pymongo
 from werkzeug.security import safe_str_cmp, generate_password_hash, \
     check_password_hash
@@ -152,8 +152,10 @@ class Model(object):
 
         # save and, if verbose, log about it
 
-        # set self.update_on, because most models support it
+        # set self.update_on, created_by, because most models support it
         self.updated_on = datetime.now()
+        self.created_by = flask_login.current_user._id
+
         self.mdb.save(record)
         if verbose:
             self.logger.info('Saved changes to %s' % self)
@@ -195,7 +197,7 @@ class Model(object):
 
 
 
-class User(UserMixin, Model):
+class User(flask_login.UserMixin, Model):
     """ The user model. Hyper-simple: basically exists so the maintainers can
     sign in and create posts that link back to them. """
 

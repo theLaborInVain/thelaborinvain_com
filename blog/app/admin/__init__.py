@@ -62,3 +62,10 @@ class AdministrationObject():
                 raise
 
 
+    def set_password(self, email=None, password=None):
+        """ Sets a password. """
+        user_record = app.config['MDB'].users.find_one({'email': email})
+        user_object = models.User(_id=user_record['_id'])
+        user_object.update_password(password)
+        return True
+

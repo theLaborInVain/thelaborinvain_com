@@ -12,7 +12,8 @@ import os
 
 # second party
 from bson.objectid import ObjectId
-from webptools import webplib
+#from webptools import webplib
+import PIL.Image
 from werkzeug.utils import secure_filename
 
 # application imports
@@ -53,6 +54,7 @@ class Image(models.Model):
         self.data_model = {
             'base_name': str,
             'created_on': datetime,
+            'created_by': ObjectId,
             'updated_on': datetime,
         }
 
@@ -82,15 +84,25 @@ class Image(models.Model):
             )
             os.mkdir(app.config['UPLOADS'])
 
-        # save as webp; change base_name
-        in_file.save(os.path.join("/tmp/", self.base_name))
+        # set the target (base) name
         target_name = os.path.splitext(self.base_name)[0] + '.webp'
-        webplib.cwebp(
-            os.path.join('/tmp', self.base_name),
+
+        # write the file to tmp, then conver it
+        in_file.save(os.path.join("/tmp/", self.base_name))
+        im = PIL.Image.open(os.path.join('/tmp', self.base_name))
+        im.save(
             os.path.join(app.config['UPLOADS'], target_name),
-            "-q 80"
+            'webp',
+            quality=100
         )
+
         self.base_name = target_name
+
+        # double check it!
+        abs_path = os.path.join(app.config['UPLOADS'], self.base_name)
+        if not os.path.isfile(abs_path):
+            self.logger.error('Image file does not exist! %s' % abs_path)
+            raise OSError('Could not create image! %s' % abs_path)
 
         # now write the db record
         self.created_on = datetime.now()
