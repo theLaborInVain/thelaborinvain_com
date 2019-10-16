@@ -13,6 +13,7 @@ from bson.objectid import ObjectId
 from bson import json_util
 import flask
 import flask_login
+from werkzeug.urls import url_parse
 
 # application imports
 from app import app, models, util
@@ -122,18 +123,31 @@ def login():
     """ We handle admin panel logins here. """
 
     form = LoginForm()
+    app.logger.info('validating...')
     if form.validate_on_submit():
-        user_rec = app.config['MDB'].users.find_one({'email': form.email.data})
-        if user_rec is not None:
-            user_obj = models.User(_id=user_rec['_id'])
-            if user_obj.check_password(form.password.data):
-                flask_login.login_user(user_obj, remember=form.remember_me.data)
-                return flask.redirect(flask.url_for('admin'))
 
-        flask.flash("Invalid username or password")
-        return flask.redirect(flask.url_for('login'))
+        def fail():
+            flask.flash("Invalid username or password")
+            return flask.redirect(flask.url_for('login'))
+
+        try:
+            user_obj = models.User(email=form.email.data)
+        except ValueError:  # unknown user
+            fail()
+
+        if not user_obj.check_password(form.password.data):
+            fail()
+        else:
+            # success--log the user in!
+            user_obj.logger.info('User authenticated! %s' % user_obj)
+            flask_login.login_user(user_obj, remember=form.remember_me.data)
+            next_page = flask.request.args.get('next')
+            if not next_page or url_parse(next_page).netloc != '':
+                next_page = flask.url_for('admin')
+            return flask.redirect(next_page)
 
     return flask.render_template('login.html', form=form)
+
 
 @app.route('/logout')
 def logout():

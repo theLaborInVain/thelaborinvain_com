@@ -26,7 +26,9 @@ app.config['MDB'].tags.create_index([('name', pymongo.TEXT),], unique=True)
 app.config['UPLOADS'] = os.path.join(app.root_path, '..', 'uploads/')
 
 login = LoginManager(app)
+login.session_protection = 'strong'
 login.login_view = 'login'
+
 
 # sorry, pep8
 

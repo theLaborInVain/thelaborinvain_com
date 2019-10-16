@@ -1,5 +1,7 @@
+asn1crypto==1.2.0
 cffi==1.13.0
 Click==7.0
+cryptography==2.7
 Flask==1.1.1
 Flask-DotEnv==0.1.2
 Flask-Login==0.4.1
@@ -12,5 +14,7 @@ numpy==1.17.2
 Pillow==6.2.0
 pycparser==2.19
 pymongo==3.9.0
+pyOpenSSL==19.0.0
+six==1.12.0
 Werkzeug==0.16.0
 WTForms==2.2.1

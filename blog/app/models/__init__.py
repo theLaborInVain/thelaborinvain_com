@@ -218,6 +218,12 @@ class User(flask_login.UserMixin, Model):
             'created_on': datetime,
         }
 
+        # try to set _id from email before we hand off to the base class
+        # load() method.
+        rec = self.mdb.find_one({'email': self.kwargs.get('email', None)})
+        if rec is not None:
+            self.kwargs['_id'] = rec['_id']
+
         self.load()
 
 
