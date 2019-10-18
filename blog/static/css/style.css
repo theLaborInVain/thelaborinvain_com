@@ -195,7 +195,8 @@ p.published_on {text-align: right; margin-top: -1vh; }
     border-radius: 10px;
     margin: 1vw;
     color: #000;
-    background: #fff; 
+    background: #fff;
+    cursor: pointer;  
 }
 .attachment_caption {
     font-style: italic; 
@@ -269,7 +270,6 @@ p.published_on {text-align: right; margin-top: -1vh; }
 }
 .tag_search_result {
     border: 0.2em solid #fff;
-    padding: 0.1em;
     color: #fff;
     width: 100%;
     box-sizing: border-box;
@@ -279,6 +279,9 @@ p.published_on {text-align: right; margin-top: -1vh; }
     flex-direction: row;
     flex-wrap: nowrap;
     min-height: 8vh;
+    background: #fff;
+    overflow: hidden; 
+    cursor: pointer; 
 }
 .tag_search_super_head {
     margin-bottom: -3vh; 
@@ -288,8 +291,11 @@ p.published_on {text-align: right; margin-top: -1vh; }
     height: 100%;
 }
 .tag_search_result_description {
-    margin-left: 1vw;
-    cursor: pointer;  
+    padding: 0.2em;
+    width: 100%; 
+    padding-left: 1vw;
+    background: #000;
+    color: #fff; 
 }
 .tag_search_result_title {
     font-size: 1.5em;
@@ -377,4 +383,7 @@ p.published_on {text-align: right; margin-top: -1vh; }
     }
     .gallery_close_button {
         height: 7%; 
+    }
+    .tag_search_result_image {
+        width: 10vh; 
     }
