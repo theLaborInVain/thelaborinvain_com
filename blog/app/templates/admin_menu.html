@@ -12,7 +12,7 @@
 
         <ul class="edit_post_picker" ng-if="assets.posts !== null">
             <li
-                ng-repeat="post in assets.posts"
+                ng-repeat="post in assets.posts |orderBy:'created_on'"
                 ng-click="goToURL('/edit_post/' + post._id.$oid)"
             >
                 <div class="edit_post_thumbnail_container">

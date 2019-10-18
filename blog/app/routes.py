@@ -39,6 +39,44 @@ def get_one_post(post_handle):
     return flask.render_template('post.html', post_object=posts.Post(_id=post['_id']))
 
 
+@app.route('/search/<target_collection>')
+def search_collection(target_collection):
+    """ Searches posts for posts with a tag. URL should be like this:
+            /search/posts?tag=Munchkin (or similar)
+    """
+
+    if target_collection != 'posts':
+        return flask.Response(response='Not implemented!', status=501)
+
+    if flask.request.args.get('tag', None) is None:
+        return flask.Response(response='Tag param is required!', status=400)
+
+    # get the tag's object or return None
+    tag_obj = app.config['MDB'].tags.find_one({
+        'name': flask.request.args.get('tag')
+    })
+    if tag_obj is None:
+        return flask.Response(
+            response={},
+            status=200,
+            mimetype='application/json'
+        )
+
+    results = app.config['MDB'].posts.find({
+        'tags': {
+            '$in': [tag_obj['_id']]
+        }
+    })
+    return flask.Response(
+        response=json.dumps([
+            posts.Post(_id=post_rec['_id']).serialize() for post_rec in
+            results
+        ], default=json_util.default),
+        status=200,
+        mimetype='application/json'
+    )
+
+
 @app.route('/get/<collection>')
 def get_assets(collection):
     """ Get JSON of 'collection' assets."""

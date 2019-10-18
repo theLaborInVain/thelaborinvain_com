@@ -17,7 +17,7 @@ import PIL.Image
 from werkzeug.utils import secure_filename
 
 # application imports
-from app import app, models
+from app import app, models, util
 
 
 #
@@ -75,7 +75,10 @@ class Image(models.Model):
         in_file = self.kwargs.get('raw_upload')
 
         # set the basename
-        self.base_name = secure_filename(in_file.filename)
+        self.base_name = (
+            datetime.now().strftime(util.YMD) + "_" +
+            secure_filename(in_file.filename)
+        )
 
         # first handle the upload
         if not os.path.isdir(app.config['UPLOADS']):

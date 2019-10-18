@@ -6,7 +6,7 @@
 
     <li
         class="post"
-        ng-repeat="post in posts"
+        ng-repeat="post in posts|orderBy:'published_on.$date'"
         ng-if="post.published"
         ng-click="post.show_index_modal = true"
     >

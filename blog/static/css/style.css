@@ -1,7 +1,7 @@
 html, body {height: 100%; }
 html {
     font-family: Arial;
-    font-size: 1.9vh;
+    font-size: 1.5vh;
 }
 
 body {
@@ -142,7 +142,12 @@ a.fancy:visited {
     padding-left: 2vw;
     padding-right: 2vw
 }
-.hero_tag {font-size: 0.6em; margin: 0.3em; padding: 0.2em; line-height: 2em;}
+.hero_tag {
+    font-size: 0.9vh;
+    margin: 0.3em;
+    padding: 0.2em;
+    line-height: 2em;
+}
 .lede_container {
     text-decoration: none; 
     cursor: pointer; 
@@ -201,3 +206,90 @@ p.published_on {text-align: right; margin-top: -1vh; }
     margin-right: 1vw;   
     text-align: center; 
 }
+
+
+/*********  photo gallery!   *********/
+
+
+.modal_inner.photo_gallery {
+    color: #fff;
+    display: flex;
+    flex-direction: column; 
+    flex-wrap: nowrap;
+    
+}
+
+.gallery_ui, .gallery_navigator {
+    width: 100%; 
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+}
+.gallery_ui {
+    height: 85%; 
+}
+.gallery_navigator{
+    height: 15%;
+}
+.gallery_navigator.gallery_current_image {
+    font-size: 3vh; 
+}
+.gallery_current_image {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.gallery_current_image img {
+    max-width: 100%; 
+}
+.gallery_page_left, .gallery_page_right {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 10vh;
+    cursor: pointer;  
+}
+.gallery_page_left {
+    transform: scale(-1,-1);
+    padding-bottom: 3vh; 
+}
+
+.gallery_close_button {
+    width: 100%;
+    font-size: 3vh;
+    padding: 1vh;
+    margin-top: auto;  
+}
+
+.tag_search_results_container {
+    width: 100%; 
+}
+.tag_search_result {
+    border: 0.2em solid #fff;
+    padding: 0.1em;
+    color: #fff;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 1vh;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.tag_search_result_image {
+    width: 20vw; 
+    height: 100%;
+}
+.tag_search_result_description {
+    margin-left: 1vw;
+    cursor: pointer;  
+}
+.tag_search_result_title {
+    font-size: 1.5em;
+}
+/*********  ALTERNATE BREAKPOINTS HERE   *********/
+

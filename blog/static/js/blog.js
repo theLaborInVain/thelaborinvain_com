@@ -15,6 +15,12 @@ app.controller("rootController", function($scope, $http) {
     $scope.scratch = {};
 
     $scope.ui = {curDate: new Date()};
+    $scope.gallery = {};
+
+    $scope.goToURL = function(url) {
+    // lets us use ng-click link an anchor tag
+        location.replace(url)
+    };
 
     $scope.loadAssets = function(asset_type, count) {
 
@@ -38,8 +44,9 @@ app.controller("rootController", function($scope, $http) {
         );
     };
 
-    $scope.loadAttachments = function(post) {
+    $scope.loadAttachments = function(post, initializeGallery) {
 		// gets attachments for 'post'; adds them to the post obj
+        // initialize the gallery on the way out
         var req_url = "/get/attachments/" + post._id.$oid;
         console.time(req_url);
         $http({
@@ -47,6 +54,10 @@ app.controller("rootController", function($scope, $http) {
             url : req_url,
         }).then(function mySuccess(response) {
             post.attachments = response.data;
+            if (initializeGallery) {
+                console.info('Initializing gallery...');
+                $scope.initializeGallery();
+            }
             console.timeEnd(req_url);
         }, function myError(response) {
             console.error(response.data);
@@ -80,6 +91,74 @@ app.controller("rootController", function($scope, $http) {
        console.error('Could not find tag with OID ' + oid);
     };
 
+    // tag search
+
+    $scope.showTagSearchResults = function(tagName) {
+
+        $scope.tagSearch = {
+            tagName: tagName,
+        };
+        $scope.tagSearch.results = undefined;
+
+        // get the results
+        var req_url = "/search/posts?tag=" + tagName;
+        console.time(req_url);
+        $http({
+            method : "GET",
+            url : req_url,
+        }).then(function mySuccess(response) {
+            $scope.tagSearch.results = response.data;
+            console.timeEnd(req_url);
+        }, function myError(response) {
+            console.error(response.data);
+            console.timeEnd(req_url);
+        });
+
+        $scope.ui.show_tag_search = true
+    }
+
+    // photo gallery stuff below!
+
+    $scope.showPhotoGallery = function(startImage) {
+        // unhides the photogallery; uses 'startImage' to determine which image
+        // the user starts on
+        $scope.ui.show_photo_gallery = true;
+        $scope.gallery.current_image = startImage;
+    };
+
+    $scope.navigateGallery = function(operation) {
+        var current_index = $scope.gallery.imageBaseNames.indexOf($scope.gallery.current_image);
+
+        if (operation === 'next') {
+            current_index++ 
+        } else (
+            current_index-- 
+        )
+
+        // handle wrap-arounds
+        if (current_index == $scope.gallery.imageBaseNames.length) {
+            current_index = 0;
+        };
+
+        // set it and return
+        $scope.gallery.current_image = $scope.gallery.imageBaseNames[current_index];
+    }
+
+    $scope.initializeGallery = function() {
+        $scope.gallery.imageBaseNames = [$scope.post.hero_image.base_name];
+        $scope.gallery.captions = {};
+        $scope.gallery.captions[$scope.post.hero_image.base_name] = $scope.post.hero_caption;
+   
+        for (i = 0; i < $scope.post.attachments.length; i++) {
+            $scope.gallery.imageBaseNames.push($scope.post.attachments[i].image.base_name);
+            $scope.gallery.captions[$scope.post.attachments[i].image.base_name] = $scope.post.attachments[i].caption;
+        };
+        $scope.gallery.current_image = $scope.gallery.imageBaseNames[0];
+        console.warn('Initialized gallery!');
+    };
+
+
+
     $scope.init = function() {
         $scope.loadAssets('tags');
         $scope.loadAssets('posts');
@@ -87,5 +166,6 @@ app.controller("rootController", function($scope, $http) {
     };
 
     $scope.init();
+
 
 });

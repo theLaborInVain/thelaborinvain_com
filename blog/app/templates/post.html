@@ -2,32 +2,31 @@
 
 {% block content %}
 
-
     <div
         ng-if="post !== undefined"
-        ng-init="loadAttachments(post)"
+        ng-init="loadAttachments(post, true)"
         class="post_full_view_container"
     >
 
         <p>{a post.lede a}</p>
 
-        <a href="/images/{a post.hero_image.base_name a}">
-            <img
-                class="post_full_view_hero headline"
-                ng-src="/images/{a post.hero_image.base_name a}"
-                alt="{a post.hero_caption a}"
-            />
-        </a>
+        <img
+            class="post_full_view_hero headline"
+            ng-src="/images/{a post.hero_image.base_name a}"
+            ng-click="showPhotoGallery(post.hero_image.base_name)"
+            alt="{a post.hero_caption a}"
+        />
 
         <h1 title="Post title">{a post.title a}</h1>
         <p class="published_on" title="Published on">
             {a post.published_on.$date|date:'yyyy-MM-dd HH:mm:ss' a}
         </p>
 
-        <ul class="asset_corral post_full_view_tags">
+        <ul class="asset_corral post_full_view_tags" ng-if="tags !== undefined">
             <li
                 ng-repeat="tag_oid in post.tags"
                 ng-init="tag = getTag(tag_oid)"
+                ng-click="showTagSearchResults(tag.name)"
             >
                 {a tag.name a}
             </li>
@@ -42,22 +41,127 @@
             class="attachment_container"
             ng-repeat="attachment in post.attachments |orderBy:'sort_order'"
         >
-            <a href="/images/{a attachment.image.base_name a}">
-                <img
-                    class="post_full_view_attachment"
-                    ng-src="/images/{a attachment.image.base_name a}"
-                    title="{a attachment.caption a}"
-                    alt="{a attachment.caption a}"
-                />
-                <p class="attachment_caption">
-                    {a attachment.caption a}
-                </p>
-            </a>
+            <img
+                loading="lazy"
+                class="post_full_view_attachment"
+                ng-src="/images/{a attachment.image.base_name a}"
+                title="{a attachment.caption a}"
+                alt="{a attachment.caption a}"
+                ng-click="showPhotoGallery(attachment.image.base_name)"
+            />
+            <p class="attachment_caption">
+                {a attachment.caption a}
+            </p>
         </div>
 
 
 
     </div><!-- post_full_view_container -->
+
+    <!-- tag search -->
+    <div
+        id="tagSearch"
+        class="modal_outer"
+        ng-if="ui.show_tag_search"
+    >
+        <div
+            class="modal_inner tag_search"
+        >
+            <scan>All posts using the tag</scan>
+            <h1>{a tagSearch.tagName a}</h1>
+
+            <div class="tag_search_results_container">
+                <div
+                    class="tag_search_result"
+                    ng-repeat="result in tagSearch.results|orderBy:'published_on.$date':true"
+                    ng-if="result.published"
+                    ng-click="goToURL('/b/' + result.handle)"
+                >
+                    <img
+                        loading="lazy"
+                        ng-src="/images/{a result.hero_image.base_name a}"
+                        class="tag_search_result_image"
+                    />
+
+                    <div
+                        class="tag_search_result_description"
+                    >
+                        <b class="tag_search_result_title">{a result.title a}</b><br/>
+                        Published: {a result.published_on.$date|date:'yyyy-MM-dd'a}<br/>
+                        Tags:
+                        <span
+                            ng-repeat="tag_oid in result.tags"
+                            ng-init="tag = getTag(tag_oid)"
+                        >
+                            {a tag.name a}{a $last ? '' : ', ' a}
+                        </span>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <button
+                class="gallery_close_button"
+                ng-click="ui.show_tag_search = undefined"
+            >
+                Close
+            </button>
+
+        </div>
+    </div>
+
+    <!-- photo gallery! -->
+    <div
+        id="photoGallery"
+        class="modal_outer"
+        ng-if="ui.show_photo_gallery"
+    >
+        <div
+            class="modal_inner photo_gallery"
+            ng-if="gallery.current_image !== undefined"
+        >
+
+            <div class="gallery_ui">
+                <div class="gallery_current_image">
+                    <img
+                        ng-src="/images/{a gallery.current_image a}"
+                        alt="{a gallery.captions[gallery.current_image] a}"
+                    />
+                    <span>{a gallery.captions[gallery.current_image] a}</span>
+                </div>
+            </div> <!-- gallery_ui -->
+
+            <div class="gallery_navigator">
+                <div
+                    class="gallery_page_left"
+                    ng-click="navigateGallery('prev')"
+                >
+                    &#x27A7;
+                </div>
+                <div class="gallery_current_image">
+                    {a gallery.imageBaseNames.indexOf(gallery.current_image) + 1 a}
+                    / {a gallery.imageBaseNames.length a}
+                </div>
+                <div
+                    class="gallery_page_right"
+                    ng-click="navigateGallery('next')"
+                >
+                    &#x27A7;
+                </div>
+            </div>
+
+            <button
+                class="gallery_close_button"
+                ng-click="ui.show_photo_gallery = undefined"
+            >
+                Close
+            </button>
+
+        </div>
+    </div>
+
+
 
 <!--
     <a href="/">

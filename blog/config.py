@@ -15,7 +15,7 @@ from pymongo import MongoClient
 
 
 class Config(object):
-    VERSION = "0.13.76"
+    VERSION = "0.16.84"
     PORT = 8060
     SECRET_KEY = os.environ.get('SECRET_KEY') or str(sys.path)
 #    SECRET_KEY = secrets.token_hex(16)  # this breaks the login cookie

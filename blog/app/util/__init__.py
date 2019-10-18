@@ -16,6 +16,7 @@ from app import app
 
 
 # CONSTANTS
+YMD = "%Y-%m-%d"
 YMDHMS = "%Y-%m-%d %H:%M:%S"
 
 
