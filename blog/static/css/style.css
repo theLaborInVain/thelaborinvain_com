@@ -346,6 +346,7 @@ p.published_on {text-align: right; margin-top: -1vh; }
     }
     #postContainer {
         width: 70%;
+        max-width: 1000px;
         margin: 0 auto; 
         margin-bottom: 35%; 
     }
@@ -353,7 +354,8 @@ p.published_on {text-align: right; margin-top: -1vh; }
         left: auto;
         transform: none;
         right: 2vw;
-        width: 15%; 
+        width: 200px;
+        height: 200px;  
     }
     .modal_inner {
         width: 50%;
