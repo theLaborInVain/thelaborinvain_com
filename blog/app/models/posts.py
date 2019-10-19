@@ -157,9 +157,8 @@ class Post(models.Model):
                 output['attachments'].append(images.expand_image(attachment_oid))
 
         # now, create some HTML from the plaintext
-        html = str(output.get('body', ''))
-        html = "".join(["<p>%s</p>" % p for p in html.split('\n') if p != ''])
-        output['html_body'] = html
+        output['html_lede'] = util.fancy_html(output.get('lede', ''))
+        output['html_body'] = util.fancy_html(output.get('body', ''))
 
         return output
 

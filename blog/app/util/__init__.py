@@ -11,6 +11,9 @@ import os
 import string
 import sys
 
+# second party
+from bs4 import BeautifulSoup
+
 # app imports
 from app import app
 
@@ -71,3 +74,36 @@ def string_to_handle(s):
     s = s.replace(" ", "_")
 
     return s
+
+
+def fancy_html(s, apply_p_blocks=True):
+    """ Accepts a string; returns fancy-ass HTML with all of our cool stuff."""
+
+    logger = get_logger()
+
+    s = str(s)
+    if apply_p_blocks:
+        raw = "".join(["<p>%s</p>" % p for p in s.split('\n') if p != ''])
+    else:
+        raw = str(s)
+
+    # expand links -- do this before we get to HTML junk
+    raw_list = raw.split(" ")
+    for word in raw_list:
+        if word[:8] == 'https://':
+            index = raw_list.index(word)
+            raw_list[index] = '<a href="%s">%s</a>' % (word,word)
+    raw = " ".join(raw_list)
+
+    soup = BeautifulSoup(raw, 'html.parser')
+
+    # fix anchors
+    for anchor in soup.find_all('a'):
+        if 'fancy' not in anchor.get('class', []):
+            anchor['class'] = anchor.get('class', []) + ['fancy']
+        else:
+            logger.info('fancy in %s' % anchor)
+
+        anchor['target'] = 'top'
+
+    return str(soup)

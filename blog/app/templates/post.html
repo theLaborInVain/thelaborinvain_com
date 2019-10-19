@@ -8,7 +8,7 @@
         class="post_full_view_container"
     >
 
-        <p>{a post.lede a}</p>
+        <p ng-bind-html="post.html_lede|trustedHTML"></p>
 
         <img
             class="post_full_view_hero headline"
