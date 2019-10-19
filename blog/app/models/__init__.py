@@ -218,6 +218,12 @@ class User(flask_login.UserMixin, Model):
             'created_on': datetime,
         }
 
+        self.required_attribs = [
+            'name',
+            'email',
+            'password'
+        ]
+
         # try to set _id from email before we hand off to the base class
         # load() method.
         rec = self.mdb.find_one({'email': self.kwargs.get('email', None)})
@@ -245,9 +251,10 @@ class User(flask_login.UserMixin, Model):
     def new(self):
         """ Adds a user to MDB; sets self._id on its way out. """
 
-        for req_var in ['name', 'email', 'password']:
+        for req_var in self.required_attribs:
             if req_var not in self.kwargs:
                 err = "The '%s' kwarg is required when creating a new user!"
+                self.logger.error(err % req_var)
                 raise ValueError(err % req_var)
 
         self.logger.warn('Creating new user!')

@@ -92,7 +92,10 @@ def fancy_html(s, apply_p_blocks=True):
     for word in raw_list:
         if word[:8] == 'https://':
             index = raw_list.index(word)
-            raw_list[index] = '<a href="%s">%s</a>' % (word,word)
+            url = word
+            if url[-1] in [',','.']:
+                url = url[:-1]
+            raw_list[index] = '<a href="%s">%s</a>' % (url,word)
     raw = " ".join(raw_list)
 
     soup = BeautifulSoup(raw, 'html.parser')

@@ -169,11 +169,11 @@ def login():
 
         try:
             user_obj = models.User(email=form.email.data)
-        except ValueError:  # unknown user
-            fail()
+        except Exception as e:  # unknown user
+            return fail()
 
         if not user_obj.check_password(form.password.data):
-            fail()
+            return fail()
         else:
             # success--log the user in!
             user_obj.logger.info('User authenticated! %s' % user_obj)
