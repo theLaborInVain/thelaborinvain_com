@@ -138,6 +138,8 @@ app.controller("rootController", function($scope, $http) {
         // handle wrap-arounds
         if (current_index == $scope.gallery.imageBaseNames.length) {
             current_index = 0;
+        } else if (current_index == -1) {
+            current_index = $scope.gallery.imageBaseNames.length - 1;
         };
 
         // set it and return

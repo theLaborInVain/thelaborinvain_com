@@ -48,7 +48,7 @@ a.fancy:visited {
     font-weight:bold;
     transform: scale(-1,-1);
     margin-left: -10%;
-    text-shadow: #000 0px 0px 0.2em;
+    text-shadow: #000 0 0 0.2em;
     -webkit-font-smoothing: antialiased;
 }
 #footer {width: 100%; text-align: center; padding-bottom: 0.3vh;  font-size: 2vh; -webkit-text-size-adjust: none;}
@@ -110,7 +110,8 @@ a.fancy:visited {
     height: 100%; 
     display: flex;
     flex-direction: column;
-    align-items: center;  
+    align-items: center;
+    overflow: scroll;  
 }
 .modal_hero_container {
     width: 100%;
@@ -171,32 +172,49 @@ a.fancy:visited {
     margin-bottom: 65%;
 }
 .post_full_view_container h1 {text-align: center;}
-p.published_on {text-align: right; margin-top: -1vh; }
+p.published_on {
+    text-align: right;
+    margin-top: -1vh; 
+    margin-bottom: -4%; 
+}
 .post_full_view_hero, .post_full_view_attachment {
+    cursor: pointer; 
     max-width: 100%; 
 }
 .asset_corral.post_full_view_tags:before {
     content: "tags";
-    margin-top: -4vh; 
+    margin-top: -2em; 
+    margin-left: 1%; 
     position: absolute;
-    font-size: 1em;  
+    font-size: 1em;
+    background: #fff;
+    color: #000;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px; 
+    padding: 0.1em;
+    padding-right: 0.5em;
+    padding-left: 0.5em;
 }
 .asset_corral.post_full_view_tags {
     margin: 1vw;
     margin-top: 5vh;
     margin-bottom: 3vh;  
     padding: 0.5em;
-    border: 0.1em solid #fff;
+    border: 0.2em solid #fff;
     border-radius: 10px; 
 }
 .asset_corral.post_full_view_tags li {
     padding: 1vw; 
-    border: 1px solid #ddd;
+    border: 2px solid;
     border-radius: 10px;
     margin: 1vw;
     color: #000;
-    background: #fff;
-    cursor: pointer;  
+    background: linear-gradient(20deg, #C2EE89, #F9EC9D);
+    border-color: #00FF00; 
+    border-bottom-color: #FF9900; 
+    border-right-color: #FF9900; 
+    cursor: pointer;
+    font-weight: bold;  
 }
 .attachment_caption {
     font-style: italic; 
@@ -205,6 +223,7 @@ p.published_on {text-align: right; margin-top: -1vh; }
     margin-left: 1vw;
     margin-right: 1vw;   
     text-align: center; 
+    font-size: 0.5em; 
 }
 
 
@@ -240,6 +259,7 @@ p.published_on {text-align: right; margin-top: -1vh; }
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 90%; 
 }
 .gallery_current_image img {
     max-width: 100%; 
@@ -262,7 +282,13 @@ p.published_on {text-align: right; margin-top: -1vh; }
     width: 100%;
     font-size: 3vh;
     padding: 1vh;
-    margin-top: auto;  
+    margin-top: auto;
+    background: radial-gradient(#FF0040, #ff0099);
+    color: #fff; 
+    border-bottom-style: none; 
+    border: 0.1em solid #fff; 
+    border-radius: 100px;
+    cursor: pointer; 
 }
 
 .tag_search_results_container {
@@ -328,15 +354,24 @@ p.published_on {text-align: right; margin-top: -1vh; }
         margin: 0 auto;
         margin-bottom: 45%; 
     }
+    .asset_corral.post_full_view_tags:before {
+        margin-top: -4%;
+    }
+    .attachment_caption {
+        font-size: 1em; 
+    }
     .modal_inner.photo_gallery {
         width: 100%; 
     }
+    .gallery_current_image {
+        width: 70%; 
+    }
+
 }
 
 /* ----------- Non-Retina Screens ----------- */
-@media screen 
-  and (min-device-width: 1000px) 
-  and (-webkit-min-device-pixel-ratio: 1) { 
+
+@media only screen and (min-width: 1050px) and (orientation: landscape) {
 
     html {
         font-size: 12pt;
@@ -360,11 +395,18 @@ p.published_on {text-align: right; margin-top: -1vh; }
     .modal_inner {
         width: 50%;
         margin: 0 auto;  
+        overflow: auto; 
     }
     .post_full_view_container {
         width: 50%;
         margin: 0 auto;
         margin-bottom: 35%; 
+    }
+    p.published_on {
+        margin-bottom: -6%; 
+    }
+    .asset_corral.post_full_view_tags:before {
+        margin-top: -2.2%;
     }
     .modal_inner.photo_gallery {
         width: 100%;
@@ -374,7 +416,8 @@ p.published_on {text-align: right; margin-top: -1vh; }
         height: 80%; 
     }
     .gallery_navigator {
-        height: 10%; 
+        height: 10%;
+        width: 50%;  
     }
     .gallery_current_image {
         height: 100%;
@@ -386,6 +429,13 @@ p.published_on {text-align: right; margin-top: -1vh; }
     .gallery_close_button {
         height: 7%; 
     }
+    .gallery_close_button.photo_gallery {
+        width: 50%; 
+    }
     .tag_search_result_image {
         width: 10vh; 
+    }
+    .attachment_caption {
+        margin-top: 3px; 
+        font-size: 1em; 
     }

@@ -8,8 +8,6 @@
         class="post_full_view_container"
     >
 
-        <p ng-bind-html="post.html_lede|trustedHTML"></p>
-
         <img
             class="post_full_view_hero headline"
             ng-src="/images/{a post.hero_image.base_name a}"
@@ -31,6 +29,8 @@
                 {a tag.name a}
             </li>
         </ul>
+
+        <p ng-bind-html="post.html_lede|trustedHTML"></p>
 
         <div
             class="post_full_view_body"
@@ -153,7 +153,7 @@
             </div>
 
             <button
-                class="gallery_close_button"
+                class="gallery_close_button photo_gallery"
                 ng-click="ui.show_photo_gallery = undefined"
             >
                 Close
