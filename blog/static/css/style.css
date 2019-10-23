@@ -157,12 +157,6 @@ a.fancy:visited {
     color: #fff;
     padding: 1vh; 
 }
-.modal_close {
-    font-size: 2vh;
-    padding: 1vh; 
-    margin-top: auto; 
-    width: 100%;  
-}
 
 
 /*********  post view   *********/
@@ -246,7 +240,7 @@ p.published_on {
     justify-content: space-evenly;
 }
 .gallery_ui {
-    height: 85%; 
+    height: 78%; 
 }
 .gallery_navigator{
     height: 15%;
@@ -278,7 +272,7 @@ p.published_on {
     padding-bottom: 3vh; 
 }
 
-.gallery_close_button {
+.gallery_close_button, .modal_close {
     width: 100%;
     font-size: 3vh;
     padding: 1vh;
@@ -290,6 +284,12 @@ p.published_on {
     border-radius: 100px;
     cursor: pointer; 
 }
+
+.modal_close.post_full_view {
+    margin-top: 40%; 
+    margin-bottom: -50%; 
+}
+
 
 .tag_search_results_container {
     width: 100%; 

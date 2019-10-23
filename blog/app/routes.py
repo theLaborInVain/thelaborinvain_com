@@ -92,6 +92,9 @@ def get_assets(collection):
     if collection == "posts":
         results = posts.get(count)
 
+    if collection == 'tags':
+        results.sort('name')
+
     return flask.Response(
         response=json.dumps([r for r in results], default=json_util.default),
         status=200,

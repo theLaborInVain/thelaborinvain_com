@@ -1,5 +1,5 @@
 <!DOCTYPE html lang="en">
-<html ng-app="blog" ng-controller="rootController">
+<html ng-app="blog" ng-controller="rootController" lang="en">
 
     <head>
 
@@ -15,6 +15,15 @@
 
         <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="/static/css/style.css?v={{ VERSION }}">
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-88194596-3"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'UA-88194596-3');
+        </script>
 
     </head>
 
@@ -53,7 +62,7 @@
             </div>
 
             <button
-                class="close_index_about"
+                class="modal_close"
                 ng-click="ui.show_index_about_modal = false"
             >
                 Back
