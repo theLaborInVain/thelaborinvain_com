@@ -257,6 +257,7 @@ p.published_on {
 }
 .gallery_current_image img {
     max-width: 100%; 
+    max-height: 100%; 
 }
 .gallery_page_left, .gallery_page_right {
     width: 20%;
