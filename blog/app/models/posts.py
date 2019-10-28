@@ -315,5 +315,7 @@ class Post(models.Model):
         return app.config['MDB'].users.find_one({'_id': self.created_by})
 
     def get_tags(self):
-        """ Returns a dictionary of tags. """
+        """ Returns a list of tags. """
+        if self.tags is None:
+            return []
         return app.config['MDB'].tags.find({'_id': {'$in': self.tags}}).sort('name')
