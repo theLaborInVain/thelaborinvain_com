@@ -24,8 +24,9 @@ class Config(object):
         'property of The Labor in Vain and may not be reproduced for '
         'commercial purposes without consent.'
     ) % datetime.now().strftime('%Y')
+    ADMIN_NAME = "Timothy O'Connell"
     ADMIN_EMAIL = 'toconnell@thelaborinvain.com'
-    VERSION = "0.19.98"
+    VERSION = "0.21.105"
     PORT = 8060
     SECRET_KEY = os.environ.get('SECRET_KEY') or str(sys.path)
 #    SECRET_KEY = secrets.token_hex(16)  # this breaks the login cookie

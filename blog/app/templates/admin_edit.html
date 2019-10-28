@@ -10,6 +10,12 @@
         <span ng-if="post._id.$oid !== undefined" ng-init="loadAttachments()"></span>
 
         <div class="edit_post_left_column">
+            <input
+                class="edit_post_title"
+                type="text"
+                ng-model="post.title"
+                ng-blur="updatePost({title: post.title})"
+            />
             <div class="edit_post_hero_container">
                 <code>
                     {a post.hero_image.base_name a}
@@ -20,7 +26,7 @@
                     class="edit_post_hero_caption"
                     placeholder="Hero Image caption text goes here!"
                     ng-model="post.hero_caption"
-                    ng-blur="test(); updatePost({hero_caption: post.hero_caption})"
+                    ng-blur="updatePost({hero_caption: post.hero_caption})"
                 />
             </div>
             <div class="edit_post_attachments">

@@ -9,6 +9,9 @@
 # standard lib imports
 import os
 
+# second party imports
+from bson.objectid import ObjectId
+
 # application imports
 from app import app, models, util
 
@@ -32,9 +35,25 @@ class AdministrationObject():
     #   GET/SET methods
     #
 
-    def dump_users(self):
+    def get_collection(self, collection):
         """ Dumps all user records. """
-        return app.config['MDB'].users.find()
+        return app.config['MDB'][collection].find()
+
+
+    def set_attribute(self, collection=None, asset_oid=None,
+        attrib=None, value=None):
+        """ Updates an arbitrary asset. Be careful with this!"""
+
+        asset_record = app.config['MDB'][collection].find_one({
+            '_id': ObjectId(asset_oid)
+        })
+        if asset_record is None:
+            raise ValueError('Asset not found! %s' % ObjectId(asset_oid))
+
+        asset_record[attrib] = value
+
+        app.config['MDB'][collection].save(asset_record)
+        return asset_record
 
 
     def initialize(self):

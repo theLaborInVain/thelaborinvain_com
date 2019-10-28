@@ -47,7 +47,7 @@ def get_rss_feed(feed_type=None):
     return flask.Response(
         response=posts.get_feed(),
         status=200,
-        mimetype='application/rss+xml',
+        mimetype='application/atom+xml',
     )
 
 
