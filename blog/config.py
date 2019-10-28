@@ -7,6 +7,7 @@
 """
 
 # standard lib
+from datetime import datetime
 import os
 import sys
 
@@ -15,7 +16,16 @@ from pymongo import MongoClient
 
 
 class Config(object):
-    VERSION = "0.18.96"
+    URL = 'https://blog.thelaborinvain.com'
+    TITLE = 'The Labor in Vain - Bad News Travels Fast'
+    COPYRIGHT = (
+        '&copy; 2018 - %s, The Labor in vain. All content published on this '
+        'website, to include text, photos, video and other media, are the '
+        'property of The Labor in Vain and may not be reproduced for '
+        'commercial purposes without consent.'
+    ) % datetime.now().strftime('%Y')
+    ADMIN_EMAIL = 'toconnell@thelaborinvain.com'
+    VERSION = "0.19.98"
     PORT = 8060
     SECRET_KEY = os.environ.get('SECRET_KEY') or str(sys.path)
 #    SECRET_KEY = secrets.token_hex(16)  # this breaks the login cookie
