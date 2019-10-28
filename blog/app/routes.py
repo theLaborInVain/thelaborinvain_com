@@ -30,6 +30,27 @@ def index():
     return flask.render_template('blog.html', **app.config)
 
 
+@app.route('/rss.xml')
+@app.route('/rss/<feed_type>')
+@app.route('/f/<feed_type>')
+def get_rss_feed(feed_type=None):
+    """ Our routes for RSS. """
+    if feed_type is None:
+        feed_type = 'posts'
+
+    if feed_type != 'posts':
+        return flask.Response(
+            response="Feed type '%s' not found!" % feed_type,
+            status=404
+        )
+
+    return flask.Response(
+        response=posts.get_feed(),
+        status=200,
+        mimetype='application/rss+xml',
+    )
+
+
 @app.route('/b/<post_handle>')
 def get_one_post(post_handle):
     """ Get one post with the hande 'post_handle'. Return it. """
