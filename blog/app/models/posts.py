@@ -56,6 +56,8 @@ def get_feed():
 
     feed = ET.Element('feed')
     feed.set('xmlns', 'http://www.w3.org/2005/Atom')
+    feed.set('xmlns:content', 'http://purl.org/rss/1.0/modules/content/')
+    feed.set('xmlns:webfeeds', 'http://webfeeds.org/rss/1.0')
 
     feed_atom_link = ET.SubElement(feed, 'link')
     feed_atom_link.set('rel','self')
@@ -82,9 +84,17 @@ def get_feed():
     # logo/icon
     ET.SubElement(feed, 'logo').text = \
         app.config['URL'] + '/static/media/the_labor_in_vain_logo-01.png'
+    ET.SubElement(feed, 'webfeeds:cover').text = \
+        app.config['URL'] + '/static/media/the_labor_in_vain_logo-01.png'
     ET.SubElement(feed, 'icon').text = \
         app.config['URL'] + '/static/media/favicon.ico'
+    ET.SubElement(feed, 'webfeeds:icon').text = \
+        app.config['URL'] + '/static/media/favicon.ico'
 
+    # misc.
+    feed_anal = ET.SubElement(feed, 'webfeeds:analytics')
+    feed_anal.set('id', 'UA-88194596-3')
+    feed_anal.set('engine', 'GoogleAnalytics')
 
     # create entries here
     for rec in app.config['MDB'].posts.find({
@@ -94,12 +104,22 @@ def get_feed():
         # get post
         post = Post(_id=rec['_id']).serialize()
         post_url = app.config['URL'] + '/b/' + post['handle']
+        hero_img_url = app.config['URL'] + '/images/' + post['hero_image']['base_name']
+
+        # start it up!
         post_item = ET.SubElement(feed, 'entry')
 
         # required author block
         author = ET.SubElement(post_item, 'author')
         ET.SubElement(author, 'name').text = post['author']['name']
         ET.SubElement(author, 'email').text = post['author']['email']
+
+        # thumbnail
+        thumbnail = ET.SubElement(post_item, 'media:thumbnail')
+        thumbnail.set('xmlns:media', 'http://search.yahoo.com/mrss/')
+        thumbnail.set('url', hero_img_url)
+        thumbnail.set('height', '72')
+        thumbnail.set('weight', '72')
 
         # required post content
         post_content = ET.SubElement(post_item, 'content')
@@ -238,10 +258,11 @@ class Post(models.Model):
         # expand the hero image
         output = copy(self.record)
         output['hero_image'] = images.expand_image(output['hero_image'])
-        output['html_hero_image'] = '<img src="%s/images/%s" />' % (
-            app.config['URL'],
-            output['hero_image']['base_name']
-        )
+        output['html_hero_image'] = \
+            '<img class="webfeedsFeaturedVisual" src="%s/images/%s" />' % (
+                app.config['URL'],
+                output['hero_image']['base_name']
+            )
 
         # loop through attachment oids and expand
         output['attachments'] = []

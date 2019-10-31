@@ -79,8 +79,6 @@ def string_to_handle(s):
 def fancy_html(s, apply_p_blocks=True):
     """ Accepts a string; returns fancy-ass HTML with all of our cool stuff."""
 
-    logger = get_logger()
-
     s = str(s)
     if apply_p_blocks:
         raw = "".join(["<p>%s</p>" % p for p in s.split('\n') if p != ''])
@@ -104,8 +102,6 @@ def fancy_html(s, apply_p_blocks=True):
     for anchor in soup.find_all('a'):
         if 'fancy' not in anchor.get('class', []):
             anchor['class'] = anchor.get('class', []) + ['fancy']
-        else:
-            logger.info('fancy in %s' % anchor)
 
         anchor['target'] = 'top'
 
