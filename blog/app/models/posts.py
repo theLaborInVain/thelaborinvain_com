@@ -318,7 +318,6 @@ class Post(models.Model):
         elif was_published and not getattr(self, 'published', False):
             self.published_on = None
 
-
         self.save()
 
 

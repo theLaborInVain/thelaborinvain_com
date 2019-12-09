@@ -152,6 +152,7 @@ app.controller("editPostController", function($scope, $http) {
     $scope.updatePost = function(updateDict) {
         console.warn('Updating post...');
         console.warn(updateDict);
+
         // POSTs updateDict to the URL for editing posts
         var req_url = "/edit_post/" + $scope.post._id.$oid;
         console.time(req_url);

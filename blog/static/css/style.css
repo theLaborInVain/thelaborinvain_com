@@ -117,10 +117,14 @@ a.fancy:visited {
     width: 0px;  /* Remove scrollbar space */
     background: transparent;  /* Optional: just make scrollbar invisible */
 }
+#modalHeroContainer {
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
 .modal_hero_container {
     width: 100%;
     height: 40vh;
-    background-repeat: no-repeat; 
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -397,6 +401,8 @@ p.published_on {
         width: 200px;
         height: 200px;  
     }
+    #modalHeroContainer {
+    }
     .modal_inner {
         width: 50%;
         margin: 0 auto;  
@@ -411,7 +417,6 @@ p.published_on {
         margin-bottom: -40px; 
     }
     .post_full_view_hero, .post_full_view_attachment {
-        height: 100%;
         display: block;
         margin: 0 auto; 
     }
@@ -452,3 +457,4 @@ p.published_on {
         margin-top: 3px; 
         font-size: 1em; 
     }
+}

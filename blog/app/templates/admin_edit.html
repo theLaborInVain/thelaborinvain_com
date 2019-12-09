@@ -219,12 +219,12 @@
                 >
             </div>
             <div ng-if="post.published">
-                <b>Published on:</b>
+                <b>Published:</b>
                 <input
-                    type="date"
-                    ng-value="post.published_on.$date|date:'yyyy-MM-dd'"
+                    type="datetime"
+                    ng-value="post.published_on.$date|date:'yyyy-MM-dd HH:mm:ss'"
                     ng-model="scratch.whatever_published_on"
-                    ng-change="updatePost({published_on: scratch.whatever_published_on})"
+                    ng-blur="updatePost({'published_on': scratch.whatever_published_on})"
                 >
             </div>
             <div class="tags_container" ng-if="post !== undefined">

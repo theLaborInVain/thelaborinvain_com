@@ -176,7 +176,13 @@ class Model(object):
 
                 # unfuck javascript-style date strings
                 if self.data_model[key] == datetime:
-                    value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.000Z')
+                    try:
+                        value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.000Z')
+                    except ValueError:
+                        try:
+                            value = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                        except Exception as e:
+                            raise
 
                 # set the self.attribute values
                 setattr(self, key, value)
