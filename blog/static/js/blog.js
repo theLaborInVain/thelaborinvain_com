@@ -14,6 +14,8 @@ app.controller("rootController", function($scope, $http) {
 
     $scope.scratch = {};
 
+    $scope.metaTags = 'painted miniatures, painted'
+
     $scope.ui = {curDate: new Date()};
     $scope.gallery = {};
 
@@ -87,8 +89,13 @@ app.controller("rootController", function($scope, $http) {
             if ($scope.tags[i]._id.$oid === oid.$oid) {
                 return $scope.tags[i]
             };
-       };
-       console.error('Could not find tag with OID ' + oid);
+        };
+        console.error('Could not find tag with OID ' + oid);
+    };
+
+    $scope.extendMetaTags = function(tag_name) {
+        $scope.metaTags = $scope.metaTags + ', ' + tag_name
+        console.warn($scope.metaTags);
     };
 
     // tag search

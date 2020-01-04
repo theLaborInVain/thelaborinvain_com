@@ -47,7 +47,10 @@
                         <span>{a post.published_on.$date|date:'yyyy-MM-dd' a}</span>
                         <h1>{a post.title a}</h1>
                     </div>
-                    <div class="hero_tags_container" ng-if="tags !== undefined">
+                    <div
+                        class="hero_tags_container"
+                        ng-if="tags !== undefined"
+                    >
                         <span
                             class="hero_tag"
                             ng-repeat="tag_oid in post.tags"

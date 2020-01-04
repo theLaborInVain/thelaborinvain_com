@@ -319,7 +319,7 @@ button.create_new {width: 95%; margin: 1em; border-radius: 10px; }
 .edit_post_container {
     margin-left: 1vw; 
     margin-top: 5vh;
-    margin-bottom: 10vh;
+    margin-bottom: 20vh;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;

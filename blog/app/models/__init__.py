@@ -99,6 +99,7 @@ class Model(object):
         except pymongo.errors.DuplicateKeyError as e:
             self.mdb.remove({'_id': self._id})
             self.logger.error(e)
+            self.logger.error('Cannot create asset: %s' % self)
             raise ValueError('Duplicate key error prevented asset creation!')
 
 

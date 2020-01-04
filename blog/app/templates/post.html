@@ -20,10 +20,16 @@
             {a post.published_on.$date|date:'yyyy-MM-dd HH:mm:ss' a}
         </p>
 
-        <ul class="asset_corral post_full_view_tags" ng-if="tags !== undefined">
+        <ul
+            class="asset_corral post_full_view_tags"
+            ng-if="tags !== undefined"
+        >
             <li
                 ng-repeat="tag_oid in post.tags"
-                ng-init="tag = getTag(tag_oid)"
+                ng-init="
+                    tag = getTag(tag_oid);
+                    extendMetaTags(tag.name);
+                "
                 ng-click="showTagSearchResults(tag.name)"
             >
                 {a tag.name a}

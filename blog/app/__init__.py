@@ -21,8 +21,15 @@ from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
-app.config['MDB'].users.create_index([('email', pymongo.TEXT),], unique=True)
-app.config['MDB'].tags.create_index([('name', pymongo.TEXT),], unique=True)
+app.config['MDB'].users.create_index(
+    [('email', pymongo.ASCENDING),],
+    unique=True
+)
+app.config['MDB'].tags.create_index(
+    [('name', pymongo.ASCENDING),],
+    unique=True,
+    sparse=True,
+)
 app.config['UPLOADS'] = os.path.join(app.root_path, '..', 'uploads/')
 
 login = LoginManager(app)
