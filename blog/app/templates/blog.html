@@ -2,113 +2,134 @@
 
 {% block content %}
 
-<ul id="postContainer" class="asset_corral">
+<!-- hack city -->
+<span
+    ng-if="posts.length > 0"
+    ng-init="setPostYears()"
+    style="display: none;"
+></span>
 
-    <li
-        class="post"
-        ng-repeat="post in posts|orderBy:'published_on.$date':true"
-        ng-if="post.published"
-        ng-click="post.show_index_modal = true"
-    >
-
-        <img
-            loading="lazy"
-            class="hero_image_index_tile"
-            title="{a post.hero_caption a}"
-            ng-src="/images/{a post.hero_image.base_name a}" 
-        />
-
-    </li>
-
-    <!-- modal stuff is separate, so we don't accidentally click it -->
+<div id="postYearsContainer"> <!-- post year container repeater -->
 
     <div
-        class="modal_outer"
-        ng-repeat="post in posts"
-        ng-if="post.show_index_modal"
+        ng-repeat="postYear in postYears"
+        ng-if="postYears !== undefined"
+        class="post_year_container"
     >
 
-        <div
-            class="modal_inner"
-        >
-            <!-- clickable region! -->
-            <a ng-href="/b/{a post.handle a}">
+        <h2 class="post_year">{a postYear a}</h1>
 
-                <div
-                    id="modalHeroContainer"
-                    class="modal_hero_container"
+        <ul class="post_container asset_corral">
+
+            <li
+                class="post"
+                ng-repeat="post in posts|orderBy:'published_on.$date':true"
+                ng-if="
+                    post.published &&
+                    post.postYear === postYear
+                "
+                ng-click="post.show_index_modal = true"
+            >
+
+                <img
+                    loading="lazy"
+                    class="hero_image_index_tile"
                     title="{a post.hero_caption a}"
-                    style="
-                        background-image: url(/images/{a post.hero_image.base_name a});
-                    "
+                    ng-src="/images/{a post.hero_image.base_name a}" 
                 />
 
-                    <div class="hero_info_container">
-                        <span>{a post.published_on.$date|date:'yyyy-MM-dd' a}</span>
-                        <h1>{a post.title a}</h1>
-                    </div>
-                    <div
-                        class="hero_tags_container"
-                        ng-if="tags !== undefined"
-                    >
-                        <span
-                            class="hero_tag"
-                            ng-repeat="tag_oid in post.tags"
-                            ng-init="tag = getTag(tag_oid)"
-                        >
-                            {a tag.name a}
-                        </span>
-                    </div>
+            </li>
 
-                </div>
+            <!-- modal stuff is separate, so we don't accidentally click it -->
 
-
-                <div
-                    class="lede_container"
-                    ng-bind-html="post.html_lede|trustedHTML"
-                >
-                </div>
-
-                <div
-                    class="lede_container"
-                >
-                    Tap or click to view the full post!
-                </div>
-
-                <ul
-                    class="asset_corral post_attachment_thumbnails"
-                    ng-init="loadAttachments(post)"
-                >
-                    <li
-                        ng-repeat="attachment in post.attachments|orderBy:'sort_order'"
-                        title="{a attachment.caption a}"
-                    >
-                        <img
-                            loading="lazy"
-                            class="attachment_thumbnail"
-                            ng-src="/images/{a attachment.image.base_name a}" 
-                        />
-                    </li>
-                </ul>
-
-            </a>
-            <!-- clickable region! -->
-
-
-            <button
-                class="modal_close"
-                ng-click="post.show_index_modal = false"
+            <div
+                class="modal_outer"
+                ng-repeat="post in posts"
+                ng-if="post.show_index_modal"
             >
-                Close
-            </button>
+
+                <div
+                    class="modal_inner"
+                >
+                    <!-- clickable region! -->
+                    <a ng-href="/b/{a post.handle a}">
+
+                        <div
+                            id="modalHeroContainer"
+                            class="modal_hero_container"
+                            title="{a post.hero_caption a}"
+                            style="
+                                background-image: url(/images/{a post.hero_image.base_name a});
+                            "
+                        />
+
+                            <div class="hero_info_container">
+                                <span>{a post.published_on.$date|date:'yyyy-MM-dd' a}</span>
+                                <h1>{a post.title a}</h1>
+                            </div>
+                            <div
+                                class="hero_tags_container"
+                                ng-if="tags !== undefined"
+                            >
+                                <span
+                                    class="hero_tag"
+                                    ng-repeat="tag_oid in post.tags"
+                                    ng-init="tag = getTag(tag_oid)"
+                                >
+                                    {a tag.name a}
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="lede_container"
+                            ng-bind-html="post.html_lede|trustedHTML"
+                        >
+                        </div>
+
+                        <div
+                            class="lede_container"
+                        >
+                            Tap or click to view the full post!
+                        </div>
+
+                        <ul
+                            class="asset_corral post_attachment_thumbnails"
+                            ng-init="loadAttachments(post)"
+                        >
+                            <li
+                                ng-repeat="attachment in post.attachments|orderBy:'sort_order'"
+                                title="{a attachment.caption a}"
+                            >
+                                <img
+                                    loading="lazy"
+                                    class="attachment_thumbnail"
+                                    ng-src="/images/{a attachment.image.base_name a}" 
+                                />
+                            </li>
+                        </ul>
+
+                    </a>
+                    <!-- clickable region! -->
 
 
-        </div><!-- modal inner -->
+                    <button
+                        class="modal_close"
+                        ng-click="post.show_index_modal = false"
+                    >
+                        Close
+                    </button>
 
-    </div><!-- modal outer -->
+                </div><!-- modal inner -->
 
-</ul><!-- postContainer -->
+            </div><!-- modal outer -->
 
+        </ul><!-- postContainer -->
+
+    </div> <!-- post Year -->
+
+</div> <!-- post year container repeater -->
 
 <div
     id="homeLink"

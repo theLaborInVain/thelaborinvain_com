@@ -57,10 +57,13 @@ a.fancy:visited {
 .index_about p {padding: 1em; }
 .close_index_about {padding: 0.5em; width: 100%; margin-top: auto; font-size: 1.5em; }
 
-#postContainer {
-    margin-bottom: 65%; 
+.post_year_container:last-child {
+    margin-bottom: 55%; 
 }
-
+h2.post_year {
+    font-size: 3vh;
+    margin: 2%; 
+}
 .asset_corral {
     margin: 0;
     padding: 0;
@@ -388,11 +391,16 @@ p.published_on {
     #footer {
         font-size: 12pt; 
     }
-    #postContainer {
+    h2.post_year {
+        width: 70%;
+        max-width: 1000px;
+        margin: 2% auto;
+        padding-left: 1%; 
+    }
+    .post_container {
         width: 70%;
         max-width: 1000px;
         margin: 0 auto; 
-        margin-bottom: 35%; 
     }
     #homeLink {
         left: auto;

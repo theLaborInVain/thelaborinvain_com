@@ -24,6 +24,23 @@ app.controller("rootController", function($scope, $http) {
         location.replace(url)
     };
 
+
+    $scope.setPostYears = function() {
+        // updates $scope.postYears, which is a set of how many years of posts
+        // we have
+        var tmp_set = new Set();
+        for (i = 0; i < $scope.posts.length; i++) {
+            var published_on = $scope.posts[i].published_on;
+            if (published_on !== undefined && published_on !== null) {
+                var date_obj = new Date(published_on.$date);
+                var postYear = date_obj.getFullYear();
+                $scope.posts[i].postYear = postYear;
+                tmp_set.add(postYear);
+            }
+        };
+        $scope.postYears = Array.from(tmp_set);
+    };
+
     $scope.loadAssets = function(asset_type, count) {
 
         var reqUrl = "/get/" + asset_type;
@@ -57,7 +74,7 @@ app.controller("rootController", function($scope, $http) {
         }).then(function mySuccess(response) {
             post.attachments = response.data;
             if (initializeGallery) {
-                console.info('Initializing gallery...');
+//                console.info('Initializing gallery...');
                 $scope.initializeGallery();
             }
             console.timeEnd(req_url);
@@ -95,7 +112,6 @@ app.controller("rootController", function($scope, $http) {
 
     $scope.extendMetaTags = function(tag_name) {
         $scope.metaTags = $scope.metaTags + ', ' + tag_name
-        console.warn($scope.metaTags);
     };
 
     // tag search
@@ -154,16 +170,31 @@ app.controller("rootController", function($scope, $http) {
     }
 
     $scope.initializeGallery = function() {
+        // creates the gallery; goes to great lengths to preserve sort order
         $scope.gallery.imageBaseNames = [$scope.post.hero_image.base_name];
+
         $scope.gallery.captions = {};
         $scope.gallery.captions[$scope.post.hero_image.base_name] = $scope.post.hero_caption;
    
+        // sort images based on their sort_order attrib
+        var sortingHat = {}
         for (i = 0; i < $scope.post.attachments.length; i++) {
-            $scope.gallery.imageBaseNames.push($scope.post.attachments[i].image.base_name);
-            $scope.gallery.captions[$scope.post.attachments[i].image.base_name] = $scope.post.attachments[i].caption;
+            var imgObj = $scope.post.attachments[i];
+            sortingHat[Number(imgObj.sort_order)] = imgObj;
         };
+
+        // now, iterate in key order and push them on
+        var sortingKeys = Object.keys(sortingHat).sort(function(a,b){return a - b});
+        for (i = 0; i < sortingKeys.length; i++) {
+            var sortingKey = sortingKeys[i];
+            var imgObj = sortingHat[sortingKey];
+            $scope.gallery.imageBaseNames.push(imgObj.image.base_name);
+            $scope.gallery.captions[imgObj.image.base_name] = imgObj.caption;
+        };
+       
+        // finally, set the current image (i.e. the hero) 
         $scope.gallery.current_image = $scope.gallery.imageBaseNames[0];
-        console.warn('Initialized gallery!');
+//        console.warn('Initialized gallery!');
     };
 
 
