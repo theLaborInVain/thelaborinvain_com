@@ -63,6 +63,7 @@
 				>
 		            <li
 						ng-repeat="image in assets.images"
+                        ng-if="$index < 20"
                         ng-init="image.is_attached = isAttached(image._id.$oid)"
                         ng-class="{
                             'is_attached': image.is_attached,

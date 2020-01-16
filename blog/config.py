@@ -13,6 +13,7 @@ import sys
 
 # second party
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 
 
 class Config(object):
@@ -26,12 +27,13 @@ class Config(object):
     ) % datetime.now().strftime('%Y')
     ADMIN_NAME = "Timothy O'Connell"
     ADMIN_EMAIL = 'toconnell@thelaborinvain.com'
-    VERSION = "0.24.121"
+    VERSION = "0.27.122"
     PORT = 8060
     SECRET_KEY = os.environ.get('SECRET_KEY') or str(sys.path)
 #    SECRET_KEY = secrets.token_hex(16)  # this breaks the login cookie
     MDB = MongoClient()['thelaborinvain_blog_v0']
     ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+    UNKNOWN_IMAGE_OID = ObjectId('5e1f58d8ab2ad4635342962f')
     GET_COUNT_DEFAULT = 9999
 
     if os.environ.get('FLASK_ENV') == 'production':

@@ -108,15 +108,14 @@ class Model(object):
         come from their __init__() methods. """
 
         if '_id' in self.kwargs and self.kwargs['_id'] is not None:
-            self._id = self.kwargs.get('_id')
+            self._id = ObjectId(self.kwargs.get('_id'))
         else:
             self.new()  #sets self._id
 
-        # sanity check
-
         self.record = self.mdb.find_one({'_id': self._id})
         if self.record is None:
-            raise ValueError('Record OID %s not found in MDB!' % self._id)
+            err = "'%s' collection OID '%s' not found in MDB!"
+            raise ValueError(err % (self.collection, self._id))
 
         for key, value in self.record.items():
             setattr(self, key, value)

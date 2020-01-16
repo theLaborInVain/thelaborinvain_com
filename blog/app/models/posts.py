@@ -155,10 +155,19 @@ class Tag(models.Model):
         self.collection = 'tags'
         self.mdb = app.config['MDB'][self.collection]
 
-        self.data_model = {'name': str}
+        self.data_model = {
+            'name': str,
+            'last_used_on': datetime,
+        }
         self.required_attribs = ['name']
 
         self.load()
+
+
+    def set_last_used_on(self):
+        """ Sets the tag's 'last_used_on' value to right now. """
+        self.last_used_on = datetime.now()
+        self.save()
 
 
 class Attachment(models.Model):
@@ -309,7 +318,15 @@ class Post(models.Model):
                     ]
                     ))
                 )
+
+                # log tag usage
+                if attrib == 'tags':
+                    for tag_dict in flask.request.json[attrib]:
+                        tag_object = Tag(_id=tag_dict['$oid'])
+                        tag_object.set_last_used_on()
+
                 del flask.request.json[attrib]
+
 
         super().update(verbose=False)
 

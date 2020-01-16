@@ -9,6 +9,35 @@ app.config(['$interpolateProvider', function($interpolateProvider) {
 // HTML insertion
 app.filter('trustedHTML', function($sce) { return $sce.trustAsHtml; } );
 
+app.filter('orderObjectByDate', function(){
+ return function(input, attribute) {
+    if (!angular.isObject(input)) return input;
+
+    var array = [];
+    for(var objectKey in input) {
+        array.push(input[objectKey]);
+    }
+
+    array.sort(function(a, b) {
+        try {
+        var dateA = new Date(a[attribute].$date);
+        }
+        catch(err) {
+            dateA = new Date(2020,0,1)
+        };
+
+        try {
+        var dateB = new Date(b[attribute].$date);
+        }
+        catch(err) {
+            dateB = new Date(2020,0,1)
+        };
+        return dateA - dateB;
+    });
+
+    return array.reverse();
+ }
+});
 
 // root Controller starts here
 app.controller("rootController", function($scope, $http) {
@@ -18,6 +47,9 @@ app.controller("rootController", function($scope, $http) {
     $scope.ui = {
         show_image_asset_creator_modal: false,
         show_posts_asset_creator_modal: false,
+        admin_menu_post_limit: 15,
+        admin_menu_image_limit: 15,
+        show_set_new_post_title_from_tag: true,
     }
 
     $scope.assets = {
@@ -73,6 +105,14 @@ app.controller("rootController", function($scope, $http) {
 
     };
 
+
+    $scope.setTitleFromTag = function() {
+        // sets the new post title from a tag value
+        var newTitle = $scope.new_post.titleTag.name;
+        $scope.new_post.title = newTitle;
+        $scope.ui.show_set_new_post_title_from_tag = false;
+    };
+
     $scope.createNewPost = function() {
         var reqUrl = "/create/post"
 
@@ -87,7 +127,7 @@ app.controller("rootController", function($scope, $http) {
             url: reqUrl,
             data: postData,
         }).then(function mySuccess(response) {
-            console.warn(response.data);
+//            console.warn(response.data);
             $scope.ui.show_posts_asset_creator_modal = undefined;
             $scope.new_post = {
                 title: null,
@@ -132,7 +172,7 @@ app.controller("rootController", function($scope, $http) {
 
     $scope.init = function() {
         $scope.loadAssets('tags');
-        $scope.loadAssets('images', 20);
+        $scope.loadAssets('images');
         $scope.loadAssets('posts');
         console.info('rootController initialized!')
     };
@@ -151,7 +191,7 @@ app.controller("editPostController", function($scope, $http) {
 
     $scope.updatePost = function(updateDict) {
         console.warn('Updating post...');
-        console.warn(updateDict);
+//        console.warn(updateDict);
 
         // POSTs updateDict to the URL for editing posts
         var req_url = "/edit_post/" + $scope.post._id.$oid;
@@ -162,7 +202,7 @@ app.controller("editPostController", function($scope, $http) {
             data: updateDict
         }).then(function mySuccess(response) {
             console.warn('Update successful!');
-            console.warn(response);
+//            console.warn(response);
             $scope.flashSavedMessage();
             $scope.loadPost($scope.post._id.$oid);
             console.timeEnd(req_url);

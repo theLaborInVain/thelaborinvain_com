@@ -55,7 +55,7 @@ button {cursor: pointer; }
 
 #savedPopup {
     transition: 1s;
-    position: absolute;
+    position: fixed;
     right: 3%;
     bottom: 3%;
     background: #fff;

@@ -8,8 +8,12 @@ import getpass
 from optparse import OptionParser
 import sys
 
+# second party imports
+#from bson.objectid import ObjectId
+
 # project imports
-from app import admin
+from app import admin, models
+from app.models import posts
 
 def create_user():
     """ Gets new user stuff from CLI prompts. High tech shit! """
@@ -43,6 +47,10 @@ if __name__ == "__main__":
     parser.add_option("--set_password", dest="set_password", default=False,
         help="Interactively set a user's password", action='store_true',)
 
+    # posts
+    parser.add_option("-p", dest="post_oid", default=None,
+        help="Work with a post.")
+
     # tags
     parser.add_option("--list_tags", dest="list_tags", default=False,
         help="Dump a list of tags", action='store_true',)
@@ -74,6 +82,11 @@ if __name__ == "__main__":
             print(user)
     if options.set_password:
         admin_object.set_password(*set_password())
+
+    # post admin
+    if options.post_oid is not None:
+        post_object = posts.Post(_id=options.post_oid)
+        print(post_object)
 
     # tag admin
     if options.list_tags:

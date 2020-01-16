@@ -14,6 +14,7 @@
             <li
                 ng-repeat="post in assets.posts |orderBy:'created_on'"
                 ng-click="goToURL('/edit_post/' + post._id.$oid)"
+                ng-if="$index <= ui.admin_menu_post_limit"
             >
                 <div class="edit_post_thumbnail_container">
                     <img class="edit_post_thumbnail" ng-src="/images/{a post.hero_image.base_name a}" />
@@ -26,13 +27,20 @@
             </li>
         </ul>
 
+        <button
+            class="create_new"
+            ng-if="assets.posts.length > ui.admin_menu_post_limit"
+            ng-click="ui.admin_menu_post_limit = ui.admin_menu_post_limit + 10"
+        >
+            Show more posts
+        </button>
+
         <div
             class="asset_column_loader"
             ng-if="assets.posts === null"
         >
             <img class="loading_spinner" src="/static/media/loading_io.gif" />
             <div>Loading Posts...</div>
-            <div>show modal? {a ui.show_posts_asset_creator_modal a}</div>
         </div>
     </div>
 
@@ -49,6 +57,7 @@
         <ul class="asset_corral" ng-if="assets.images !== null && assets.images.length > 0">
             <li
                 ng-repeat="image in assets.images"
+                ng-if="$index <= ui.admin_menu_image_limit"
                 ng-mouseover="image.show_detail = true"
                 ng-mouseleave="image.show_detail = undefined"
             >
@@ -74,6 +83,7 @@
                             class="rm_image_preview"
                             ng-src="/images/{a image.base_name a}"
                         />
+                        <div>{a image._id.$oid a}</div>
                         <div>{a image.base_name a}</div>
 
                         <form ng-init="rm_url='/rm/images/' + image._id.$oid" action="{a rm_url a}" method='GET'>
@@ -91,13 +101,21 @@
 
             </li>
         </ul>
+
+        <button
+            class="create_new"
+            ng-if="assets.images.length > ui.admin_menu_image_limit"
+            ng-click="ui.admin_menu_image_limit = ui.admin_menu_image_limit + 10"
+        >
+            Show more images
+        </button>
+
         <div
             class="asset_column_loader"
             ng-if="assets.images === null"
         >
             <img class="loading_spinner" src="/static/media/loading_io.gif" />
             <div>Loading Images...</div>
-            <div>show modal? {a ui.show_image_asset_creator_modal a}</div>
         </div>
     </div>
 
@@ -118,6 +136,15 @@
             ng-model="new_post.title"
             placeholder="Post Title"
         />
+
+        <select
+            ng-if="ui.show_set_new_post_title_from_tag"
+            ng-model="new_post.titleTag"
+            ng-change="setTitleFromTag()"
+            ng-options="t.name for t in assets.tags |orderObjectByDate: 'last_used_on'"
+        >
+            <option disabled value="">Set title from tag</option>
+        </select> 
 
         <div class="hero_image_controls">
             <div class="hero_image_preview_text">
@@ -149,6 +176,7 @@
         <ul class="asset_corral thumbnail_picker">
             <li
                 ng-repeat="image in assets.images"
+                ng-if="$index < 20"
             >
                 <img
                     class="asset_corral_image"
@@ -161,7 +189,7 @@
         <button
             class="create_new_post"
             ng-click="createNewPost()"
-            ng-disabled="new_post.title === null && new_post.hero_image === null"
+            ng-disabled="new_post.title === null || new_post.hero_image === null"
             ng-class="{
                 'active': new_post.title !== null && new_post.hero_image !== null,
             }"
