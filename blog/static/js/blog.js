@@ -14,6 +14,14 @@ app.controller("rootController", function($scope, $http) {
 
     $scope.scratch = {};
 
+    $scope.openGraph = {
+        title: "The Labor in Vain - Miniatures painting blog.",
+        type: "website",
+        url: "https://blog.thelaborinvain.com",
+        image: "https://blog.thelaborinvain.com/static/media/the_labor_in_vain_logo_no_text.webp",
+        description: "Miniatures, Hobby and Projects Blog for The Labor in Vain, a production company based in Chicago, IL.",
+    };
+
     $scope.metaTags = 'painted miniatures, painted'
 
     $scope.ui = {curDate: new Date()};
@@ -108,10 +116,6 @@ app.controller("rootController", function($scope, $http) {
             };
         };
         console.error('Could not find tag with OID ' + oid);
-    };
-
-    $scope.extendMetaTags = function(tag_name) {
-        $scope.metaTags = $scope.metaTags + ', ' + tag_name
     };
 
     // tag search

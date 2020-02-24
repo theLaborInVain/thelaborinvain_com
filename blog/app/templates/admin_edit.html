@@ -10,12 +10,24 @@
         <span ng-if="post._id.$oid !== undefined" ng-init="loadAttachments()"></span>
 
         <div class="edit_post_left_column">
-            <input
-                class="edit_post_title"
-                type="text"
-                ng-model="post.title"
-                ng-blur="updatePost({title: post.title})"
-            />
+            <div class="edit_post_title_and_dimension_container">
+                <input
+                    class="edit_post_title"
+                    type="text"
+                    ng-model="post.title"
+                    ng-blur="updatePost({title: post.title})"
+                />
+                <div class="edit_post_longest_dimension_container">
+                    <input
+                        class="edit_post_longest_dimension"
+                        type="number"
+                        ng-model="post.longest_dimension"
+                        ng-blur="updatePost({longest_dimension: post.longest_dimension})"
+                    />
+                    mm
+                </div>
+            </div><!-- title and dimension -->
+
             <div class="edit_post_hero_container">
                 <code>
                     {a post.hero_image.base_name a}

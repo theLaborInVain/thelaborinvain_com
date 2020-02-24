@@ -17,7 +17,12 @@
         class="post_year_container"
     >
 
-        <h2 class="post_year">{a postYear a}</h1>
+        <h2
+            class="post_year"
+            ng-if="postYear !== ui.curDate.getFullYear()"
+        >
+            {a postYear a}
+        </h2>
 
         <ul class="post_container asset_corral">
 

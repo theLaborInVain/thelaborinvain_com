@@ -15,12 +15,15 @@
                 ng-repeat="post in assets.posts |orderBy:'created_on'"
                 ng-click="goToURL('/edit_post/' + post._id.$oid)"
                 ng-if="$index <= ui.admin_menu_post_limit"
+                ng-class="{
+                    'published': post.published === true
+                }"
             >
                 <div class="edit_post_thumbnail_container">
                     <img class="edit_post_thumbnail" ng-src="/images/{a post.hero_image.base_name a}" />
                 </div>
                 <div class="edit_post_details">
-                    <b>{a post.title a}</b><br/>
+                    <b>{a post.title a}</b> ({a post.longest_dimension a}mm)<br/>
                     Published: {a post.published_on.$date|date:'yyyy-MM-dd' a}<br/>
                     Created: {a post.created_on.$date|date:'yyyy-MM-dd' a}<br/>
                 </div>
@@ -85,6 +88,7 @@
                         />
                         <div>{a image._id.$oid a}</div>
                         <div>{a image.base_name a}</div>
+                        <div>Long edge: {a image.long_edge a}</div>
 
                         <form ng-init="rm_url='/rm/images/' + image._id.$oid" action="{a rm_url a}" method='GET'>
                             <button type="submit" class="rm_image_button">REMOVE</button>
@@ -159,11 +163,19 @@
                     <code ng-if="!new_post.hero_image_preview">file_name</code>
                     <code>{a new_post.hero_image_preview.base_name a}</code>
                 </div>
-                <div>
-                    <i>Uploaded:</i> {a new_post.hero_image_preview.created_on.$date|date: 'yyyy-MM-dd HH:mm:ss'a}
+                <div class="new_post_longest_dimension_container">
+                    <i>Longest dimension:</i> 
+                    <input
+                        type="number"
+                        class="new_post_hero_longest_dimension"
+                        ng-model="new_post.longest_dimension"
+                        value="30"
+                        placeholder="#"
+                    />
+                    mm
                 </div>
                 <div>
-                    <i>Modified:</i> {a new_post.hero_image_preview.updated_on.$date|date: 'yyyy-MM-dd HH:mm:ss'a}
+                    <i>Uploaded:</i> {a new_post.hero_image_preview.created_on.$date|date: 'yyyy-MM-dd HH:mm:ss'a}
                 </div>
             </div>
             <div class="hero_image_preview_img">

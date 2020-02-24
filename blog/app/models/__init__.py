@@ -39,9 +39,9 @@ def get_asset(collection=None, _id=None, **params):
     if collection == 'images':
         return models.images.Image(_id=_id)
     elif collection == 'posts':
-        return models.posts.Post(_id=_id)
+        return models.posts.Post(_id=_id, **params)
     elif collection == 'post':
-        return models.posts.Post(_id=_id)
+        return models.posts.Post(_id=_id, **params)
     elif collection == 'attachment':
         return models.posts.Attachment(_id=_id, **params)
     elif collection == 'attachments':
@@ -67,6 +67,7 @@ class Model(object):
         """ Default init for all objects. """
 
         self.logger = util.get_logger()
+        self.args = args
         self.kwargs = kwargs
         for key, value in kwargs.items():
             setattr(self, key, value)

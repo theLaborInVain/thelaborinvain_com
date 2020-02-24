@@ -197,7 +197,8 @@ class Attachment(models.Model):
 
     def new(self):
         """ Defauls some attribs. """
-        self.sort_order = 0
+        current_attachments = self.mdb.find({'post_id': ObjectId(self.post_id)})
+        self.sort_order = current_attachments.count() + 1
         super().new()
 
 
@@ -227,6 +228,7 @@ class Post(models.Model):
             'tags': list,
             'hero_image': ObjectId,
             'hero_caption': str,        # just a string
+            'longest_dimension': int,
 
             # meta
             'created_by': ObjectId,
@@ -266,7 +268,13 @@ class Post(models.Model):
 
         # expand the hero image
         output = copy(self.record)
-        output['hero_image'] = images.expand_image(output['hero_image'])
+        try:
+            output['hero_image'] = images.expand_image(output['hero_image'])
+        except KeyError:
+            output['hero_image'] = images.expand_image(
+                app.config['UNKNOWN_IMAGE_OID']
+            )
+
         output['html_hero_image'] = \
             '<img class="webfeedsFeaturedVisual" src="%s/images/%s" />' % (
                 app.config['URL'],
@@ -349,10 +357,55 @@ class Post(models.Model):
 
     def get_author(self):
         """ Gets the post's author record from users. """
-        return app.config['MDB'].users.find_one({'_id': self.created_by})
+        try:
+            return app.config['MDB'].users.find_one({'_id': self.created_by})
+        except AttributeError:
+            return {'name': None, 'email': None}
 
-    def get_tags(self):
-        """ Returns a list of tags. """
-        if self.tags is None:
+
+    def get_keywords_string(self):
+        """ Creates a string representing keywords (for use in server-side meta
+        data rendering. """
+
+        keywords_list = copy(app.config['KEYWORDS'])
+        keywords_list.extend(self.get_tags(str))
+        return ", ".join(keywords_list)
+
+
+    def get_og_dict(self):
+        """ Creates a dictionary of Open Graph tags. """
+
+        og = copy(util.og_default)
+
+        hero_image_obj = images.expand_image(self.hero_image)
+        og['image'] = os.path.join(
+            app.config['URL'],
+            'images',
+            hero_image_obj['base_name']
+        )
+
+        og['title'] = "The Labor in Vain: " + self.title
+        og['description'] = self.hero_caption
+
+        og['url'] = os.path.join(app.config['URL'], 'b/', self.handle)
+
+        og['type'] = 'article'
+        og['published_time'] = self.published_on.isoformat()
+
+        return og
+
+
+    def get_tags(self, return_type=object):
+        """ Returns a list of tag OBJECTS unless otherwise specified. """
+        if not hasattr(self, 'tags') or self.tags is None:
             return []
-        return app.config['MDB'].tags.find({'_id': {'$in': self.tags}}).sort('name')
+
+        post_tags = app.config['MDB'].tags.find(
+            {'_id': {'$in': self.tags}}
+        ).sort('name')
+
+        if return_type == str:
+            return [t['name'] for t in post_tags]
+
+        return post_tags
+

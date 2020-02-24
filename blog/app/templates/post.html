@@ -4,7 +4,7 @@
 
     <div
         ng-if="post !== undefined"
-        ng-init="loadAttachments(post, true)"
+        ng-init="loadAttachments(post, true);"
         class="post_full_view_container"
     >
 
@@ -26,10 +26,7 @@
         >
             <li
                 ng-repeat="tag_oid in post.tags"
-                ng-init="
-                    tag = getTag(tag_oid);
-                    extendMetaTags(tag.name);
-                "
+                ng-init="tag = getTag(tag_oid);"
                 ng-click="showTagSearchResults(tag.name)"
             >
                 {a tag.name a}
@@ -89,11 +86,15 @@
                     ng-if="result.published"
                     ng-click="goToURL('/b/' + result.handle)"
                 >
-                    <img
-                        loading="lazy"
-                        ng-src="/images/{a result.hero_image.base_name a}"
-                        class="tag_search_result_image"
-                    />
+                    <div
+                        class="tag_search_result_image_container"
+                    >
+                        <img
+                            loading="lazy"
+                            ng-src="/images/{a result.hero_image.base_name a}"
+                            class="tag_search_result_image"
+                        />
+                    </div>
 
                     <div
                         class="tag_search_result_description"

@@ -6,6 +6,7 @@
 """
 
 # standard lib
+from datetime import datetime
 import logging
 import os
 import string
@@ -21,6 +22,17 @@ from app import app
 # CONSTANTS
 YMD = "%Y-%m-%d"
 YMDHMS = "%Y-%m-%d %H:%M:%S"
+
+
+# open graph default dict
+og_default = {
+    'title': app.config['TITLE'],
+    'description': app.config['DESC'],
+    'type': 'website',
+    'url': app.config['URL'],
+    'image': app.config['IMAGE'],
+    'published_time': datetime.now().isoformat(),
+}
 
 
 def get_logger(log_level=None, log_name=None):

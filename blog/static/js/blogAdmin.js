@@ -116,10 +116,12 @@ app.controller("rootController", function($scope, $http) {
     $scope.createNewPost = function() {
         var reqUrl = "/create/post"
 
-        var postData = {
-            title: $scope.new_post.title,
-            hero_image: $scope.new_post.hero_image,
-        }
+//        var postData = {
+//            title: $scope.new_post.title,
+//            hero_image: $scope.new_post.hero_image,
+//        }
+        var postData = $scope.new_post;
+        console.warn(postData);
 
         console.time(reqUrl);
         $http({

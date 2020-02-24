@@ -61,6 +61,7 @@ class Image(models.Model):
             'created_on': datetime,
             'created_by': ObjectId,
             'updated_on': datetime,
+            'long_edge': str,
         }
 
         self.load()
@@ -95,7 +96,7 @@ class Image(models.Model):
         # set the target (base) name
         target_name = os.path.splitext(self.base_name)[0] + '.webp'
 
-        # write the file to tmp, then conver it
+        # write the file to tmp, then convert it
         in_file.save(os.path.join("/tmp/", self.base_name))
         im = PIL.Image.open(os.path.join('/tmp', self.base_name))
         im.save(
@@ -103,6 +104,11 @@ class Image(models.Model):
             'webp',
             quality=100
         )
+
+        # set the long edge
+        self.long_edge = 'vertical'
+        if im.height < im.width:
+            self.lont_edge = 'horizontal'
 
         self.base_name = target_name
 

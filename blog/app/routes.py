@@ -27,7 +27,12 @@ from app.forms import LoginForm
 @app.route('/', methods=['GET','POST'])
 def index():
     """ Get posts, show posts. """
-    return flask.render_template('blog.html', **app.config)
+    return flask.render_template(
+        'blog.html',
+        keywords = ", ".join(app.config['KEYWORDS']),
+        og=util.og_default,
+        **app.config
+    )
 
 
 @app.route('/rss.xml')
@@ -57,7 +62,15 @@ def get_one_post(post_handle):
     post = app.config['MDB'].posts.find_one({'handle': post_handle})
     if post is None:
         return flask.Response(response='Post not found!', status=404)
-    return flask.render_template('post.html', post_object=posts.Post(_id=post['_id']))
+
+    post_object=posts.Post(_id=post['_id'])
+
+    return flask.render_template(
+        'post.html',
+        keywords = post_object.get_keywords_string(),
+        og = post_object.get_og_dict(),
+        post_object = post_object,
+    )
 
 
 @app.route('/search/<target_collection>')
@@ -233,12 +246,7 @@ def create_post(asset_type):
     """ Creates a new 'asset_type'. Returns a 200 and the oid. """
     params = flask.request.json
 
-    if asset_type == 'post':
-        asset_object = posts.Post(
-            title=params['title'], hero_image=ObjectId(params['hero_image'])
-        )
-    else:
-        asset_object = models.get_asset(asset_type, **params)
+    asset_object = models.get_asset(asset_type, **params)
 
     return flask.Response(
         response=json.dumps(
