@@ -19,7 +19,7 @@ from bson.objectid import ObjectId
 
 # application imports
 from app import app, models, util
-from app.models import images
+from app.models import images, figures
 
 #
 #   Helper Methods
@@ -226,9 +226,9 @@ class Post(models.Model):
             'body': str,
             'lede': str,
             'tags': list,
+            'figure': ObjectId,
             'hero_image': ObjectId,
             'hero_caption': str,        # just a string
-            'longest_dimension': int,
 
             # meta
             'created_by': ObjectId,
@@ -238,29 +238,28 @@ class Post(models.Model):
             'published': bool,
         }
 
+        self.required_attribs = [
+            'figure',
+            'hero_image',
+        ]
+
         self.load()
 
 
     def new(self):
-        """ Creates a new post, does a heckin' save. """
+        """ Loads the figure, """
 
-        for req_var in ['title', 'hero_image']:
-            if req_var not in self.kwargs:
-                err = "The '%s' kwarg is required when creating a new post!"
-                raise ValueError(err % req_var)
+        if self.kwargs.get('figure', None) is None:
+            raise ValueError("'figure' attribute is required!")
 
-        # create the record
-        self._id = self.mdb.insert({'title': self.title})
+        # get the figure, use it to set a few things
+        figure_object = figures.Figure(_id=self.kwargs['figure'])
 
-        # finally, attribs and save
-        self.created_on = datetime.now()
-        self.created_by = flask_login.current_user._id
-        self.hero_image = self.kwargs['hero_image']
+        self.title = figure_object.name
+        self.tags = figure_object.tags
+        self.hero_caption = figure_object.publisher + ': ' + self.title
 
-        if self.save(verbose=False):
-            self.logger.warn('Created post! %s' % self)
-        else:
-            raise AttributeError('New post record could not be saved!')
+        super().new()
 
 
     def serialize(self):
@@ -385,11 +384,13 @@ class Post(models.Model):
         )
 
         og['title'] = "The Labor in Vain: " + self.title
-        og['description'] = self.hero_caption
+        og_desc = self.hero_caption + " Painted by %s" % self.get_author()['name']
+        og['description'] = og_desc
 
         og['url'] = os.path.join(app.config['URL'], 'b/', self.handle)
 
-        og['type'] = 'article'
+#        og['type'] = 'blog'
+        og['type'] = "instapp:photo"
         og['published_time'] = self.published_on.isoformat()
 
         return og

@@ -17,6 +17,7 @@ from werkzeug.urls import url_parse
 
 # application imports
 from app import app, models, util
+from app.models import figures as WhatTheLiteralFuck
 from app.models import posts
 from app.forms import LoginForm
 
@@ -70,6 +71,7 @@ def get_one_post(post_handle):
         keywords = post_object.get_keywords_string(),
         og = post_object.get_og_dict(),
         post_object = post_object,
+        **app.config
     )
 
 
@@ -244,6 +246,7 @@ def admin():
 @app.route('/create/<asset_type>', methods=['POST'])
 def create_post(asset_type):
     """ Creates a new 'asset_type'. Returns a 200 and the oid. """
+
     params = flask.request.json
 
     asset_object = models.get_asset(asset_type, **params)

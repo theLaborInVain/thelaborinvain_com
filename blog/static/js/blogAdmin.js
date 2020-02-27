@@ -42,11 +42,14 @@ app.filter('orderObjectByDate', function(){
 // root Controller starts here
 app.controller("rootController", function($scope, $http) {
 
-    $scope.scratch = {};
+    $scope.scratch = {
+        activePanel: null,
+    }
 
     $scope.ui = {
         show_image_asset_creator_modal: false,
         show_posts_asset_creator_modal: false,
+        admin_menu_figure_limit: 15,
         admin_menu_post_limit: 15,
         admin_menu_image_limit: 15,
         show_set_new_post_title_from_tag: true,
@@ -70,11 +73,41 @@ app.controller("rootController", function($scope, $http) {
         location.replace(url)
     };
 
+	$scope.postForm = function(url) {
+		// creates a bogus form; posts it
+	    var form = document.createElement("form");
+	
+    	form.method = "GET";
+	    form.action = url;   
+
+	    document.body.appendChild(form);
+
+	    form.submit();
+	};
+
 
     // sleep time expects milliseconds
     $scope.sleep = function(time) {
         return new Promise((resolve) => setTimeout(resolve, time));
     }
+
+
+    // helper functions for working with asset lists
+    $scope.expandImage = function(image_oid) {
+        // retrieves an image object from $scope.assets.images whose OID
+        // matches 'image_oid'
+        console.warn('expanding image oid: ' + image_oid);
+        for (i = 0; i < $scope.assets.images.length; i++) {
+            var imageObject = $scope.assets.images[i];
+            if (imageObject._id.$oid === image_oid) {
+                return imageObject;
+            };
+        };
+        return {
+            error: 'no image with OID: ' + image_oid,
+            base_name: '2020-02-26_sanic.webp',
+        }
+    };
 
     $scope.flashSavedMessage = function() {
         // fades it in, fades it out
@@ -105,21 +138,8 @@ app.controller("rootController", function($scope, $http) {
 
     };
 
-
-    $scope.setTitleFromTag = function() {
-        // sets the new post title from a tag value
-        var newTitle = $scope.new_post.titleTag.name;
-        $scope.new_post.title = newTitle;
-        $scope.ui.show_set_new_post_title_from_tag = false;
-    };
-
     $scope.createNewPost = function() {
         var reqUrl = "/create/post"
-
-//        var postData = {
-//            title: $scope.new_post.title,
-//            hero_image: $scope.new_post.hero_image,
-//        }
         var postData = $scope.new_post;
         console.warn(postData);
 
@@ -172,8 +192,101 @@ app.controller("rootController", function($scope, $http) {
         });
     };
 
+
+    //
+    //  figure management
+    //
+
+
+
+    $scope.setNewFigure = function() {
+
+        // sets the $scope.new_figure, which is either a blank dict or
+        // the object of an existing figure
+        function swapOIDs(attr) {
+            if ($scope.new_figure[attr] !== undefined) {
+                for (i = 0; i < $scope.new_figure[attr].length; i++) {
+                    var oidDict = $scope.new_figure[attr][i];
+                    $scope.new_figure[attr].splice(i, 1);
+                    $scope.new_figure[attr].splice(i, 0, oidDict.$oid);
+                };
+           };
+        };
+
+        if ($scope.scratch.editFigure !== undefined) {
+            $scope.new_figure = $scope.scratch.editFigure;
+            ['concept_art', 'unpainted', 'tags'].forEach(swapOIDs);
+        } else {
+            $scope.new_figure = {
+                concept_art: [],
+                unpainted: [],
+                sculpted_by: undefined,
+                longest_dimension: 0,
+                tags: [],
+            };
+        };
+        $scope.scratch.editFigure = undefined;
+    };
+
+
+    $scope.toggleFigureTag = function(tag) {
+        if ($scope.new_figure.tags === undefined) {
+            $scope.new_figure.tags = [];
+        };
+        var tagIndex = $scope.new_figure.tags.indexOf(tag._id.$oid);
+        if (tagIndex === -1) {
+            $scope.new_figure.tags.push(tag._id.$oid);
+        } else {
+            $scope.new_figure.tags.splice(tagIndex, 1);
+        };
+    };
+
+    $scope.addImageToActiveList = function(image) {
+        if ($scope.scratch.activePanel === 'newFigureArtPanel') {
+            if ($scope.new_figure.concept_art.indexOf(image._id.$oid) !== -1) {
+                console.warn('already added');
+            } else {
+                $scope.new_figure.concept_art.push(image._id.$oid);
+            }
+        } else if ($scope.scratch.activePanel === 'newFigureSculpturePanel') {
+            if ($scope.new_figure.unpainted.indexOf(image._id.$oid) !== -1) {
+                console.warn('already added');
+            } else {
+                $scope.new_figure.unpainted.push(image._id.$oid);
+            }
+        } else {
+            throw("Active panel '" + $scope.scratch.activePanel + "' does not have an image OID array!")
+        };
+    };
+
+    $scope.createNewFigure = function() {
+        var reqUrl = "/create/figure"
+
+        var postData = $scope.new_figure;
+        console.warn(postData);
+
+        console.time(reqUrl);
+        $http({
+            method : "POST",
+            url: reqUrl,
+            data: postData,
+        }).then(function mySuccess(response) {
+            $scope.ui.show_figure_edit_modal = undefined;
+                $scope.scratch.editFigure = undefined;
+                $scope.setNewFigure();
+            	$scope.loadAssets('figures');
+            console.timeEnd(reqUrl);
+        }, function myError(response) {
+            console.error(response.data);
+            console.timeEnd(reqUrl);
+        });
+	};
+
+
+
     $scope.init = function() {
         $scope.loadAssets('tags');
+        $scope.loadAssets('figures');
         $scope.loadAssets('images');
         $scope.loadAssets('posts');
         console.info('rootController initialized!')
@@ -338,34 +451,38 @@ app.controller("editPostController", function($scope, $http) {
         };
     };
     
-    $scope.getAsset = function(collection, oid){
-        // gets an asset; returns a dict
-        var req_url = "/get/" + collection + '/' + oid;
-        console.time(req_url);
-        $http({
-            method : "GET",
-            url : req_url,
-        }).then(function mySuccess(response) {
-            console.timeEnd(req_url);
-            return response.data;
-        }, function myError(response) {
-            console.error(response.data);
-            console.timeEnd(req_url);
-            return null;
-        });
-
-    };
-
     $scope.loadPost = function(post_oid){
 
         var req_url = "/get/post/" + post_oid;
         console.time(req_url);
-        $http({
+        var loadPostPromise = $http({
             method : "GET",
             url : req_url,
-        }).then(function mySuccess(response) {
+        })
+
+        // set the $scope.post
+        loadPostPromise.then(function mySuccess(response) {
             $scope.post = response.data;
             console.timeEnd(req_url);
+        }, function myError(response) {
+            console.error(response.data);
+            console.timeEnd(req_url);
+        });
+
+        // set the $scope.figure
+        loadPostPromise.then(function mySuccess(response) {
+            var fig_url = "/get/figures/" + $scope.post.figure.$oid;
+            console.time(fig_url);
+            $http({
+                method : "GET",
+                url : fig_url,
+            }).then(function mySuccess(response) {
+                $scope.figure = response.data;
+                console.timeEnd(fig_url);
+            }, function myError(response) {
+                console.error(response.data);
+                console.timeEnd(fig_url);
+            });
         }, function myError(response) {
             console.error(response.data);
             console.timeEnd(req_url);
@@ -394,4 +511,12 @@ app.controller("editPostController", function($scope, $http) {
     };
 
     $scope.init()
+});
+
+
+app.controller("editFigureController", function($scope, $http) {
+
+
+
+
 });

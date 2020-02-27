@@ -10,6 +10,35 @@
         <span ng-if="post._id.$oid !== undefined" ng-init="loadAttachments()"></span>
 
         <div class="edit_post_left_column">
+
+            <!-- figure -->
+            <div
+                class="edit_post_figure_controls_container"
+                ng-if="figure !== undefined"
+            >
+                <div class="edit_post_figure_thumbnail_container">
+                    <img
+                        ng-src="/images/{a figure.concept_art[0].base_name a}"
+                    />    
+                </div>
+                <div class="edit_post_figure_thumbnail_container">
+                    <img
+                        ng-src="/images/{a figure.unpainted[0].base_name a}"
+                    />    
+                </div>
+                <div class="edit_post_figure_info_container">
+                    <div><b>{a figure.name a}</b> ({a figure.longest_dimension a}mm)</div>
+                    <div
+                        ng-repeat="attr in ['publisher', 'game', 'concept_art_by', 'sculptor']"
+                        ng-if="figure[attr] !== undefined"
+                        ng-class-even="'zebra'"
+                    >
+                        <i>{a attr a}:</i> {a figure[attr] a}
+                    </div>
+                </div>
+            </div>
+
+            <!-- title -->
             <div class="edit_post_title_and_dimension_container">
                 <input
                     class="edit_post_title"
@@ -17,21 +46,10 @@
                     ng-model="post.title"
                     ng-blur="updatePost({title: post.title})"
                 />
-                <div class="edit_post_longest_dimension_container">
-                    <input
-                        class="edit_post_longest_dimension"
-                        type="number"
-                        ng-model="post.longest_dimension"
-                        ng-blur="updatePost({longest_dimension: post.longest_dimension})"
-                    />
-                    mm
-                </div>
             </div><!-- title and dimension -->
 
+
             <div class="edit_post_hero_container">
-                <code>
-                    {a post.hero_image.base_name a}
-                </code>
                 <img ng-src="/images/{a post.hero_image.base_name a}"/>
                 <input
                     type="text"
@@ -41,8 +59,9 @@
                     ng-blur="updatePost({hero_caption: post.hero_caption})"
                 />
             </div>
-            <div class="edit_post_attachments">
 
+
+            <div class="edit_post_attachments">
 
 				<div class="edit_post_attachments_toggler">
 					<div
@@ -152,18 +171,20 @@
         <div class="edit_post_right_column">
             <div class="edit_post_publish_controls">
                 <button
+                    class="add_button"
                     ng-click="savePost()"
                 >
                     Save
                 </button>
                 <button
+                    class="warn_button"
                     ng-if="!post.published"
                     ng-click="updatePost({published: true})"
                 >
                     Publish
                 </button>
                 <button
-                    class="warning_button"
+                    class="add_button"
                     ng-if="post.published"
                     ng-click="updatePost({published: false})"
                 >

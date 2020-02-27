@@ -12,7 +12,6 @@ import os
 
 # second party
 from bson.objectid import ObjectId
-#from webptools import webplib
 import PIL.Image
 from werkzeug.utils import secure_filename
 
@@ -108,7 +107,7 @@ class Image(models.Model):
         # set the long edge
         self.long_edge = 'vertical'
         if im.height < im.width:
-            self.lont_edge = 'horizontal'
+            self.long_edge = 'horizontal'
 
         self.base_name = target_name
 

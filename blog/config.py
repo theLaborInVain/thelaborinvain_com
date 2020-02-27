@@ -19,7 +19,7 @@ from bson.objectid import ObjectId
 class Config(object):
     URL = 'https://blog.thelaborinvain.com'
     IMAGE = URL + '/static/media/the_labor_in_vain_logo_no_text.webp'
-    TITLE = 'The Labor in Vain - Bad News Travels Fast'
+    TITLE = 'The Labor in Vain'
     DESC = (
         'Miniatures, Hobby and Projects Blog for The Labor in Vain, '
         'a production company based in Chicago, IL.'
@@ -33,7 +33,7 @@ class Config(object):
     KEYWORDS = ['miniatures', 'miniatures painting', 'minis']
     ADMIN_NAME = "Timothy O'Connell"
     ADMIN_EMAIL = 'toconnell@thelaborinvain.com'
-    VERSION = "0.29.125"
+    VERSION = "0.30.137"
     PORT = 8060
     SECRET_KEY = os.environ.get('SECRET_KEY') or str(sys.path)
 #    SECRET_KEY = secrets.token_hex(16)  # this breaks the login cookie

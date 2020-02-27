@@ -38,6 +38,10 @@ def get_asset(collection=None, _id=None, **params):
 
     if collection == 'images':
         return models.images.Image(_id=_id)
+    elif collection == 'figure':
+        return models.figures.Figure(_id=_id, **params)
+    elif collection == 'figures':
+        return models.figures.Figure(_id=_id, **params)
     elif collection == 'posts':
         return models.posts.Post(_id=_id, **params)
     elif collection == 'post':
@@ -80,6 +84,9 @@ class Model(object):
     def new(self):
         """ Adds a new record to MDB. """
 
+        if not hasattr(self, 'required_attribs'):
+            self.required_attribs = []
+
         # sanity check
         for req_var in self.required_attribs:
             if req_var not in self.kwargs:
@@ -92,7 +99,9 @@ class Model(object):
 
         for req_var in self.required_attribs:
             setattr(self, req_var, self.kwargs[req_var])
+
         self.created_on = datetime.now()
+        self.created_by = flask_login.current_user._id
         self._id = self.mdb.insert({})
 
         try:

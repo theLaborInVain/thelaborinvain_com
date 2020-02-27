@@ -8,7 +8,13 @@
 
     <!-- posts admin -->
     <div class="asset_column">
-        <button class="create_new" ng-click="ui.show_posts_asset_creator_modal = true">+ New Post</button>
+
+        <button
+            class="create_new_asset add_button"
+            ng-click="ui.show_posts_asset_creator_modal = true"
+        >
+            New Post
+        </button>
 
         <ul class="edit_post_picker" ng-if="assets.posts !== null">
             <li
@@ -20,10 +26,13 @@
                 }"
             >
                 <div class="edit_post_thumbnail_container">
-                    <img class="edit_post_thumbnail" ng-src="/images/{a post.hero_image.base_name a}" />
+                    <img
+                        class="edit_post_thumbnail"
+                        ng-src="/images/{a post.hero_image.base_name a}"
+                    />
                 </div>
                 <div class="edit_post_details">
-                    <b>{a post.title a}</b> ({a post.longest_dimension a}mm)<br/>
+                    <b>{a post.title a}</b><br/>
                     Published: {a post.published_on.$date|date:'yyyy-MM-dd' a}<br/>
                     Created: {a post.created_on.$date|date:'yyyy-MM-dd' a}<br/>
                 </div>
@@ -31,7 +40,7 @@
         </ul>
 
         <button
-            class="create_new"
+            class="show_more_assets"
             ng-if="assets.posts.length > ui.admin_menu_post_limit"
             ng-click="ui.admin_menu_post_limit = ui.admin_menu_post_limit + 10"
         >
@@ -40,18 +49,76 @@
 
         <div
             class="asset_column_loader"
-            ng-if="assets.posts === null"
+            ng-if="assets.posts === undefined"
         >
             <img class="loading_spinner" src="/static/media/loading_io.gif" />
             <div>Loading Posts...</div>
         </div>
-    </div>
+
+    </div> <!-- end of asset column! -->
 
     <!-- images admin -->
     <div class="asset_column">
 
+
+        <!-- figures new/edit controls -->
+
         <button
-            class="create_new"
+            class="create_new_asset add_button"
+            ng-click="
+                setNewFigure();
+                ui.show_figure_edit_modal = true
+            "
+        >
+            New Figure
+        </button>
+
+        <ul
+            class="asset_corral thumbnail_picker"
+            ng-if="
+                assets.figures.length > 0 &&
+                assets.images.length > 0
+            "
+        >
+            <li
+                ng-repeat="figure in assets.figures"
+                ng-if="$index <= ui.admin_menu_figure_limit"
+                ng-init="figureImage = expandImage(figure.unpainted[0].$oid)"
+            >
+                <img
+                    class="asset_corral_image"
+                    ng-src="/images/{a figureImage.base_name a}" 
+                    ng-click="
+                        scratch.editFigure = figure;
+                        setNewFigure();
+                        ui.show_figure_edit_modal = true;
+                    "
+                />
+            </li>
+        </ul>
+
+        <button
+            class="show_more_assets"
+            ng-if="assets.figures.length > ui.admin_menu_figure_limit"
+            ng-click="ui.admin_menu_figure_limit = ui.admin_menu_figure_limit + 10"
+        >
+            Show more figures
+        </button>
+
+        <div
+            class="asset_column_loader"
+            ng-if="assets.figures === undefined"
+        >
+            <img class="loading_spinner" src="/static/media/loading_io.gif" />
+            <div>Loading Figures...</div>
+        </div>
+
+
+
+        <!-- images new/rm controls -->
+
+        <button
+            class="create_new_asset add_button"
             ng-click="ui.show_image_asset_creator_modal = true"
         >
             New Image
@@ -70,44 +137,21 @@
                 <img
                     class="asset_corral_image"
                     ng-src="/images/{a image.base_name a}" 
-                    ng-click="image.show_rm_image_control = true"
+                    ng-click="
+                        scratch.rmImageObject = image;
+                        ui.show_rm_image_control = true;
+                    "
                 />
                 <div class="asset_detail_bottom" ng-if="image.show_detail">
                     {a image.created_on.$date|date:'yyyy-MM-dd HH:mm:ss' a}
                 </div>
 
-                <div
-                    class="asset_creator_modal rm_image_control"
-                    ng-if="image.show_rm_image_control"
-                >
-                    <div class="asset_creator_inner rm_images">
-
-                        <img
-                            class="rm_image_preview"
-                            ng-src="/images/{a image.base_name a}"
-                        />
-                        <div>{a image._id.$oid a}</div>
-                        <div>{a image.base_name a}</div>
-                        <div>Long edge: {a image.long_edge a}</div>
-
-                        <form ng-init="rm_url='/rm/images/' + image._id.$oid" action="{a rm_url a}" method='GET'>
-                            <button type="submit" class="rm_image_button">REMOVE</button>
-                        </form>
-
-                        <button
-                            ng-click="image.show_rm_image_control = false"
-                        >
-                            Close
-                        </button>
-
-                    </div>
-                </div>
 
             </li>
         </ul>
 
         <button
-            class="create_new"
+            class="show_more_assets"
             ng-if="assets.images.length > ui.admin_menu_image_limit"
             ng-click="ui.admin_menu_image_limit = ui.admin_menu_image_limit + 10"
         >
@@ -121,12 +165,20 @@
             <img class="loading_spinner" src="/static/media/loading_io.gif" />
             <div>Loading Images...</div>
         </div>
+
     </div>
 
 </div> <!-- assets_container -->
 
 
-<!-- modals for creating content below -->
+<!--
+
+    THE FOLD; anything below here starts out invisible/non-existent
+
+-->
+
+
+<!-- new post creator -->
 
 <div
     class="asset_creator_modal"
@@ -134,58 +186,242 @@
 >
     <div class="asset_creator_inner new_post">
 
-        <input
-            type="text"
-            class="new_post_title"
-            ng-model="new_post.title"
-            placeholder="Post Title"
-        />
-
-        <select
-            ng-if="ui.show_set_new_post_title_from_tag"
-            ng-model="new_post.titleTag"
-            ng-change="setTitleFromTag()"
-            ng-options="t.name for t in assets.tags |orderObjectByDate: 'last_used_on'"
+        <div
+            class="hero_figure_caption"
+            ng-repeat="figure in assets.figures"
+            ng-if="figure._id.$oid === new_post.figure"
         >
-            <option disabled value="">Set title from tag</option>
-        </select> 
+            <b>{a figure.name  a}</b> | {a figure.publisher a}
+        </div>
+        <div
+            class="hero_figure_caption"
+            ng-if="new_post.figure === undefined"
+        >
+            <b>Figure name</b> | publisher
+        </div>
+       
+        <div class="horizontal_panel">
+            <ul
+                class="asset_corral thumbnail_picker"
+            >
+                <li
+                    class="hero_figure_thumbnail"
+                    ng-repeat="figure in assets.figures"
+                    ng-if="$index <= 10"
+                    ng-init="figureImage = expandImage(figure.unpainted[0].$oid)"
+                    ng-class="{
+                        'selected': figure._id.$oid === new_post.figure
+                    }"
+                >
+                    <img
+                        class="asset_corral_image"
+                        ng-src="/images/{a figureImage.base_name a}" 
+                        ng-click="new_post.figure = figure._id.$oid"
+                    />
+                </li>
+            </ul>
+        </div>
 
-        <div class="hero_image_controls">
-            <div class="hero_image_preview_text">
-                <input
-                    type="text"
-                    class="new_post_hero_image"
-                    ng-model="new_post.hero_image"
-                    placeholder="Hero image OID"
-                    disabled
-                />
+        <div class="horizontal_panels_container">
+            <div class="vertical_panel">
+                <h2>Hero image</h2>
+                <div class="hero_image_preview_img">
+                    <img ng-src="/images/{a new_post.hero_image_preview.base_name a}" />
+                </div>
+                <div>
+                    <code ng-if="!new_post.hero_image_preview">long_edge</code>
+                    <code>{a new_post.hero_image_preview.long_edge a}</code>
+                </div>
                 <div>
                     <code ng-if="!new_post.hero_image_preview">file_name</code>
                     <code>{a new_post.hero_image_preview.base_name a}</code>
                 </div>
-                <div class="new_post_longest_dimension_container">
-                    <i>Longest dimension:</i> 
+                <div>
+                    <code ng-if="!new_post.hero_image_preview">uploaded_on</code>
+                    <i>Uploaded:</i> {a new_post.hero_image_preview.created_on.$date|date: 'yyyy-MM-dd HH:mm:ss'a}
+                </div>
+            </div><!-- hero_image preview -->
+
+            <ul class="asset_corral hero_image_picker thumbnail_picker">
+                <li
+                    ng-repeat="image in assets.images"
+                    ng-if="$index < 20"
+                >
+                    <img
+                        class="asset_corral_image"
+                        ng-src="/images/{a image.base_name a}" 
+                        ng-click="new_post.hero_image = image._id.$oid; new_post.hero_image_preview = image"
+                    />
+                </li>
+            </ul>
+        </div> <!-- hero image horizontal_panel -->
+
+        <div class="asset_creator_inner_button_raft">
+            <button
+                class="create_new_post"
+                ng-click="createNewPost()"
+                ng-disabled="new_post.figure === null || new_post.hero_image === null"
+                ng-class="{
+                    'add_button': new_post.figure !== null && new_post.hero_image !== null,
+                }"
+            >
+                Create New Post!
+            </button>
+
+            <button
+                ng-click="ui.show_posts_asset_creator_modal = false"
+            >
+                close
+            </button>
+        </div>
+
+    </div><!-- asset_creator_innor.new_post -->
+</div><!-- asset_creator_modal -->
+
+
+<div
+    class="asset_creator_modal create_figure"
+    ng-if="ui.show_figure_edit_modal"
+>
+    <div class="asset_creator_inner create_figure">
+
+        <h2 ng-if="new_figure._id">Edit {a new_figure.name a}</h2>
+        <h2 ng-if="!new_figure._id">Add Figure!</h2>
+
+        <div
+            id="newFigureAboutPanel"
+            class="horizontal_panel create_figure_modal_about_container info"
+            ng-click="scratch.activePanel = 'newFigureAboutPanel'"
+            ng-class="{
+                'active': scratch.activePanel === 'newFigureAboutPanel',
+            }"
+        >
+            <input
+                type="text"
+                ng-model="new_figure.name"
+                placeholder="Name"
+            />
+            <input
+                type="text"
+                ng-model="new_figure.game"
+                placeholder="Game"
+            />
+            <input
+                type="text"
+                ng-model="new_figure.publisher"
+                placeholder="Publisher"
+            />
+		</div><!-- about panel -->
+
+        <div class="horizontal_panels_container">
+            <div 
+                id="newFigureArtPanel"
+                class="vertical_panel"
+                ng-click="scratch.activePanel = 'newFigureArtPanel'"
+                ng-class="{
+                    'active': scratch.activePanel === 'newFigureArtPanel',
+                    'fuchsia': scratch.activePanel === 'newFigureArtPanel',
+                }"
+            >
+                <h3>Concept Art</h3>
+
+                <div
+                    class="empty_thumbnail_picker"
+                    ng-if="
+						new_figure.concept_art.length === 0 &&
+						scratch.activePanel === 'newFigureArtPanel'
+					"
+                >
+                    Use thumbnails to add concept art!
+                </div>
+
+                <ul class="asset_corral thumbnail_picker" ng-if="new_figure.concept_art.length > 0">
+                    <li
+                        ng-repeat="image in assets.images"
+                        ng-if="new_figure.concept_art.indexOf(image._id.$oid) !== -1" 
+                    >
+                        <img
+                            class="asset_corral_image"
+                            ng-src="/images/{a image.base_name a}" 
+                            ng-click="
+                                new_figure.concept_art.splice(
+                                    new_figure.concept_art.indexOf(image._id.$oid), 1
+                                );
+                            "
+                        />
+                    </li>
+                </ul>
+
+                <input
+                    type="text"
+                    ng-model="new_figure.concept_art_by"
+                    placeholder="Concept art by:"
+                />
+
+            </div>
+
+            <div
+                id="newFigureSculpturePanel"
+                class="vertical_panel"
+                ng-click="scratch.activePanel = 'newFigureSculpturePanel'"
+                ng-class="{
+                    'active': scratch.activePanel === 'newFigureSculpturePanel',
+                    'plum': scratch.activePanel === 'newFigureSculpturePanel',
+                }"
+            >
+                <h3>Sculpture</h3>
+
+                <div
+                    class="empty_thumbnail_picker"
+                    ng-if="
+						new_figure.unpainted.length === 0 &&
+						scratch.activePanel === 'newFigureSculpturePanel'
+					"
+                >
+                    Use thumbnails to add images of the unsculpted figure!
+                </div>
+
+                <ul class="asset_corral thumbnail_picker" ng-if="new_figure.unpainted.length > 0">
+                    <li
+                        ng-repeat="image in assets.images"
+                        ng-if="new_figure.unpainted.indexOf(image._id.$oid) !== -1" 
+                    >
+                        <img
+                            class="asset_corral_image"
+                            ng-src="/images/{a image.base_name a}" 
+                            ng-click="
+                                new_figure.unpainted.splice(
+                                    new_figure.unpainted.indexOf(image._id.$oid), 1
+                                );
+                            "
+                        />
+                    </li>
+                </ul>
+
+                <input
+                    type="text"
+                    ng-model="new_figure.sculpted_by"
+                    placeholder="Sculpted by:"
+                />
+
+                <div>
                     <input
                         type="number"
-                        class="new_post_hero_longest_dimension"
-                        ng-model="new_post.longest_dimension"
-                        value="30"
-                        placeholder="#"
+                        ng-model="new_figure.longest_dimension"
                     />
                     mm
                 </div>
-                <div>
-                    <i>Uploaded:</i> {a new_post.hero_image_preview.created_on.$date|date: 'yyyy-MM-dd HH:mm:ss'a}
-                </div>
-            </div>
-            <div class="hero_image_preview_img">
-                <img ng-src="/images/{a new_post.hero_image_preview.base_name a}" />
-            </div>
-        </div>
-       
-        <b>Hero Image:</b>
 
-        <ul class="asset_corral thumbnail_picker">
+            </div><!-- top panel for sculpture -->
+        </div> <!-- top panels container -->
+
+        <ul
+			class="asset_corral thumbnail_picker"
+            ng-class="{
+                'plum': scratch.activePanel === 'newFigureSculpturePanel',
+                'fuchsia': scratch.activePanel === 'newFigureArtPanel',
+            }"
+		>
             <li
                 ng-repeat="image in assets.images"
                 ng-if="$index < 20"
@@ -193,34 +429,74 @@
                 <img
                     class="asset_corral_image"
                     ng-src="/images/{a image.base_name a}" 
-                    ng-click="new_post.hero_image = image._id.$oid; new_post.hero_image_preview = image"
+                    ng-click="
+                        addImageToActiveList(image);
+                    "
                 />
             </li>
         </ul>
 
-        <button
-            class="create_new_post"
-            ng-click="createNewPost()"
-            ng-disabled="new_post.title === null || new_post.hero_image === null"
+        <div
+            id="newFigureTagsPanel"
+            class="horizontal_panel tags"
+            ng-click="scratch.activePanel = 'newFigureTagsPanel'"
             ng-class="{
-                'active': new_post.title !== null && new_post.hero_image !== null,
+                'active': scratch.activePanel === 'newFigureTagsPanel',
             }"
         >
-            Create New Post!
-        </button>
+            <div class="tags_corral">
+                <div
+                    class="tag"
+                    ng-repeat="tag in assets.tags"
+                    ng-click="toggleFigureTag(tag)"
+                    ng-class="{
+						'active': new_figure.tags !== undefined && new_figure.tags.indexOf(tag._id.$oid) !== -1,
+					}"
+                >
+                    {a tag.name a}
+                </div>
+            </div>
+            <div class="new_tag_widget">
+                <input type="text" placeholder="new tag" ng-model="scratch.create_new_tag"/>
+                <button
+                    ng-click="createNewTag()"
+                >
+                    +
+                </button>
+            </div>
 
-        <button
-            ng-click="ui.show_posts_asset_creator_modal = false"
-        >
-            close
-        </button>
+        </div><!-- new figure about panel -->
 
+        <div class="asset_creator_inner_button_raft">
+            <button
+                class="del_button"
+                ng-if="new_figure._id !== undefined"
+                ng-click="
+                    postForm('/rm/figures/' + new_figure._id.$oid)
+                "
+            >
+                DELETE
+            </button>
+            <button
+				ng-click="createNewFigure()"
+				class="add_button"
+			>
+                Save
+            </button>
+            <button
+                ng-click="ui.show_figure_edit_modal = false"
+            >
+                close
+            </button>
         </div>
     </div>
-</div><!-- asset_creator_modal -->
+</div><!-- new figure asset_creator_modal -->
 
+
+
+<!-- new image creator modal -->
 <div
-    class="asset_creator_modal"
+    class="asset_creator_modal new_image"
     ng-if="ui.show_image_asset_creator_modal"
 >
     <div class="asset_creator_inner upload_images">
@@ -232,6 +508,7 @@
             />
 
             <button
+                class="add_button"
                 ng-click="
                     toggleFullScreenLoading()
                 "
@@ -241,13 +518,54 @@
             </button>
         </form>
 
-        <button
-            ng-click="ui.show_image_asset_creator_modal = false"
-        >
-            close
-        </button>
+        <div class="asset_creator_inner_button_raft">
+            <button
+                ng-click="ui.show_image_asset_creator_modal = false"
+            >
+                close
+            </button>
+        </div>
+
     </div>
-</div><!-- asset_creator_modal -->
+</div><!-- new image asset_creator_modal -->
+
+
+<!-- REMOVE image modal -->
+<div
+    class="asset_creator_modal rm_image_control"
+    ng-if="ui.show_rm_image_control"
+>
+    <div class="asset_creator_inner rm_images">
+
+        <img
+            class="rm_image_preview"
+            ng-src="/images/{a scratch.rmImageObject.base_name a}"
+        />
+        <div>{a scratch.rmImageObject._id.$oid a}</div>
+        <div>{a scratch.rmImageObject.base_name a}</div>
+        <div>Long edge: {a scratch.rmImageObject.long_edge a}</div>
+
+        <div class="asset_creator_inner_button_raft">
+
+            <button
+                class="del_button"
+                ng-click="
+                    postForm('/rm/images/' + scratch.rmImageObject._id.$oid);
+                "
+            >
+                DELETE
+            </button>
+
+            <button
+                ng-click="ui.show_rm_image_control = false"
+            >
+                Close
+            </button>
+
+        </div>
+
+    </div>
+</div><!-- REMOVE image asset_creator_modal ends -->
 
 
 {% endblock %}
