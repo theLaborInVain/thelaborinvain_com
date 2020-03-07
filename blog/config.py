@@ -33,13 +33,12 @@ class Config(object):
     KEYWORDS = ['miniatures', 'miniatures painting', 'minis']
     ADMIN_NAME = "Timothy O'Connell"
     ADMIN_EMAIL = 'toconnell@thelaborinvain.com'
-    VERSION = "0.30.137"
+    VERSION = "0.31.144"
     PORT = 8060
     SECRET_KEY = os.environ.get('SECRET_KEY') or str(sys.path)
 #    SECRET_KEY = secrets.token_hex(16)  # this breaks the login cookie
     MDB = MongoClient()['thelaborinvain_blog_v0']
     ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
-    UNKNOWN_IMAGE_OID = ObjectId('5e1f58d8ab2ad4635342962f')
     GET_COUNT_DEFAULT = 9999
 
     if os.environ.get('FLASK_ENV') == 'production':

@@ -73,6 +73,11 @@ app.controller("rootController", function($scope, $http) {
         location.replace(url)
     };
 
+    $scope.submitForm = function(form_id) {
+	    var form = document.getElementById(form_id);
+        form.submit();
+    };
+
 	$scope.postForm = function(url) {
 		// creates a bogus form; posts it
 	    var form = document.createElement("form");
@@ -96,7 +101,7 @@ app.controller("rootController", function($scope, $http) {
     $scope.expandImage = function(image_oid) {
         // retrieves an image object from $scope.assets.images whose OID
         // matches 'image_oid'
-        console.warn('expanding image oid: ' + image_oid);
+//        console.warn('expanding image oid: ' + image_oid);
         for (i = 0; i < $scope.assets.images.length; i++) {
             var imageObject = $scope.assets.images[i];
             if (imageObject._id.$oid === image_oid) {
@@ -207,8 +212,10 @@ app.controller("rootController", function($scope, $http) {
             if ($scope.new_figure[attr] !== undefined) {
                 for (i = 0; i < $scope.new_figure[attr].length; i++) {
                     var oidDict = $scope.new_figure[attr][i];
-                    $scope.new_figure[attr].splice(i, 1);
-                    $scope.new_figure[attr].splice(i, 0, oidDict.$oid);
+                    if (oidDict !== undefined && typeof oidDict === 'object') {
+                        $scope.new_figure[attr].splice(i, 1);
+                        $scope.new_figure[attr].splice(i, 0, oidDict.$oid);
+                    };
                 };
            };
         };
@@ -259,12 +266,14 @@ app.controller("rootController", function($scope, $http) {
         };
     };
 
-    $scope.createNewFigure = function() {
-        var reqUrl = "/create/figure"
+    $scope.saveFigure = function(operation) {
+        var reqUrl = "/" + operation + "/figure"
+
+        if (operation === 'update') {
+            reqUrl = reqUrl + '/' + $scope.new_figure._id.$oid
+        };
 
         var postData = $scope.new_figure;
-        console.warn(postData);
-
         console.time(reqUrl);
         $http({
             method : "POST",
@@ -272,16 +281,15 @@ app.controller("rootController", function($scope, $http) {
             data: postData,
         }).then(function mySuccess(response) {
             $scope.ui.show_figure_edit_modal = undefined;
-                $scope.scratch.editFigure = undefined;
-                $scope.setNewFigure();
-            	$scope.loadAssets('figures');
+            $scope.scratch.editFigure = undefined;
+            $scope.setNewFigure();
+        	$scope.loadAssets('figures');
             console.timeEnd(reqUrl);
         }, function myError(response) {
             console.error(response.data);
             console.timeEnd(reqUrl);
         });
 	};
-
 
 
     $scope.init = function() {
@@ -317,7 +325,6 @@ app.controller("editPostController", function($scope, $http) {
             data: updateDict
         }).then(function mySuccess(response) {
             console.warn('Update successful!');
-//            console.warn(response);
             $scope.flashSavedMessage();
             $scope.loadPost($scope.post._id.$oid);
             console.timeEnd(req_url);

@@ -285,7 +285,7 @@
 >
     <div class="asset_creator_inner create_figure">
 
-        <h2 ng-if="new_figure._id">Edit {a new_figure.name a}</h2>
+        <h2 ng-if="new_figure._id">{a new_figure.name a}</h2>
         <h2 ng-if="!new_figure._id">Add Figure!</h2>
 
         <div
@@ -478,10 +478,18 @@
                 DELETE
             </button>
             <button
-				ng-click="createNewFigure()"
+                ng-if="new_figure._id !== undefined"
+				ng-click="saveFigure('update')"
+				class="warn_button"
+			>
+                Update
+            </button>
+            <button
+                ng-if="new_figure._id === undefined"
+				ng-click="saveFigure('create')"
 				class="add_button"
 			>
-                Save
+                Create
             </button>
             <button
                 ng-click="ui.show_figure_edit_modal = false"
@@ -500,25 +508,29 @@
     ng-if="ui.show_image_asset_creator_modal"
 >
     <div class="asset_creator_inner upload_images">
-        <form method="POST" action="/upload" enctype="multipart/form-data">
+        <form
+            id="uploadImagesForm"
+            method="POST"
+            action="/upload"
+            enctype="multipart/form-data"
+        >
             <input
                 name='file[]'
                 type="file"
                 multiple
             />
-
-            <button
-                class="add_button"
-                ng-click="
-                    toggleFullScreenLoading()
-                "
-                type="submit"
-             >
-                Upload Images!
-            </button>
         </form>
 
         <div class="asset_creator_inner_button_raft">
+            <button
+                class="add_button"
+                ng-click="
+                    submitForm('uploadImagesForm');
+                    toggleFullScreenLoading()
+                "
+             >
+                Upload Images!
+            </button>
             <button
                 ng-click="ui.show_image_asset_creator_modal = false"
             >

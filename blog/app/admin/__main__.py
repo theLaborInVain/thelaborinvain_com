@@ -12,8 +12,8 @@ import sys
 #from bson.objectid import ObjectId
 
 # project imports
-from app import admin, models
-from app.models import posts
+from app import admin, models, util
+from app.models import posts, figures
 
 def create_user():
     """ Gets new user stuff from CLI prompts. High tech shit! """
@@ -47,9 +47,14 @@ if __name__ == "__main__":
     parser.add_option("--set_password", dest="set_password", default=False,
         help="Interactively set a user's password", action='store_true',)
 
+    # figures
+    parser.add_option("-f", dest="figure_oid", default=None,
+        help="Work with a figure.")
+
     # posts
     parser.add_option("-p", dest="post_oid", default=None,
         help="Work with a post.")
+
 
     # tags
     parser.add_option("--list_tags", dest="list_tags", default=False,
@@ -82,6 +87,14 @@ if __name__ == "__main__":
             print(user)
     if options.set_password:
         admin_object.set_password(*set_password())
+
+    # figure admin
+    if options.figure_oid is not None:
+        figure_object = figures.Figure(_id=options.figure_oid)
+        print('  RECORD:')
+        util.dump_record(figure_object.record)
+        print('\n  SERIALIZED:')
+        util.dump_record(figure_object.serialize())
 
     # post admin
     if options.post_oid is not None:

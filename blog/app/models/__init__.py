@@ -147,11 +147,14 @@ class Model(object):
         for key, value_type in self.data_model.items():
             record[key] = getattr(self, key, None)
             if record[key] != None:
+                if isinstance(record[key], dict):
+                    if record[key].get('$oid', None) is not None:
+                        record[key] = record[key]['$oid']
                 try:
                     if not isinstance(record[key], value_type):
                         try:
                             record[key] = value_type(record[key])
-                        except:
+                        except TypeError:
                             msg = "Could not cast value '%s' to %s type!"
                             raise TypeError(msg % (record[key], value_type))
                 except TypeError as e:
@@ -182,17 +185,34 @@ class Model(object):
         Keys have to be in the self.data_model to be supported. """
         params = flask.request.json
         for key, value in params.items():
+
+            if value == 'None':
+                value = None
+
+            if key == 'updated_on':
+                value = datetime.now()
+
             if key in self.data_model.keys():
 
                 # unfuck javascript-style date strings
                 if self.data_model[key] == datetime:
-                    try:
-                        value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.000Z')
-                    except ValueError:
+                    if isinstance(value, datetime):
+                        pass
+                    elif isinstance(value, dict):
+                        value = datetime.fromtimestamp(value['$date'] / 1000.0)
+                    else:
                         try:
-                            value = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
-                        except Exception as e:
-                            raise
+                            value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.000Z')
+                        except ValueError:
+                            try:
+                                value = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                            except Exception as e:
+                                raise
+                        except TypeError as e:
+                            err_msg = "Incoming attribute '%s' must be datetime!"
+                            self.logger.error(err_msg % key)
+                            self.logger.error("Got value '%s' instead..." % value)
+                            raise Exception(err_msg % key)
 
                 # set the self.attribute values
                 setattr(self, key, value)

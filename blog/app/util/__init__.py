@@ -118,3 +118,14 @@ def fancy_html(s, apply_p_blocks=True):
         anchor['target'] = 'top'
 
     return str(soup)
+
+
+def dump_record(d, indent=1):
+    """ Our custom pprint. """
+    spacer = "  "
+    for key, value in d.items():
+        print(spacer * indent + str(key))
+        if isinstance(value, dict):
+            pretty(value, indent + 1)
+        else:
+            print(spacer * (indent + 1) + str(value))

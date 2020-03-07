@@ -255,9 +255,13 @@ class Post(models.Model):
         # get the figure, use it to set a few things
         figure_object = figures.Figure(_id=self.kwargs['figure'])
 
-        self.title = figure_object.name
-        self.tags = figure_object.tags
-        self.hero_caption = figure_object.publisher + ': ' + self.title
+        # set the post title and hero caption
+        self.title = getattr(figure_object, 'name')
+        publisher = getattr(figure_object, 'publisher', '')
+        self.hero_caption = publisher + ': ' + self.title
+
+        # finally, use the figure's tags for the post
+        self.tags = getattr(figure_object, 'tags', [])
 
         super().new()
 
@@ -368,6 +372,7 @@ class Post(models.Model):
 
         keywords_list = copy(app.config['KEYWORDS'])
         keywords_list.extend(self.get_tags(str))
+        keywords_list.append('painted')
         return ", ".join(keywords_list)
 
 

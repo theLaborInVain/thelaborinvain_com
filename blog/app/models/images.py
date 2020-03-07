@@ -35,9 +35,7 @@ def expand_image(oid=None):
         err = "OID '%s' not associated with an image!" % oid
         app.logger.error(err)
         app.logger.error('Using default image...')
-        record = app.config['MDB'].images.find_one(
-            {'_id': app.config['UNKNOWN_IMAGE_OID']}
-        )
+        record = {'base_name': 'unknown_image.jpg'}
 
     return dict(record)
 
