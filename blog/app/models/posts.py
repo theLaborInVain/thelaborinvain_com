@@ -274,9 +274,7 @@ class Post(models.Model):
         try:
             output['hero_image'] = images.expand_image(output['hero_image'])
         except KeyError:
-            output['hero_image'] = images.expand_image(
-                app.config['UNKNOWN_IMAGE_OID']
-            )
+            output['hero_image'] = {'base_name': 'unknown_image.jpg'}
 
         output['html_hero_image'] = \
             '<img class="webfeedsFeaturedVisual" src="%s/images/%s" />' % (
@@ -388,7 +386,11 @@ class Post(models.Model):
             hero_image_obj['base_name']
         )
 
-        og['title'] = "The Labor in Vain: " + self.title
+        og['title'] = "The Labor in Vain: '%s'" % self.title
+        if hasattr(self, 'figure'):
+            figure = figures.Figure(_id=self.figure)
+            og['title'] += ' by %s' % figure.publisher
+
         og_desc = self.hero_caption + " Painted by %s" % self.get_author()['name']
         og['description'] = og_desc
 

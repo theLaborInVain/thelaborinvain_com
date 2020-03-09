@@ -4,7 +4,10 @@
 
     <div
         ng-if="post !== undefined"
-        ng-init="loadAttachments(post, true);"
+        ng-init="
+            loadAttachments(post, true);
+            setFigure(post.figure.$oid);
+        "
         class="post_full_view_container"
     >
 
@@ -32,6 +35,28 @@
                 {a tag.name a}
             </li>
         </ul>
+
+        <div
+            ng-if="figure !== undefined"
+            class="post_full_view_figure_container"
+        >
+            <div
+                class="post_full_view_figure_concept"
+            >
+                <img ng-src="/images/{a figure.concept_art[0].base_name a}" />
+            </div>
+            <div
+                class="post_full_view_figure_unpainted"
+            >
+                <img ng-src="/images/{a figure.unpainted[0].base_name a}" />
+            </div>
+            <div
+                class="post_full_view_figure_details"
+            >
+                <h2>{a figure.name a}</h2> {a figure.longest_dimension a}mm<br/>
+                {a figure.publisher a}
+            </div>
+        </div>
 
         <p ng-bind-html="post.html_lede|trustedHTML"></p>
 

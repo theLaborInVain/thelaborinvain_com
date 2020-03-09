@@ -57,7 +57,7 @@
                     class="modal_inner"
                 >
                     <!-- clickable region! -->
-                    <a ng-href="/b/{a post.handle a}">
+                    <a ng-href="/b/{a post.handle a}" style="width: 100%; ">
 
                         <div
                             id="modalHeroContainer"
@@ -72,19 +72,32 @@
                                 <span>{a post.published_on.$date|date:'yyyy-MM-dd' a}</span>
                                 <h1>{a post.title a}</h1>
                             </div>
-                            <div
-                                class="hero_tags_container"
-                                ng-if="tags !== undefined"
-                            >
-                                <span
-                                    class="hero_tag"
-                                    ng-repeat="tag_oid in post.tags"
-                                    ng-init="tag = getTag(tag_oid)"
+                            <div class="hero_tags_and_figure_container" >
+                                <div
+                                    class="hero_tags_container"
+                                    ng-if="tags !== undefined"
                                 >
-                                    {a tag.name a}
-                                </span>
+                                    <div
+                                        class="hero_tag"
+                                        ng-repeat="tag_oid in post.tags"
+                                        ng-init="tag = getTag(tag_oid)"
+                                    >
+                                        {a tag.name a}
+                                    </div>
+                                </div>
+                                <div
+                                    class="hero_figure_thumbnail invisible"
+                                    ng-if="post.figure === undefined"
+                                >
+                                </div>
+                                <div
+                                    class="hero_figure_thumbnail"
+                                    ng-if="post.figure !== undefined"
+                                    ng-init="expandFigure(post)"
+                                >
+                                    <img src="/images/{a post.figure.unpainted[0].base_name a}" />
+                                </div>
                             </div>
-
                         </div>
 
                         <div
