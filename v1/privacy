@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <title>The Labor in Vain | "Bad News Travels Fast"</title>
+
+	<!-- angularjs -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+	<script src="/js/tlv.js"></script>
+
+	<!-- style -->
+	<link rel="stylesheet" href="/css/style.css" />
+
+
+    <!-- google fonts ! -->
+    <link href="https://fonts.googleapis.com/css?family=Ruda" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poiret+One" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Special+Elite" rel="stylesheet">
+
+
+	<body ng-app="tlvApp" ng-controller="bodyController">
+
+    <div class="container">
+
+        <h2 class="seo">The Labor in Vain</h2>
+        <h1 class="seo">Chicago, IL</h1>
+
+		<div class="content_container">
+            <p>This is the privacy policy for https://thelaborinvain.com and
+            associated apps, including https://kdm-manager.com.</p>
+            <p>At present, The Labor in Vain does not integrate 
+            marketing or targeted ad delivery services into our websites 
+            and does not user your personal data directly.</p>
+            <p>Rather, we use your personal data for one of two reasons:
+            <ul>
+                <li>To deliver services you have requested, e.g. data management
+                or content we index/archive/host.</li>
+                <li>To determine/predict hosting resource requirements.</li>
+            </ul>
+            <p>But that's just us.</p>
+            <p>Since we use Google Analytics, your browsing data goes to Google,
+            which comes with <a href="https://policies.google.com/technologies/partner-sites">
+            its own set of much more complicated warnings</a>.</p>
+            <p>If you have additional questions about the Labor in Vain's use of
+            your data, please
+            <a href="https://t.co/DVaNrhGSbi">contact us directly.</a></p>
+		</div>
+
+
+		<h3 class="motto">" Bad News Travels Fast "</h3>
+
+	</div><!-- container -->	
+
+	</body>
+
+</html>
+

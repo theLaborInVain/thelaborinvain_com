@@ -33,7 +33,7 @@ class Config(object):
     KEYWORDS = ['miniatures', 'miniatures painting', 'minis']
     ADMIN_NAME = "Timothy O'Connell"
     ADMIN_EMAIL = 'toconnell@thelaborinvain.com'
-    VERSION = "0.31.149"
+    VERSION = "0.32.149"
     PORT = 8060
     SECRET_KEY = os.environ.get('SECRET_KEY') or str(sys.path)
 #    SECRET_KEY = secrets.token_hex(16)  # this breaks the login cookie

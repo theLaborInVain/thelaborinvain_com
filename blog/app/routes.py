@@ -339,3 +339,16 @@ def upload_file():
     msg = "Uploaded %s files successfully!" % processed
     return flask.redirect(flask.url_for('admin'))
 
+
+@app.context_processor
+def inject_template_scope():
+    """ Injects the consent cookie into scope. """
+    injections = dict()
+
+    def cookies_check():
+        value = flask.request.cookies.get('cookie_consent')
+        return value == 'true'
+
+    injections.update(cookies_check=cookies_check)
+
+    return injections

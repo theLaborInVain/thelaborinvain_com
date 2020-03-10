@@ -49,6 +49,29 @@
             &copy; The Labor in Vain, 2018 - {a ui.curDate|date:'yyyy' a}
         </div>
 
+        {% if cookies_check() %}
+            {# then user has already consented so no requirement for consent banner #}
+        {% else %}
+            <div id="cookieConsentContainer">
+                <h3>Privacy warning!</h3>
+                <p>This website uses cookies to gather information about usage
+                and access: specifically, we use Google Analytics, which is an
+                insidious and low-key diabolical piece of software.</p>
+                <p>To find out more, review The Labor in Vain's
+                <a href="https://thelaborinvain.com/privacy" target="top">
+                    official privacy policy</a>.
+                </p>
+                <button id="cookieConsent">&#10004; OK, got it!</button>
+            </div>
+            <script>
+                var fn = function () {
+                    document.cookie = "cookie_consent=true";
+                    document.getElementById('cookieConsentContainer').hidden = true;
+                };
+                document.getElementById('cookieConsent').onclick = fn;
+            </script>
+        {% endif %}
+
     </body>
 
 

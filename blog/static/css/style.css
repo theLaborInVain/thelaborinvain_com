@@ -51,7 +51,44 @@ a.fancy:visited {
     text-shadow: #000 0 0 0.2em;
     -webkit-font-smoothing: antialiased;
 }
+
+
 #footer {width: 100%; text-align: center; padding-bottom: 0.3vh;  font-size: 2vh; -webkit-text-size-adjust: none;}
+#cookieConsentContainer {
+    font-size: 2.5vh; 
+    padding: 3%;
+    padding-bottom: 5%;  
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #FFE500;
+    color: #052962;
+    border-top: 0.5vw dashed #052962; 
+}
+#cookieConsentContainer a {
+    color: #052962;
+    text-decoration: underline;
+    font-weight: bold; 
+}
+#cookieConsentContainer h3 {
+    margin-top: 0;
+}
+#cookieConsentContainer button {
+    border: 0.4vw solid #052962; 
+    font-size: 1.5em; 
+    background: #fff;
+    color: #000;
+    padding: 1%;
+    padding-bottom: 2%;  
+    padding-left: 7%;
+    padding-right: 10%; 
+    border-radius: 20vw;
+    margin: 0 auto;
+    margin-top: 10%; 
+    display: block;   
+}
+
 
 .index_about {margin: 1vh; background: #000; color: #fff; }
 .index_about p {padding: 1em; }
@@ -428,6 +465,12 @@ p.published_on {
         width: 20%;
         height: 20%; 
     }
+    #cookieConsentContainer {
+        font-size: 2vh;
+    }
+    #cookieConsentContainer button {
+        margin-top: 5%; 
+    }
     .post {
         height: 15vh; 
     } 
@@ -468,6 +511,17 @@ p.published_on {
     }
     #footer {
         font-size: 12pt; 
+    }
+    #cookieConsentContainer {
+        font-size: 12pt;
+        left: 25%;
+        right: 25%;
+        bottom: 5%; 
+        border: 0.1vw dashed #052962;
+        padding-bottom: 3%;  
+    }
+    #cookieConsentContainer button {
+        margin-top: 5%;
     }
     h2.post_year {
         width: 70%;
