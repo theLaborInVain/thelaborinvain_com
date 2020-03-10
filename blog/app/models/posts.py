@@ -76,7 +76,7 @@ def get_sitemap():
     for rec in app.config['MDB'].posts.find({
         'published': {'$exists': True},
         'published_on': {'$exists': True},
-    }).sort('published_on', -1).limit(10):
+    }).sort('published_on', -1):
         # get post
         post_object = Post(_id=rec['_id'])
 
