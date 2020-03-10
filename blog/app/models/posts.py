@@ -16,6 +16,7 @@ import xml.etree.ElementTree as ET
 import flask
 import flask_login
 from bson.objectid import ObjectId
+import pymongo
 
 # application imports
 from app import app, models, util
@@ -47,6 +48,50 @@ def get_latest_post():
         sort=[('published_on', -1)]
     )
     return Post(_id=post_record['_id'])
+
+
+def get_sitemap():
+
+    """ Returns XML for RSS feed. """
+
+    logger = util.get_logger(log_name='rss')
+
+    sitemap = ET.Element('urlset')
+    sitemap.set('xmlns', "http://www.sitemaps.org/schemas/sitemap/0.9")
+
+    root_url = ET.SubElement(sitemap, 'url')
+    ET.SubElement(root_url, 'loc').text = app.config['URL'] + '/'
+    ET.SubElement(root_url, 'changefreq').text = 'daily'
+    ET.SubElement(root_url, 'priority').text = '0.8'
+
+    # set lastmod for root URL based on latest post
+    latest_post = app.config['MDB'].posts.find_one({
+        'published': {'$exists': True},
+        },
+        sort=[( 'published_on', pymongo.DESCENDING )]
+    )
+
+    ET.SubElement(root_url, 'lastmod').text = latest_post['published_on'].strftime(util.YMD)
+
+    for rec in app.config['MDB'].posts.find({
+        'published': {'$exists': True},
+        'published_on': {'$exists': True},
+    }).sort('published_on', -1).limit(10):
+        # get post
+        post_object = Post(_id=rec['_id'])
+
+        # set values
+        url_item = ET.SubElement(sitemap, 'url')
+        ET.SubElement(url_item, 'loc').text = post_object.get_url()
+
+        updated_on = getattr(post_object, 'updated_on', None)
+        if updated_on is None:
+            updated_on = post_object.created_on
+        ET.SubElement(url_item, 'lastmod').text = updated_on.strftime(util.YMD)
+        ET.SubElement(url_item, 'changefreq').text = 'never'
+
+
+    return ET.tostring(sitemap)
 
 
 def get_feed():
@@ -417,3 +462,6 @@ class Post(models.Model):
 
         return post_tags
 
+    def get_url(self):
+        """ Returns the URL of the post. """
+        return app.config['URL'] + '/b/' + self.handle

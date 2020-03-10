@@ -56,6 +56,16 @@ def get_rss_feed(feed_type=None):
         mimetype='application/atom+xml',
     )
 
+@app.route('/sitemap.xml')
+def get_sitemap():
+    """ Turns posts into a sitemap."""
+
+    return flask.Response(
+        response=posts.get_sitemap(),
+        status=200,
+        mimetype='application/atom+xml',
+    )
+
 
 @app.route('/b/<post_handle>')
 def get_one_post(post_handle):
