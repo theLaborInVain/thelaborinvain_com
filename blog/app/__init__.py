@@ -25,11 +25,12 @@ app.config['MDB'].users.create_index(
     [('email', pymongo.ASCENDING),],
     unique=True
 )
+#app.config['MDB'].tags.drop_indexes()
 app.config['MDB'].tags.create_index(
     [('name', pymongo.ASCENDING),],
     unique=True,
-    sparse=True,
 )
+
 app.config['UPLOADS'] = os.path.join(app.root_path, '..', 'uploads/')
 
 login = LoginManager(app)

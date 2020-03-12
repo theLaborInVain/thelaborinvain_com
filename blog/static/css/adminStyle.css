@@ -20,6 +20,7 @@ button {cursor: pointer; }
     justify-content: center;
     align-items: center;
 }
+.clickable {cursor: pointer; }
 .display_none {display: none !important; }
 .loading_spinner {width: 10vw; margin: 2vh auto; }
 .warning_button {background: #c60000; color: #fff; font-weight: bold; }
@@ -95,6 +96,24 @@ button {cursor: pointer; }
     align-items: center;
     background: #fff;
 }
+.modal_inner_close_button {
+    position: absolute;
+    top: 3%;
+    right: 3%;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    padding-top: 0.5vw;
+    padding-bottom: 0.6vw;
+    background: #aaa;
+    border-radius: 0.3vw;
+    border: 1px solid #777;
+    color: #fff;
+    font-weight: bold; 
+    cursor: pointer; 
+}
+.modal_inner_close_button::after {
+    content: "X"
+}
 
 /* ui effects */
 .bold {font-weight: bold; }
@@ -134,7 +153,8 @@ li.selected {
     margin-top: 0;
     margin-bottom: 1%;  
 }
-.asset_creator_inner.create_figure {
+.asset_creator_inner.post_asset_manager,
+    .asset_creator_inner.create_figure {
     width: 75%;
 }
 .asset_creator_inner.new_post {
@@ -530,25 +550,170 @@ button.rm_image_button {background: #f60000; color: #fff; padding: 1vh; width: 1
 .toggle_hero {border-color: #E49797; background: #E49797;}
 .toggle_attachments {border-color: #F9CC9D; background: #F9CC9D; }
 
+
+    /*
+
+        middle column 
+
+    */
+
 .edit_post_middle_column {width: 40%; display: flex; flex-direction: column; }
 .edit_post_body, .edit_post_lede {box-sizing: border-box; border: 0; color: #aaa; resize: none; margin-bottom: 1em;}
 .edit_post_body {min-height: 50%; }
 .edit_post_lede {overflow: hidden; min-height: 10%; }
 .edit_post_body:focus, .edit_post_lede:focus {color: #000; outline: none; }
 .edit_post_body.active {color: #000; }
-.edit_post_right_column {width: 20%; display: flex; flex-direction: column; box-sizing: border-box; padding-left: 1vw; }
+
+    /*
+
+        right column 
+
+    */
+
+.edit_post_right_column {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding-left: 1vw;
+}
 .edit_post_right_column * {margin-bottom: 1em}
-.post_meta_data_table {margin: 0 auto; border-collapse: collapse; margin-bottom: 1em; }
-.post_meta_data_table td {padding: 0.2em; }
-.post_meta_data_table td.key {font-weight: bold; border-right: 1px solid #ccc; }
+
 .edit_post_publish_controls {display: flex; flex-direction: row; justify-content: space-evenly; margin-bottom: 1vh; }
 .edit_post_publish_controls button {padding: 0.7vw; border-radius: 10px; }
+
+.help_tip_click_to_add {
+    font-size: 0.7em;
+    color: #aaa;
+    text-align: center;
+    border: 2px dashed #ddd;
+    border-radius: 100%;
+    width: 10vw;
+    height: 10vw;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+}
+
+.edit_post_datetime {
+    width: 90%;
+    border: 0;
+    padding: 1%;  
+}
+.edit_post_datetime:focus {
+    background: #ffdd00;
+}
+
 .tags_container {display: flex; flex-direction: column; justify-content: space-evenly; border: 1px solid #ddd; margin-top: 1vh; }
 .tags_corral {display: flex; flex-direction: row; flex-wrap: wrap; }
 .tag {padding: 0.2vw; border: 1px solid #ccc; background: #ddd; color: #eee; margin: 2px; transition: 2s; cursor: pointer; }
 .tag.active {border-color: #FF9900; background: #0c3;}
-.new_tag_widget {padding: 0.2vw; background: #cf0;}
-.new_tag_widget input {font-size:0.8em; padding-left: 2px; }
+.new_tag_widget {
+    padding: 0.2vw;
+    display: flex;
+    flex-wrap:nowrap;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-top: 3%;  
+}
+.new_tag_widget input {padding-left: 1%; width: 75%; }
+.new_tag_widget button {padding-right: 1%; width: 20%; height: fit-content; margin: 2%; }
+
+.edit_post_paint_panel {
+    cursor: auto; 
+}
+#editPostPaintPickerFilter {
+    width: 100%;
+    margin: auto;
+    margin-bottom: 1%; 
+    box-sizing: border-box; 
+}
+.edit_post_paint_picker {
+    width: 100%;
+    background: #fff;
+    border-radius: 5px;
+    border: 1px solid #ccc; 
+    min-height: 4vw;
+    margin-bottom: 3%;
+    padding: 1%; 
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    box-sizing: border-box;
+}
+.paint_picker_container {
+    width: 25%;
+    transition: 1s;
+    padding: 1%;
+    box-sizing: border-box;   
+}
+.paint_picker_chip {
+    height: 4vw;
+    width: 4vw;
+    border-radius: 100%;
+    border: 1px solid #eee;
+    margin: 0 auto;
+    font-size: 0.6em;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+.paint_picker_caption {
+    text-align: center;
+    font-size: 0.7em; 
+}
+.new_paint_widget {
+    display: flex;
+    flex-wrap:nowrap;
+}
+.new_paint_preview_container {
+    box-sizing: border-box;
+    width: 60%;
+    border-right: 1px solid #ddd;
+}
+.new_paint_preview_swatch_container input {
+    width: 95% !important;
+    margin: 0 auto; 
+}
+.new_paint_swatch_detail {
+    display: flex;
+    justify-content: space-evenly; 
+}
+.new_paint_preview_swatch_list {
+   width: 50%;  
+}
+.new_paint_preview_swatch {
+    margin: 0 auto; 
+    margin-top: 1%;
+    margin-bottom: 1%; 
+    border-radius: 100%;
+    height: 10vh;
+    width: 10vh;
+    border: 1px solid #000;
+    background: #fff;
+}
+.new_paint_options_container {
+    box-sizing: border-box;
+    width: 40%; 
+    display: flex;
+    flex-direction: column;
+    padding-left: 3%;  
+}
+.new_paint_color_chip {
+    cursor: pointer; 
+    padding: 2%;
+    border: 1px solid #000;
+    margin: 1%;
+    text-align: center;  
+}
+.new_paint_options_checkboxes {
+    margin-top: 3%; 
+}
+.post_meta_data_table {margin: 0 auto; border-collapse: collapse; margin-bottom: 1em; width: 95%; }
+.post_meta_data_table td {padding: 0.2em; word-break: break-word; }
+.post_meta_data_table td.key {font-weight: bold; border-right: 1px solid #ccc; width: 15%; text-align: right; padding-right: 1em; }
+
 
 /****** user mgmt *********/
 .user_management {
@@ -575,8 +740,10 @@ button.rm_image_button {background: #f60000; color: #fff; padding: 1vh; width: 1
 }
 .admin_avatar {height: 5vh; }
 
-.add_button {background: #1AA15F; color: #fff; border-color: #fff; }
+.save_button,
+    .add_button {background: #1AA15F; color: #fff; border-color: #fff; }
 .warn_button {background: #FFCD42; color: #000; border-color: #fff; }
-.del_button {background: #DD5145; color: #fff; border-color: #fff; }
+.del_button,
+    .rm_button {background: #DD5145; color: #fff; border-color: #fff; }
 .fuchsia {background: #F30B88; background-color: #F30B88 !important; border-color: #F30B88; color: #fff; }
 .plum {background: #8A2A7C; background-color: #8A2A7C !important; border-color: #8A2A7C; color: #fff; }

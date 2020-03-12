@@ -254,7 +254,7 @@ def admin():
 
 @flask_login.login_required
 @app.route('/create/<asset_type>', methods=['POST'])
-def create_post(asset_type):
+def create_asset(asset_type):
     """ Creates a new 'asset_type'. Returns a 200 and the oid. """
 
     params = flask.request.json

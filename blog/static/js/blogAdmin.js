@@ -68,9 +68,27 @@ app.controller("rootController", function($scope, $http) {
         hero_image_preview: undefined,
     }
 
+    $scope.ngOIDListContains = function(oid, list) {
+        // looks for an object by oid in a list of JSON-style OIDs
+        for (var i = 0; i < list.length; i++) {
+            var listObjOID = list[i].$oid;
+            if (listObjOID === oid) {
+                return i;
+            }
+        }
+        return false;
+    };
+
     $scope.goToURL = function(url) {
         // lets us use ng-click link an anchor tag
         location.replace(url)
+    };
+
+    $scope.clickElement = function(elementID) {
+        setTimeout(function() {
+            document.getElementById(elementID).click()
+            $scope.clicked = true;
+        }, 0);
     };
 
     $scope.submitForm = function(form_id) {
@@ -123,8 +141,19 @@ app.controller("rootController", function($scope, $http) {
        });
     };
 
-    $scope.createNewTag = function() {
-        // creates a new tag
+    $scope.setNewPaintGradient = function(newPaint) {
+        for (i = 0; i < newPaint.colors.length; i++) {
+            var color = newPaint.colors[i];
+            if (i === 0) {
+                newPaint.gradient = color;
+            } else {
+                newPaint.gradient = newPaint.gradient + ', ' + color;
+            };
+        };
+    };
+
+    $scope.createNewTag = function(list) {
+        // creates a new tag; pass a list to 'list' to add the new tag to it
         var reqUrl = '/create/tag';
         console.time(reqUrl);
         $http({
@@ -133,9 +162,41 @@ app.controller("rootController", function($scope, $http) {
             data: {name: $scope.scratch.create_new_tag},
         }).then(function mySuccess(response) {
             console.warn("Tag created!");
+            if (list !== undefined) {
+                list.push(response.data._id);
+                console.warn('added new tag to list:');
+                console.warn(list);
+            };
             $scope.scratch.create_new_tag = undefined;
             console.timeEnd(reqUrl);
             $scope.loadAssets('tags');
+        }, function myError(response) {
+            console.error(response.data);
+            console.timeEnd(reqUrl);
+        });
+
+    };
+
+    $scope.createNewPaint = function(list) {
+        console.warn('Creating new paint!');
+        console.warn($scope.scratch.newPaint);
+        var reqUrl = '/create/paint';
+        console.time(reqUrl);
+        $http({
+            method : "POST",
+            url: reqUrl,
+            data: $scope.scratch.newPaint,
+        }).then(function mySuccess(response) {
+            console.warn("Paint created!");
+            if (list !== undefined) {
+                if (list === null) {list = []};
+                list.push(response.data._id);
+                console.warn('added new paint to list:');
+                console.warn(list);
+            };
+            $scope.scratch.newPaint = {colors: []};
+            console.timeEnd(reqUrl);
+            $scope.loadAssets('paints');
         }, function myError(response) {
             console.error(response.data);
             console.timeEnd(reqUrl);
@@ -225,6 +286,8 @@ app.controller("rootController", function($scope, $http) {
             ['concept_art', 'unpainted', 'tags'].forEach(swapOIDs);
         } else {
             $scope.new_figure = {
+                name: null,
+                publisher: null,
                 concept_art: [],
                 unpainted: [],
                 sculpted_by: undefined,
@@ -297,6 +360,7 @@ app.controller("rootController", function($scope, $http) {
         $scope.loadAssets('figures');
         $scope.loadAssets('images');
         $scope.loadAssets('posts');
+        $scope.loadAssets('paints');
         console.info('rootController initialized!')
     };
 
@@ -314,7 +378,7 @@ app.controller("editPostController", function($scope, $http) {
 
     $scope.updatePost = function(updateDict) {
         console.warn('Updating post...');
-//        console.warn(updateDict);
+        console.warn(updateDict);
 
         // POSTs updateDict to the URL for editing posts
         var req_url = "/edit_post/" + $scope.post._id.$oid;
@@ -391,25 +455,43 @@ app.controller("editPostController", function($scope, $http) {
 		return false;
 	};
 
-    $scope.toggleTag = function(tag) {
-        // checks the post to see if the tag is included
-        if ($scope.post.tags === undefined || $scope.post.tags === null || $scope.post.tags.length === 0) {
-            $scope.post.tags = [];
-            $scope.post.tags.push(tag._id);
-            $scope.updatePost({tags: $scope.post.tags})
-            return true;
-        };
 
-        var attached = $scope.tagAttached(tag);
+    $scope.togglePostAttr = function(attr, object) {
+        // if 'attr' is one of the list attributes of $scope.post, this
+        // checks $scope.post for the 'attr' attrib; toggles the object into or
+        // out of $scope.post[attr]
 
+        console.warn('toggling $scope.post[' + attr + '] attrib: ' + JSON.stringify(object));
+
+        // one, create it if it doesn't exist
+        var dict = {}
+        if (
+            $scope.post[attr] === undefined ||
+            $scope.post[attr] === null ||
+            $scope.post[attr].length === 0
+            )
+                {
+                    $scope.post[attr] = [];
+                    $scope.post[attr].push(object._id);
+                    dict[attr] = $scope.post[attr]
+                    $scope.updatePost(dict)
+                    return true;
+                };
+
+        // two, check if object is in $scope.post.attr
+
+        var attached = $scope.ngOIDListContains(object._id.$oid, $scope.post[attr]);
+
+        // three, do the toggle
         if (attached !== false) {
-            $scope.post.tags.splice(attached, 1);
+            $scope.post[attr].splice(attached, 1);
         } else {
-            $scope.post.tags.push(tag._id);
+            $scope.post[attr].push(object._id);
         };
 
-        $scope.updatePost({tags: $scope.post.tags})
-		$scope.loadAssets('tags');
+        dict[attr] = $scope.post[attr];
+        $scope.updatePost(dict);
+		$scope.loadAssets(attr);
 
     };
 
@@ -444,6 +526,7 @@ app.controller("editPostController", function($scope, $http) {
                     data: {
                         post_id: $scope.post._id.$oid,
                         image_id: image_oid,
+                        caption: $scope.post.hero_caption,
                     }
                 }).then(function mySuccess(response) {
                     $scope.flashSavedMessage();

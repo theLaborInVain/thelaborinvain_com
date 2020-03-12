@@ -51,10 +51,7 @@ def get_latest_post():
 
 
 def get_sitemap():
-
-    """ Returns XML for RSS feed. """
-
-    logger = util.get_logger(log_name='rss')
+    """ Renders all published posts as a sitemap.xml file for GOOGOO. """
 
     sitemap = ET.Element('urlset')
     sitemap.set('xmlns', "http://www.sitemaps.org/schemas/sitemap/0.9")
@@ -71,7 +68,8 @@ def get_sitemap():
         sort=[( 'published_on', pymongo.DESCENDING )]
     )
 
-    ET.SubElement(root_url, 'lastmod').text = latest_post['published_on'].strftime(util.YMD)
+    root_url_lastmod = latest_post['published_on'].strftime(util.YMD)
+    ET.SubElement(root_url, 'lastmod').text = root_url_lastmod
 
     for rec in app.config['MDB'].posts.find({
         'published': {'$exists': True},
@@ -97,7 +95,7 @@ def get_sitemap():
 def get_feed():
     """ Returns XML for RSS feed. """
 
-    logger = util.get_logger(log_name='rss')
+#    logger = util.get_logger(log_name='rss')
 
     feed = ET.Element('feed')
     feed.set('xmlns', 'http://www.w3.org/2005/Atom')
@@ -209,10 +207,30 @@ class Tag(models.Model):
         self.load()
 
 
-    def set_last_used_on(self):
-        """ Sets the tag's 'last_used_on' value to right now. """
-        self.last_used_on = datetime.now()
-        self.save()
+class Paint(models.Model):
+    """ Paints are sort of like tags, in that they're attached to posts, but
+    they contain a little more data. """
+
+    def __init__(self, *args, **kwargs):
+        """ Initialize a Paint object. """
+        models.Model.__init__(self,  *args, **kwargs)
+
+        self.collection = 'paints'
+        self.mdb = app.config['MDB'][self.collection]
+
+        self.data_model = {
+            'name': str,
+            'manufacturer': str,
+            'url': str,
+            'colors': list,
+            'gradient': str,
+            'last_used_on': datetime,
+            'ink': bool,
+            'shader': bool,
+        }
+        self.required_attribs = ['name', 'manufacturer', 'colors']
+
+        self.load()
 
 
 class Attachment(models.Model):
@@ -271,6 +289,7 @@ class Post(models.Model):
             'body': str,
             'lede': str,
             'tags': list,
+            'paints': list,
             'figure': ObjectId,
             'hero_image': ObjectId,
             'hero_caption': str,        # just a string
@@ -360,7 +379,7 @@ class Post(models.Model):
         was_published = getattr(self, 'published', False)
 
         # manage the attachments/tags/list (of OIDs) before update/save
-        for attrib in ['attachments', 'tags']:
+        for attrib in ['attachments', 'tags', 'paints']:
             if flask.request.json.get(attrib, None) is not None:
                 setattr(
                     self,
@@ -373,11 +392,12 @@ class Post(models.Model):
                     ))
                 )
 
-                # log tag usage
-                if attrib == 'tags':
-                    for tag_dict in flask.request.json[attrib]:
-                        tag_object = Tag(_id=tag_dict['$oid'])
-                        tag_object.set_last_used_on()
+                # log tag and paint usage
+                if attrib in ['tags', 'paints']:
+                    for a_dict in flask.request.json[attrib]:
+                        a_object = models.get_asset(attrib, _id=a_dict['$oid'])
+#                        a_object = Tag(_id=tag_dict['$oid'])
+                        a_object.set_last_used_on()
 
                 del flask.request.json[attrib]
 

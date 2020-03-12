@@ -486,8 +486,14 @@
             </button>
             <button
                 ng-if="new_figure._id === undefined"
+                ng-disabled="
+                    new_figure.name === null ||
+                    new_figure.publisher === null
+                "
 				ng-click="saveFigure('create')"
-				class="add_button"
+				ng-class="{
+                    'add_button': new_figure.name !== null && new_figure.publisher !== null,
+                }"
 			>
                 Create
             </button>

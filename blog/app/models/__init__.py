@@ -46,6 +46,10 @@ def get_asset(collection=None, _id=None, **params):
         return models.posts.Post(_id=_id, **params)
     elif collection == 'post':
         return models.posts.Post(_id=_id, **params)
+    elif collection == 'paint':
+        return models.posts.Paint(_id=_id, **params)
+    elif collection == 'paints':
+        return models.posts.Paint(_id=_id, **params)
     elif collection == 'attachment':
         return models.posts.Attachment(_id=_id, **params)
     elif collection == 'attachments':
@@ -91,8 +95,10 @@ class Model(object):
         for req_var in self.required_attribs:
             if req_var not in self.kwargs:
                 err = "The '%s' kwarg is required when creating new %s!"
-                self.logger.error(self.kwargs)
-                raise ValueError(err % (req_var, self.collection))
+                msg = err % (req_var, self.collection)
+                self.logger.error(msg)
+                self.logger.error('Incoming kwargs dict: %s' % self.kwargs)
+                raise ValueError(msg)
 
         # do it
         self.logger.warn('Creating new %s record!' % self.collection)
@@ -101,6 +107,7 @@ class Model(object):
             setattr(self, req_var, self.kwargs[req_var])
 
         self.created_on = datetime.now()
+        self.updated_on = datetime.now()
         self.created_by = flask_login.current_user._id
         self._id = self.mdb.insert({})
 
@@ -227,9 +234,15 @@ class Model(object):
         self.logger.warn('Removed MDB record! %s' % self._id)
         return True
 
+
     #
     #   universal/general gets and sets
     #
+
+    def set_last_used_on(self):
+        """ Sets the tag's 'last_used_on' value to right now. """
+        self.last_used_on = datetime.now()
+        self.save()
 
 
 

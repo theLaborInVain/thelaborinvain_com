@@ -46,7 +46,7 @@
                     ng-model="post.title"
                     ng-blur="updatePost({title: post.title})"
                 />
-            </div><!-- title and dimension -->
+            </div><!-- title -->
 
 
             <div class="edit_post_hero_container">
@@ -198,90 +198,361 @@
                 </button>
             </div>
 
-            <!-- meta data modal -->
-            <button
-                ng-click="ui.show_post_meta_data = true"
-            >
-                post meta data
-            </button>
-
-
-            <div
-                ng-if="ui.show_post_meta_data"
-                ng-click="ui.show_post_meta_data = false"
-                class="modal_outer"
-            >
-                <div class="modal_inner">
-                    <h1>{a post.title a}</h1>
-                    <h2>created: {a post.created_on.$date|date:'yyyy-MM-dd HH:mm:ss' a}</h2>
-                    <table class="post_meta_data_table">
-                        <tr
-                            ng-repeat="key in [
-                                'created_by',
-                                'created_on',
-                                'updated_on',
-                                'published',
-                                'published_on',
-                                'title',
-                                'handle',
-                                'tags',
-                                'hero_image',
-                                'hero_caption',
-                                'lede',
-                                'body',
-                                'html_body',
-                            ]"
-                            ng-class-even="'zebra'"
-                        >
-                            <td class="key">{a key a}</td>
-                            <td>{a post[key] a}</td>
-                        </tr>
-                    </table>
-                    <i>Click anywhere to close!</i>
+            <div>
+                <h3>Tags</h3>
+                <div
+                    class="help_tip_click_to_add clickable"
+                    ng-click="ui.show_post_asset_manager = true"
+                    ng-if="
+                        post.tags === undefined ||
+                        post.tags.length === 0 ||
+                        post.tags === null
+                    "
+                >
+                    click here to add tags
                 </div>
-            </div>
-
-            <!-- meta data modal -->
-
-            <div class="post_created_on">
-                Created on: 
-                <input
-                    type="date"
-                    ng-value="post.created_on.$date|date:'yyyy-MM-dd'"
-                    ng-model="scratch.whatever"
-                    ng-change="updatePost({created_on: scratch.whatever})"
+                <div
+                    class="tags_corral clickable"
+                    ng-if="post !== undefined && assets.tags !== undefined"
+                    ng-click="ui.show_post_asset_manager = true"
                 >
-            </div>
-            <div ng-if="post.published">
-                <b>Published:</b>
-                <input
-                    type="datetime"
-                    ng-value="post.published_on.$date|date:'yyyy-MM-dd HH:mm:ss'"
-                    ng-model="scratch.whatever_published_on"
-                    ng-blur="updatePost({'published_on': scratch.whatever_published_on})"
-                >
-            </div>
-            <div class="tags_container" ng-if="post !== undefined">
-                <div class="tags_corral">
                     <div
-                        class="tag"
+                        class="tag active"
                         ng-repeat="tag in assets.tags"
-                        ng-click="toggleTag(tag)"
-                        ng-class="{'active': tagAttached(tag) !== false}"
+                        ng-if="ngOIDListContains(tag._id.$oid, post.tags) !== false"
                     >
                         {a tag.name a}
                     </div>
                 </div>
-                <div class="new_tag_widget">
-                    <input type="text" placeholder="new tag" ng-model="scratch.create_new_tag"/>
-                    <button
-                        ng-click="createNewTag()"
-                    > 
-                        +
-                    </button>
+            </div>
+
+            <div>
+                <h3>Paints</h3>
+                <div
+                    class="help_tip_click_to_add clickable"
+                    ng-click="ui.show_post_asset_manager = true"
+                    ng-if="
+                        post.paints === undefined ||
+                        post.paints.length === 0 ||
+                        post.paints === null
+                    "
+                >
+                    click here to add paints
+                </div>
+                <div
+                    class="edit_post_paint_picker clickable"
+                    ng-click="ui.show_post_asset_manager = true"
+                    ng-if="post !== undefined && post.paints.length > 0"
+                >
+                    <div
+                        class="paint_picker_chip"
+                        ng-repeat="paint in assets.paints"
+                        ng-if="ngOIDListContains(paint._id.$oid, post.paints) !== false"
+                        style="
+                            background-color: {a paint.colors[0] a};
+                            background: radial-gradient({a paint.gradient a})
+                        "
+                    >
+                        <a href="{a paint.url a}" target="top">LINK</a>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <br/><br/><br/>
+            <button
+                class="warn_button"
+                ng-click="ui.show_post_admin_panel = true"
+            >
+                Post administration
+            </button>
+
+        </div><!-- left panel -->
+
+
+
+        <!--
+
+                modals only here
+
+        -->
+        <div
+            ng-if="ui.show_post_asset_manager"
+            class="asset_creator_modal"
+        >
+            <div class="asset_creator_inner post_asset_manager">
+
+                <div class="horizontal_panels_container">
+
+                    <!-- tags panel -->
+                    <div class="vertical_panel">
+                        <div class="tags_corral">
+                            <div
+                                class="tag"
+                                ng-repeat="tag in assets.tags"
+                                ng-click="togglePostAttr('tags', tag)"
+                                ng-class="{'active': tagAttached(tag) !== false}"
+                            >
+                                {a tag.name a}
+                            </div>
+                        </div>
+                        <div class="new_tag_widget save_button">
+                            <input
+                                type="text"
+                                placeholder="new tag"
+                                ng-model="scratch.create_new_tag"
+                            />
+                            <button
+                                ng-click="createNewTag(post.tags);"
+                            > 
+                                +
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- paints panel -->
+                    <div class="vertical_panel edit_post_paint_panel" ng-init="scratch.newPaint = {colors:[]}">
+                        <input
+                            id="editPostPaintPickerFilter" 
+                            ng-model="paintSearchText"
+                            placeholder="search paints"
+                        />
+                        <div
+                            class="edit_post_paint_picker"
+                        >
+                            <div
+                                ng-repeat="paint in assets.paints |filter:paintSearchText"
+                                class="paint_picker_container clickable"
+                                ng-click="togglePostAttr('paints', paint)"
+                                ng-class="{
+                                    'add_button': ngOIDListContains(paint._id.$oid, post.paints) !== false,
+                                }"
+                            >
+                                <div
+                                    class="paint_picker_chip"
+                                    style="
+                                        background-color: {a paint.colors[0] a};
+                                        background: radial-gradient({a paint.gradient a})
+                                    "
+                                >
+                                </div>
+                                <div
+                                    class="paint_picker_caption"
+                                >
+                                    {a paint.name a}<br/>
+                                    <i>{a paint.manufacturer a}</>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="asset_creator_inner_button_raft"
+                        >
+                            <button
+                                class="add_button"
+                                ng-if="ui.show_new_paints_controls !== true"
+                                ng-click="ui.show_new_paints_controls = true"
+                            >
+                                + Add new paint
+                            </button>
+                        </div>
+
+                        <div
+                            class="new_paint_widget"
+                            ng-if="ui.show_new_paints_controls"
+                        >
+                            <div class="new_paint_preview_container">
+                                <div
+                                    class="new_paint_preview_swatch_container"
+                                >
+                                    <div
+                                        ng-click="clickElement('newPaintColorInput')"
+                                        class="new_paint_preview_swatch"
+                                        style="
+                                            background-color: {a scratch.newPaint.colors[0] a};
+                                            background: radial-gradient({a scratch.newPaint.gradient a});
+                                        "
+                                    >
+                                    </div>
+                                    <input
+                                        type="color"
+                                        id="newPaintColorInput"
+                                        value="#ff0000"
+                                        style="display: none"
+                                        ng-model="scratch.userSelectedColor"
+                                        ng-change="
+                                            scratch.newPaint.colors.push(scratch.userSelectedColor);
+                                            setNewPaintGradient(scratch.newPaint);
+                                        "
+                                    />
+                                    <input type="text" placeholder="name" ng-model="scratch.newPaint.name"/>
+                                    <input
+                                        type="text"
+                                        placeholder="manufacturer"
+                                        ng-model="scratch.newPaint.manufacturer"
+                                    />
+                                    <input type="text" placeholder="url" ng-model="scratch.newPaint.url"/>
+                                </div><!-- preview_swatch_container -->
+                            </div><!-- new_paint_preview_container -->
+
+
+                            <div
+                                class="new_paint_options_container"
+                            >
+                                <div
+                                    ng-if="scratch.newPaint.colors.length === 0"
+                                >
+                                    (click the circle to add colors)
+                                </div>
+                                <div
+                                    class="new_paint_color_chip"
+                                    title="Click to remove color!"
+                                    ng-repeat="color in scratch.newPaint.colors"
+                                    style="background: {a color a}"
+                                    ng-click="
+                                        scratch.newPaint.colors.splice($index,1);
+                                        setNewPaintGradient(scratch.newPaint);
+                                    "
+                                >
+                                    {a color a}
+                                </div>
+                                <div class="new_paint_options_checkboxes">
+                                    <div>
+                                        <input type="checkbox" ng-model="scratch.newPaint.ink"> Ink
+                                    </div>
+                                    <div>
+                                        <input type="checkbox" ng-model="scratch.newPaint.shader"> Shader
+                                    </div>
+                                </div>
+                                <div class="asset_creator_inner_button_raft">
+                                    <button
+                                        class="warn_button"
+                                        ng-click="ui.show_new_paints_controls = false"
+                                    >
+                                        close
+                                    </button>
+                                    <button
+                                        class="add_button"
+                                        ng-click="createNewPaint(post.paints)"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+                            </div><!-- new_paint_options_Container -->
+
+                        </div> <!-- new_paint_widget -->
+
+                    </div><!-- paints panel -->
+
+                </div><!-- panels container -->
+
+                <div class="asset_creator_inner_button_raft">
+                    <button
+                        class="save_button" 
+                        ng-click="ui.show_post_asset_manager = false"
+                    >
+                        Save & Close
+                    </button>
+                </div>
+
+            </div><!-- asset_creator_inner -->
+
+        </div><!-- tags and paints -->
+
+        <div
+            ng-if="ui.show_post_admin_panel"
+            class="asset_creator_modal"
+        >
+            <div class="asset_creator_inner">
+                <h2>Post administration</h2>
+                <div>
+                    Created on: <input
+                        title="created_on"
+                        class="edit_post_datetime"
+                        type="datetime"
+                        ng-value="post.created_on.$date|date:'yyyy-MM-dd HH:mm:ss'"
+                        ng-model="scratch.whatever"
+                        ng-change="updatePost({created_on: scratch.whatever})"
+                    />
+                    Published_on: <input
+                        ng-if="post.published"
+                        title="published_on"
+                        class="edit_post_datetime"
+                        type="datetime"
+                        ng-value="post.published_on.$date|date:'yyyy-MM-dd HH:mm:ss'"
+                        ng-model="scratch.whatever_published_on"
+                        ng-blur="updatePost({'published_on': scratch.whatever_published_on})"
+                    />
+                </div>
+                <div
+                    class="asset_creator_inner_button_raft"
+                >
+                    <button
+                        class="rm_button"
+                        ng-click="updatePost({'paints': []})"
+                    >
+                        Remove all PAINTS
+                    </button>
+                    <button
+                        class="rm_button"
+                        ng-click="updatePost({'tags': []})"
+                    >
+                        Remove all TAGS
+                    </button>
+                </div>
+                <div
+                    class="asset_creator_inner_button_raft"
+                >
+                    <button
+                        class="warn_button"
+                        ng-click="ui.show_post_meta_data = true"
+                    >
+                        Dump post data
+                    </button>
+                    <button
+                    
+                        ng-click="ui.show_post_admin_panel = false"
+                    >
+                        Close
+                    </button>
+                </div>
+
+            </div><!-- modal_inner -->
+        </div><!-- modal_outer admin_panel -->
+
+        <div
+            ng-if="ui.show_post_meta_data"
+            ng-click="ui.show_post_meta_data = false"
+            class="modal_outer"
+        >
+            <div class="modal_inner">
+                <div class="modal_inner_close_button"></div>
+                <h1>{a post.title a}</h1>
+                <table class="post_meta_data_table">
+                    <tr
+                        ng-repeat="(key, value) in post"
+                        ng-class-even="'zebra'"
+                    >
+                        <td class="key">{a key a}</td>
+                        <td
+                            class="value"
+                            ng-if="
+                                value.$date === undefined &&
+                                value.$oid === undefined 
+                            "
+                        >
+                            {a value a}
+                        </td>
+                        <td class="value" ng-if="value.$date !== undefined">
+                            {a value.$date|date:'yyyy-MM-dd HH:mm:ss' a}
+                        </td>
+                        <td class="value" ng-if="value.$oid !== undefined">
+                            <code>{a value.$oid a}<code>
+                        </td>
+                    </tr>
+                </table>
+            </div><!-- modal_inner -->
+        </div><!-- modal_outer -->
+
 
     </div><!-- edit_post_container -->
 
