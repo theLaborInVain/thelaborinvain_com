@@ -227,6 +227,8 @@ class Paint(models.Model):
             'last_used_on': datetime,
             'ink': bool,
             'shader': bool,
+            'metallic': bool,
+            'primer': bool,
         }
         self.required_attribs = ['name', 'manufacturer', 'colors']
 

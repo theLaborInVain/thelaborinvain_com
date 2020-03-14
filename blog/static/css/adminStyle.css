@@ -490,7 +490,7 @@ button.rm_image_button {background: #f60000; color: #fff; padding: 1vh; width: 1
     flex-direction: row;
     flex-wrap: nowrap;
     min-height: 80%;
-    max-width: 1400px; 
+    max-width: 1400px;
 }
 
 .edit_post_left_column {width: 40%; box-sizing: border-box;}
@@ -538,7 +538,7 @@ button.rm_image_button {background: #f60000; color: #fff; padding: 1vh; width: 1
     padding: 1%;  
 }
 .edit_post_attachments_inventory {width: 90%; margin: 0 auto; }
-.attachment_order_container {display: flex; flex-direction: column; margin-right: 2px;  }
+.attachment_order_container {display: flex; flex-direction: column; margin-right: 2px; margin-bottom: 10vh; }
 .attachment_order_container * {width: 100%;}
 .attachment_container {margin: 0.4em; display: flex; flex-direction: row; padding: 2px; background: #F9CC9D; justify-content: space-evenly; }
 .attachment_container img {height: 4vh; }

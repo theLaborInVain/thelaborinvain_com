@@ -70,6 +70,11 @@ app.controller("rootController", function($scope, $http) {
 
     $scope.ngOIDListContains = function(oid, list) {
         // looks for an object by oid in a list of JSON-style OIDs
+
+        if (list === null || list === undefined || list === []){
+            return false;
+        }
+
         for (var i = 0; i < list.length; i++) {
             var listObjOID = list[i].$oid;
             if (listObjOID === oid) {
