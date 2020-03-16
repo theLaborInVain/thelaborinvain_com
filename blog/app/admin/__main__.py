@@ -48,10 +48,14 @@ if __name__ == "__main__":
         help="Interactively set a user's password", action='store_true',)
 
     # figures
+    parser.add_option("--list_figures", dest="list_figures", default=False,
+        help="Dump a list of figures", action='store_true',)
     parser.add_option("-f", dest="figure_oid", default=None,
         help="Work with a figure.")
 
     # posts
+    parser.add_option("--list_posts", dest="list_posts", default=False,
+        help="Dump a list of posts (titles/dates only)", action='store_true',)
     parser.add_option("-p", dest="post_oid", default=None,
         help="Work with a post.")
 
@@ -89,6 +93,9 @@ if __name__ == "__main__":
         admin_object.set_password(*set_password())
 
     # figure admin
+    if options.list_figures:
+        for figure in admin_object.get_collection('figures'):
+            print(figure)
     if options.figure_oid is not None:
         figure_object = figures.Figure(_id=options.figure_oid)
         print('  RECORD:')
@@ -97,6 +104,14 @@ if __name__ == "__main__":
         util.dump_record(figure_object.serialize())
 
     # post admin
+    if options.list_posts:
+        for post in admin_object.get_collection('posts'):
+            print(post['_id'])
+            print(
+                "  " +
+                post['title'] + " - " +
+                post['created_on'].strftime(util.YMDHMS) + "\n"
+            )
     if options.post_oid is not None:
         post_object = posts.Post(_id=options.post_oid)
         print(post_object)

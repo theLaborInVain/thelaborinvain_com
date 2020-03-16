@@ -454,7 +454,7 @@ class Post(models.Model):
         )
 
         og['title'] = "The Labor in Vain: '%s'" % self.title
-        if hasattr(self, 'figure'):
+        if getattr(self, 'figure', None) is not None:
             figure = figures.Figure(_id=self.figure)
             og['title'] += ' by %s' % figure.publisher
 

@@ -416,11 +416,8 @@
                                     {a color a}
                                 </div>
                                 <div class="new_paint_options_checkboxes">
-                                    <div>
-                                        <input type="checkbox" ng-model="scratch.newPaint.ink"> Ink
-                                    </div>
-                                    <div>
-                                        <input type="checkbox" ng-model="scratch.newPaint.shader"> Shader
+                                    <div ng-repeat="attr in ['ink', 'metallic', 'primer', 'shader']">
+                                        <input type="checkbox" ng-model="scratch.newPaint[attr]"> {a attr a}
                                     </div>
                                 </div>
                                 <div class="asset_creator_inner_button_raft">

@@ -26,7 +26,8 @@ a.fancy:visited {
 }
 
 .centered {text-align: center; }
-
+q {display: block; padding: 1em; color: #ddd; }
+q::before {content: none; }
 
 #homeLink {
     position: fixed;
