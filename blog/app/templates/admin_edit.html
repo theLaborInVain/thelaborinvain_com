@@ -311,15 +311,36 @@
 
                     <!-- paints panel -->
                     <div class="vertical_panel edit_post_paint_panel" ng-init="scratch.newPaint = {colors:[]}">
+
                         <input
                             id="editPostPaintPickerFilter" 
                             ng-model="paintSearchText"
                             placeholder="search paints"
                         />
+
+                        <div
+                            class="edit_post_attachments_toggler"
+                            ng-init="scratch.paintPickerUI = {mode: 'Attach'}"
+                        >
+                            <div
+                                class="toggler"
+                                ng-repeat="mode in ['Attach', 'Edit']"
+                                ng-class="{'active': scratch.paintPickerUI.mode === mode}"
+                                ng-click="
+                                    scratch.paintPickerUI.mode = mode;
+                                    scratch.newPaint = {colors: []};
+                                "
+                            >
+                                {a mode a}
+                            </div>
+                        </div>
+
                         <div
                             class="edit_post_paint_picker"
                         >
+                            <!-- attach paint -->
                             <div
+                                ng-if="scratch.paintPickerUI.mode === 'Attach'"
                                 ng-repeat="paint in assets.paints |filter:paintSearchText"
                                 class="paint_picker_container clickable"
                                 ng-click="togglePostAttr('paints', paint)"
@@ -339,7 +360,36 @@
                                     class="paint_picker_caption"
                                 >
                                     {a paint.name a}<br/>
-                                    <i>{a paint.manufacturer a}</>
+                                    <i>{a paint.manufacturer a}</i>
+                                </div>
+                            </div>
+
+                            <!-- edit paint -->
+                            <div
+                                ng-if="scratch.paintPickerUI.mode === 'Edit'"
+                                ng-repeat="paint in assets.paints |filter:paintSearchText"
+                                class="paint_picker_container clickable"
+                                ng-click="
+                                    ui.show_new_paints_controls = true;
+                                    editPaint(paint)
+                                "
+                                ng-class="{
+                                    'warn_button': scratch.newPaint._id === paint._id
+                                }"
+                            >
+                                <div
+                                    class="paint_picker_chip"
+                                    style="
+                                        background-color: {a paint.colors[0] a};
+                                        background: radial-gradient({a paint.gradient a})
+                                    "
+                                >
+                                </div>
+                                <div
+                                    class="paint_picker_caption"
+                                >
+                                    {a paint.name a}<br/>
+                                    <i>{a paint.manufacturer a}</i>
                                 </div>
                             </div>
                         </div>
@@ -374,6 +424,7 @@
                                     >
                                     </div>
                                     <input
+                                        title="click here to add a color"
                                         type="color"
                                         id="newPaintColorInput"
                                         value="#ff0000"
@@ -398,10 +449,21 @@
                             <div
                                 class="new_paint_options_container"
                             >
-                                <div
-                                    ng-if="scratch.newPaint.colors.length === 0"
-                                >
-                                    (click the circle to add colors)
+                                <div class="new_paint_add_hex_container" title="click here to add a color">
+                                    <input
+                                        type="text"
+                                        ng-model="scratch.rawHexToNewPaint"
+                                        placeholder="#00aa33"
+                                    />
+                                    <button
+                                        ng-click="
+                                            scratch.newPaint.colors.push(scratch.rawHexToNewPaint);
+                                            scratch.rawHexToNewPaint = null;
+                                            setNewPaintGradient(scratch.newPaint);
+                                        "
+                                    >
+                                        +
+                                    </button>
                                 </div>
                                 <div
                                     class="new_paint_color_chip"
@@ -422,13 +484,20 @@
                                 </div>
                                 <div class="asset_creator_inner_button_raft">
                                     <button
-                                        class="warn_button"
                                         ng-click="ui.show_new_paints_controls = false"
                                     >
-                                        close
+                                        Close
+                                    </button>
+                                    <button
+                                        class="warn_button"
+                                        ng-if="scratch.newPaint._id !== undefined"
+                                        ng-click="updatePaint(scratch.newPaint)"
+                                    >
+                                        Update
                                     </button>
                                     <button
                                         class="add_button"
+                                        ng-if="scratch.newPaint._id === undefined"
                                         ng-click="createNewPaint(post.paints)"
                                     >
                                         Add

@@ -182,6 +182,32 @@ app.controller("rootController", function($scope, $http) {
 
     };
 
+
+    $scope.editPaint = function(paint) {
+        console.warn('Editing paint: ' + JSON.stringify(paint));
+        $scope.scratch.newPaint = paint; 
+    };
+
+    $scope.updatePaint = function(paint) {
+        console.warn('Updating paint: ' + JSON.stringify($scope.scratch.newPaint));
+        var reqUrl = '/update/paint/' + $scope.scratch.newPaint._id.$oid;
+        console.time(reqUrl);
+        $http({
+            method : "POST",
+            url: reqUrl,
+            data: $scope.scratch.newPaint,
+        }).then(function mySuccess(response) {
+            $scope.scratch.newPaint = {colors: []};
+            $scope.flashSavedMessage();
+            console.timeEnd(reqUrl);
+            $scope.loadAssets('paints');
+        }, function myError(response) {
+            console.error(response.data);
+            console.timeEnd(reqUrl);
+        });
+
+    };
+
     $scope.createNewPaint = function(list) {
         console.warn('Creating new paint!');
         console.warn($scope.scratch.newPaint);
@@ -267,8 +293,6 @@ app.controller("rootController", function($scope, $http) {
     //
     //  figure management
     //
-
-
 
     $scope.setNewFigure = function() {
 
