@@ -587,11 +587,14 @@
 
         <div
             ng-if="ui.show_post_meta_data"
-            ng-click="ui.show_post_meta_data = false"
             class="modal_outer"
         >
             <div class="modal_inner">
-                <div class="modal_inner_close_button"></div>
+                <div
+                    ng-click="ui.show_post_meta_data = false"
+                    class="modal_inner_close_button"
+                >
+                </div>
                 <h1>{a post.title a}</h1>
                 <table class="post_meta_data_table">
                     <tr

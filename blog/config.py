@@ -15,7 +15,6 @@ import sys
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-
 class Config(object):
     URL = 'https://blog.thelaborinvain.com'
     IMAGE = URL + '/static/media/the_labor_in_vain_logo_no_text.webp'
@@ -33,11 +32,12 @@ class Config(object):
     KEYWORDS = ['miniatures', 'miniatures painting', 'minis']
     ADMIN_NAME = "Timothy O'Connell"
     ADMIN_EMAIL = 'toconnell@thelaborinvain.com'
-    VERSION = "0.34.167"
+    VERSION = "0.35.169"
     PORT = 8060
     SECRET_KEY = os.environ.get('SECRET_KEY') or str(sys.path)
 #    SECRET_KEY = secrets.token_hex(16)  # this breaks the login cookie
     MDB = MongoClient()['thelaborinvain_blog_v0']
+    CANONICAL_TAG_NAME = 'Finished Pieces'
     ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
     GET_COUNT_DEFAULT = 9999
 

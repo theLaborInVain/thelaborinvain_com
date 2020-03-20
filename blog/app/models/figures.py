@@ -15,7 +15,7 @@ from bson.objectid import ObjectId
 
 # application imports
 from app import app, models, util
-from app.models import images
+from app.models import images, posts
 
 
 #
@@ -83,5 +83,50 @@ class Figure(models.Model):
                 expanded_list.append(images.expand_image(image_oid))
             output[image_list] = expanded_list
 
+        canonical_post = self.get_canonical_post()
+        if canonical_post is not None:
+            c_url = app.config['URL'] + '/b/' + canonical_post.handle
+            output['canonical_post_url'] = c_url
+
         return output
 
+
+    #
+    #   get, set, etc. methods below
+    #
+
+    def get_posts(self, published_only=False):
+        """ Returns a list of post OBJECTS where this figure is the post's
+        figure. """
+
+        output = []
+
+        query = {'figure': self._id}
+        if published_only:
+            query.update({'published': True})
+
+        post_records = app.config['MDB'].posts.find(query).sort('updated_on')
+
+        for post in post_records:
+            post_object = posts.Post(_id=post['_id'])
+            output.append(post_object)
+
+        return output
+
+
+    def get_canonical_post(self):
+        """ Selects the most recently published (and updated) post with this
+        figure that has the 'canonical' tag. """
+
+        canonical_tag = posts.get_canonical_tag()
+
+        canonical_posts = []
+        for post in self.get_posts(published_only=True):
+            self.logger.info(post)
+            if canonical_tag._id in post.tags:
+                canonical_posts.append(post)
+
+        if len(canonical_posts) > 0:
+            return canonical_posts[-1]
+        else:
+            return None

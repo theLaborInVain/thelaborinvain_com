@@ -36,6 +36,12 @@
             gtag('config', 'UA-88194596-3');
         </script>
 
+        <link
+            ng-if="figure.canonical_post_url !== undefined"
+            rel="canonical"
+            ng-href="{a figure.canonical_post_url a}"
+        />
+
     </head>
 
     <noscript>Please enable Javascript!</noscript>

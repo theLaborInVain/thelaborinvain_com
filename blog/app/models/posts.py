@@ -41,6 +41,21 @@ def get(count=10, return_type=None):
     return output
 
 
+def get_canonical_tag():
+    """ Uses the Config object's CANONICAL_TAG attribute to get a tag object;
+    that tag object is the blog's canonical tag. """
+
+    canonical_tag_record = app.config['MDB'].tags.find_one(
+        {'name': app.config['CANONICAL_TAG_NAME']}
+    )
+
+    if canonical_tag_record is None:
+        err = "Canonical tag name is '%s', but no tag has that name value!"
+        raise ValueError(err % app.config['CANONICAL_TAG_NAME'])
+
+    return Tag(_id=canonical_tag_record['_id'])
+
+
 def get_latest_post():
     """ Laziness function to return the latest post. """
     post_record = app.config['MDB'].posts.find_one(
@@ -367,9 +382,9 @@ class Post(models.Model):
         output['html_lede'] = util.fancy_html(output.get('lede', ''))
         output['html_body'] = util.fancy_html(output.get('body', ''))
 
-
         output['author'] = dict(self.get_author())
         output['tag_dictionary'] = list(self.get_tags())
+
 
         return output
 
@@ -420,7 +435,6 @@ class Post(models.Model):
         date_str = self.created_on.strftime(util.YMDHMS)
         self.handle = util.string_to_handle(date_str + ' ' + self.title)
         return super().save(verbose)
-
 
 
     def get_author(self):
