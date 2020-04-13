@@ -111,7 +111,11 @@ app.controller("rootController", function($scope, $http) {
     $scope.expandFigure = function(post) {
 		// takes a post and turns its figure attr into a dict
 
-        if (post.figure.name !== undefined) {
+        if (post.figure === undefined) {
+            console.warn('Post has no figure! Cannot expand it...');
+            return true;
+        } else if (post.figure.$oid === undefined) {
+            console.info('Figure is already expanded. Skipping expandFigure() call...');
             return true;
         };
 
@@ -153,6 +157,16 @@ app.controller("rootController", function($scope, $http) {
             };
         };
         console.error('Could not find tag with OID ' + oid);
+    };
+
+    $scope.getPaintObject = function(oid) {
+        // returns a tag object; consoles an error if it can't
+        for (i = 0; i < $scope.paints.length; i++) {
+            if ($scope.paints[i]._id.$oid === oid.$oid) {
+                return $scope.paints[i]
+            };
+        };
+        console.error('Could not find paint with OID ' + oid);
     };
 
     // tag search
@@ -243,6 +257,7 @@ app.controller("rootController", function($scope, $http) {
     $scope.init = function() {
         $scope.loadAssets('tags');
         $scope.loadAssets('posts');
+        $scope.loadAssets('paints');
         console.info('rootController initialized!')
     };
 

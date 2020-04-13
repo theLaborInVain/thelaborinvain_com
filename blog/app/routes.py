@@ -9,6 +9,7 @@ import json
 import os
 
 # second party
+import bson
 from bson.objectid import ObjectId
 from bson import json_util
 import flask
@@ -169,7 +170,13 @@ def get_asset(action, collection, oid):
             mimetype='application/json'
         )
 
-    asset_object = models.get_asset(collection, ObjectId(oid))
+    try:
+        asset_object = models.get_asset(collection, ObjectId(oid))
+    except bson.errors.InvalidId:
+        return flask.Response(
+            response="'%s' is not a valid Object ID!" % oid,
+            status=404
+        )
 
     return flask.Response(
         response=json.dumps(

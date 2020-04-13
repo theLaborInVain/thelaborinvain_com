@@ -33,7 +33,11 @@
                     post.published &&
                     post.postYear === postYear
                 "
-                ng-click="post.show_index_modal = true"
+                ng-click="
+                    post.show_index_modal = true;
+                    loadAttachments(post);
+                    expandFigure(post);
+                "
             >
 
                 <img
@@ -92,10 +96,16 @@
                                 </div>
                                 <div
                                     class="hero_figure_thumbnail"
-                                    ng-if="post.figure !== undefined"
-                                    ng-init="expandFigure(post)"
+                                    ng-if="post.figure.unpainted !== undefined"
+                                    ng-class="{
+                                    'tall_thumb': post.figure.unpainted[0].long_edge === 'vertical',
+                                    'wide_thumb': post.figure.unpainted[0].long_edge === 'horizontal',
+                                    }"
                                 >
-                                    <img src="/images/{a post.figure.unpainted[0].base_name a}" />
+                                    <img
+                                        ng-if="post.figure.unpainted !== undefined"
+                                        src="/images/{a post.figure.unpainted[0].base_name a}"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -114,7 +124,6 @@
 
                         <ul
                             class="asset_corral post_attachment_thumbnails"
-                            ng-init="loadAttachments(post)"
                         >
                             <li
                                 ng-repeat="attachment in post.attachments|orderBy:'sort_order'"

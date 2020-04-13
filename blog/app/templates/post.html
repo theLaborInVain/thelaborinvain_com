@@ -47,6 +47,10 @@
             </div>
             <div
                 class="post_full_view_figure_unpainted"
+                ng-class="{
+                    'tall_thumb': figure.unpainted[0].long_edge === 'vertical',
+                    'wide_thumb': figure.unpainted[0].long_edge === 'horizontal',
+                }"
             >
                 <img ng-src="/images/{a figure.unpainted[0].base_name a}" />
             </div>
@@ -58,12 +62,51 @@
             </div>
         </div>
 
-        <p ng-bind-html="post.html_lede|trustedHTML"></p>
+        <div class="post_full_view_body">
+            <p ng-bind-html="post.html_lede|trustedHTML"></p>
+        </div>
 
         <div
             class="post_full_view_body"
             ng-bind-html="post.html_body|trustedHTML"
         ></div>
+
+        <div
+            ng-if="post.paints !== undefined"
+            ng-init="expandPaints(post)"
+            class="post_full_view_paints_container"
+        >
+            <div
+                class="paint_swatch_container"
+                ng-repeat="paint in post.paints"
+                ng-init="paintObj = getPaintObject(paint)"
+            >
+                <div class="paint_swatch_outer">
+                    <div
+                        class="paint_swatch_inner"
+                        style="
+                            background-color: {a paintObj.colors[0] a};
+                            background: radial-gradient({a paintObj.gradient a});
+                        "
+                    >
+                    </div>
+                </div>
+                <div
+                    class="paint_details"
+                >
+                    <b>
+                        <a href="{a paintObj.url a}" target="top">
+                            {a paintObj.name a}
+                        </a>
+                    </b>
+                    <div>
+                        <a href="{a paintObj.url a}" target="top">
+                            {a paintObj.manufacturer a}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div
             class="attachment_container"
