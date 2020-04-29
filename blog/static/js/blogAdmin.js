@@ -51,6 +51,7 @@ app.controller("rootController", function($scope, $http) {
         show_posts_asset_creator_modal: false,
         admin_menu_figure_limit: 15,
         admin_menu_post_limit: 15,
+        admin_menu_paint_limit: 15,
         admin_menu_image_limit: 15,
         show_set_new_post_title_from_tag: true,
     }
@@ -219,12 +220,6 @@ app.controller("rootController", function($scope, $http) {
             data: $scope.scratch.newPaint,
         }).then(function mySuccess(response) {
             console.warn("Paint created!");
-            if (list !== undefined) {
-                if (list === null) {list = []};
-                list.push(response.data._id);
-                console.warn('added new paint to list:');
-                console.warn(list);
-            };
             $scope.scratch.newPaint = {colors: []};
             console.timeEnd(reqUrl);
             $scope.loadAssets('paints');

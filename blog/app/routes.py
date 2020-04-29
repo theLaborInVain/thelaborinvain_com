@@ -131,9 +131,10 @@ def get_assets(collection):
     params = flask.request.args
     count = int(params.get('count', app.config['GET_COUNT_DEFAULT']))
 
-    results = app.config['MDB'][collection].find().sort(
-        'created_on', -1
-    ).limit(count)
+    results = app.config['MDB'][collection].find().sort([
+        ('last_used_on', -1),
+        ('created_on', -1)
+    ]).limit(count)
 
     # if we're here for posts, use the special helper to get fancy posts
     if collection == "posts":

@@ -340,10 +340,16 @@
                         >
                             <!-- attach paint -->
                             <div
-                                ng-if="scratch.paintPickerUI.mode === 'Attach'"
+                                ng-if="
+                                    scratch.paintPickerUI.mode === 'Attach' &&
+                                    $index <= ui.admin_menu_paint_limit
+                                "
                                 ng-repeat="paint in assets.paints |filter:paintSearchText"
                                 class="paint_picker_container clickable"
-                                ng-click="togglePostAttr('paints', paint)"
+                                ng-click="
+                                    togglePostAttr('paints', paint);
+                                    loadAssets('paints');
+                                "
                                 ng-class="{
                                     'add_button': ngOIDListContains(paint._id.$oid, post.paints) !== false,
                                 }"
@@ -366,7 +372,10 @@
 
                             <!-- edit paint -->
                             <div
-                                ng-if="scratch.paintPickerUI.mode === 'Edit'"
+                                ng-if="
+                                    scratch.paintPickerUI.mode === 'Edit' &&
+                                    $index <= ui.admin_menu_paint_limit
+                                "
                                 ng-repeat="paint in assets.paints |filter:paintSearchText"
                                 class="paint_picker_container clickable"
                                 ng-click="
@@ -392,6 +401,15 @@
                                     <i>{a paint.manufacturer a}</i>
                                 </div>
                             </div>
+
+                            <button
+                                class="show_more_assets"
+                                ng-if="assets.paints.length > ui.admin_menu_paint_limit"
+                                ng-click="ui.admin_menu_paint_limit = ui.admin_menu_paint_limit + 10"
+                            >
+                                Show more paints!
+                            </button>
+
                         </div>
 
                         <div

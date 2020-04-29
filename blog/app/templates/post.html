@@ -19,9 +19,6 @@
         />
 
         <h1 title="Post title">{a post.title a}</h1>
-        <p class="published_on" title="Published on">
-            {a post.published_on.$date|date:'yyyy-MM-dd HH:mm:ss' a}
-        </p>
 
         <ul
             class="asset_corral post_full_view_tags"
@@ -71,8 +68,17 @@
             ng-bind-html="post.html_body|trustedHTML"
         ></div>
 
+        <hr/>
+
+        <p class="published_on">
+            <i>{a post.author.name a}</i>
+        </p>
+        <p class="published_on" title="Published on">
+            {a post.published_on.$date|date:'yyyy-MM-dd HH:mm:ss' a}
+        </p>
+
         <div
-            ng-if="post.paints !== undefined"
+            ng-if="post.paints.length > 0 && paints !== undefined"
             ng-init="expandPaints(post)"
             class="post_full_view_paints_container"
         >

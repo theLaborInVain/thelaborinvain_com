@@ -258,8 +258,6 @@ h2.post_year {
 .post_full_view_container h1 {text-align: center;}
 p.published_on {
     text-align: right;
-    margin-top: -1vh; 
-    margin-bottom: -4%; 
 }
 .post_full_view_hero, .post_full_view_attachment {
     cursor: pointer; 
@@ -572,9 +570,6 @@ p.published_on {
         width: 50%;
         margin: 0 auto;
         margin-bottom: 35%; 
-    }
-    p.published_on {
-        margin-bottom: -40px; 
     }
     .post_full_view_hero, .post_full_view_attachment {
         display: block;
