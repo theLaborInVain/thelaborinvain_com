@@ -86,6 +86,7 @@
                 class="paint_swatch_container"
                 ng-repeat="paint in post.paints"
                 ng-init="paintObj = getPaintObject(paint)"
+                title="{a paintObj.manufacturer a}: {a paintObj.name a}"
             >
                 <div class="paint_swatch_outer">
                     <div
@@ -94,6 +95,9 @@
                             background-color: {a paintObj.colors[0] a};
                             background: radial-gradient({a paintObj.gradient a});
                         "
+                        ng-class="{
+                            'metallic': paintObj.metallic === true,
+                        }"
                     >
                     </div>
                 </div>

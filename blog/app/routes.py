@@ -358,6 +358,19 @@ def upload_file():
     return flask.redirect(flask.url_for('admin'))
 
 
+
+
+#
+#   customize some of the flask built-ins here
+#
+
+@app.errorhandler(util.InvalidUsage)
+def return_exception(exception):
+    """ errorhandler is a built-in; we're using it to return an exception object
+    as a string, e.g. so browsers and whatever can see it. """
+    return flask.Response(response=exception.msg, status=exception.status_code)
+
+
 @app.context_processor
 def inject_template_scope():
     """ Injects the consent cookie into scope. """

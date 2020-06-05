@@ -29,6 +29,23 @@ a.fancy:visited {
 q {display: block; padding: 1em; color: #ddd; }
 q::before {content: none; }
 
+
+.metallic {
+  position: relative;
+  overflow: hidden;
+}
+
+.metallic:after {
+    content: "";
+    height: 100vw;
+    width: 105vw;
+    display: block;
+  background: url('/static/media/glitter.png');
+    background-size: 10%;
+    opacity: 75%;  
+}
+
+
 #homeLink {
     position: fixed;
     left: 50%;
@@ -212,6 +229,7 @@ h2.post_year {
     overflow: hidden; 
     border-radius: 2vw;
     box-shadow: 0 0 4px 1px #aaa;
+    text-align: center; 
 }
 .hero_figure_thumbnail.invisible {
     box-shadow: none; 
@@ -560,6 +578,9 @@ p.published_on {
         height: 200px;  
     }
     #modalHeroContainer {
+    }
+    .hero_figure_thumbnail.wide_thumb img {
+        height: 125%;
     }
     .modal_inner {
         width: 50%;

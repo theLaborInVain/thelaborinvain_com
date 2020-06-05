@@ -169,6 +169,7 @@ app.controller("rootController", function($scope, $http) {
         }).then(function mySuccess(response) {
             console.warn("Tag created!");
             if (list !== undefined) {
+                console.info(response.data);
                 list.push(response.data._id);
                 console.warn('added new tag to list:');
                 console.warn(list);
@@ -585,6 +586,11 @@ app.controller("editPostController", function($scope, $http) {
 
         // set the $scope.figure
         loadPostPromise.then(function mySuccess(response) {
+
+            // but don't actually set it if there's no figure on the post
+            if ($scope.post.figure === null || $scope.post.figure === undefined)
+                return true
+
             var fig_url = "/get/figures/" + $scope.post.figure.$oid;
             console.time(fig_url);
             $http({

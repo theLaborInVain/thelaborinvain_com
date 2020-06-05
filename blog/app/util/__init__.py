@@ -129,3 +129,25 @@ def dump_record(d, indent=1):
             pretty(value, indent + 1)
         else:
             print(spacer * (indent + 1) + str(value))
+
+
+
+#
+#   Exception handling for the whole app
+#
+
+class InvalidUsage(Exception):
+    """ Raise this to return an HTTP response to the requester:
+
+        raise util.InvalidUsage('Whatever', status_code=400)
+
+    """
+
+    def __init__(self, message, status_code=400, payload=None):
+        """ We're subclassing vanilla Exception here, so we've got to make
+        some minor changes. """
+
+        Exception.__init__(self)
+        self.msg = message
+        self.status_code = status_code
+        self.payload = payload

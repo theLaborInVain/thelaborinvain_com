@@ -320,7 +320,7 @@ class Post(models.Model):
         }
 
         self.required_attribs = [
-            'figure',
+#            'figure',
             'hero_image',
         ]
 
@@ -328,21 +328,22 @@ class Post(models.Model):
 
 
     def new(self):
-        """ Loads the figure, """
+        """ Loads the figure, if available, then calls the vanilla/base class
+        new() method. """
 
-        if self.kwargs.get('figure', None) is None:
-            raise ValueError("'figure' attribute is required!")
+        self.title = "New Post"
 
-        # get the figure, use it to set a few things
-        figure_object = figures.Figure(_id=self.kwargs['figure'])
+        # if we've got a figure in the POST, use it to default some things
+        if self.kwargs.get('figure', None) is not None:
+            figure_object = figures.Figure(_id=self.kwargs['figure'])
 
-        # set the post title and hero caption
-        self.title = getattr(figure_object, 'name')
-        publisher = getattr(figure_object, 'publisher', '')
-        self.hero_caption = publisher + ': ' + self.title
+            # set the post title and hero caption
+            self.title = getattr(figure_object, 'name')
+            publisher = getattr(figure_object, 'publisher', '')
+            self.hero_caption = publisher + ': ' + self.title
 
-        # finally, use the figure's tags for the post
-        self.tags = getattr(figure_object, 'tags', [])
+            # finally, use the figure's tags for the post
+            self.tags = getattr(figure_object, 'tags', [])
 
         super().new()
 
@@ -472,7 +473,11 @@ class Post(models.Model):
             figure = figures.Figure(_id=self.figure)
             og['title'] += ' by %s' % figure.publisher
 
-        og_desc = self.hero_caption + " Painted by %s" % self.get_author()['name']
+        # set the description
+        if hasattr(self, 'hero_caption') and self.hero_caption is not None:
+            og_desc = self.hero_caption + " Painted by %s" % self.get_author()['name']
+        else:
+            og_desc = 'Post by ' + self.get_author()['name']
         og['description'] = og_desc
 
         og['url'] = os.path.join(app.config['URL'], 'b/', self.handle)
