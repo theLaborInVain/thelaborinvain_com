@@ -2,7 +2,7 @@ asn1crypto==1.2.0
 beautifulsoup4==4.8.1
 cffi==1.13.0
 Click==7.0
-cryptography==2.7
+cryptography==3.2
 Flask==1.1.1
 Flask-DotEnv==0.1.2
 Flask-Login==0.4.1
