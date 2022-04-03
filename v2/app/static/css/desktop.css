@@ -1,0 +1,19 @@
+@media only screen and (min-width: 1050px) and (orientation: landscape) {
+
+    body {
+        display: flex;
+        justify-content: center; 
+        overflow-x: hidden;
+        position: absolute;
+        width: 100%;  
+    }
+
+    .index_container {
+        margin: 5rem auto 5rem auto;
+        width: 40rem; 
+    }
+
+    .title_hero_logo {
+        width: 20rem;
+    }
+}

@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'Fanwood';
+    src: url('/static/fonts/fanwood-webfont.eot?#iefix') format('embedded-opentype'),
+        url('/static/fonts/fanwood-webfont.woff') format('woff'),
+        url('/static/fonts/fanwood-webfont.woff2') format('woff2'),
+        url('/static/fonts/fanwood-webfont.ttf') format('truetype');
+}
+.fanwood {font-family: 'Fanwood';}

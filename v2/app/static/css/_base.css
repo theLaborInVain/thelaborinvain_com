@@ -1,3 +1,99 @@
+:root {
+    --font-tiny: 0.5rem;
+    --font-small: 0.7rem;
+    --font-medium: 1.1rem;
+    --font-large: 1.6rem;
+    --font-title: 2rem;
+}
+
 html {
-    font-family: Arial;
+    font-family: Fanwood;
+    font-size: var(--font-medium);
+}
+
+
+/*  re-usable UI    */
+
+.clickable {
+    cursor: pointer;
+    transition: 0.25s;
+    outline: none;
+}
+
+button:active,
+    .clickable:active {
+    transform:translate(0.15vh, 0.15vh);
+}
+
+
+
+/* index.html   */
+
+.index_container {
+    border: 1px solid;
+    
+}
+
+.title_splash {
+    margin: 5rem auto; 
+    text-align: center;
+    width: 100%; 
+}
+.title_splash h1 {
+    margin-bottom: 5rem; 
+}
+.brand_hero .the {
+    font-size: var(--font-medium);
+}
+.brand_hero .labor {
+    font-size: var(--font-title);
+}
+.brand_hero .in {
+    font-size: var(--font-large);
+    font-style: italic;
+    margin: auto -0.4rem auto auto; 
+}
+.brand_hero .vain {
+    font-size: var(--font-title);
+}
+
+.title_nav {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 100%; 
+}
+.title_nav hr {
+    border-top: 1px; 
+    margin-bottom: 2rem; 
+    width: 80%; 
+}
+.title_nav > div {
+    border: 1px solid;
+    border-radius: 0.5rem;
+    font-size: var(--font-large);
+    font-weight: bold;
+    margin-bottom: 2rem; 
+    padding: 1rem 3rem 1rem 3rem;
+    width: fit-content;
+}
+
+
+
+
+.title_footer {
+    font-size: var(--font-small);
+    margin-top: 5rem; 
+    padding: 1rem; 
+    text-align: center; 
+}
+
+.title_hero_logo {
+    margin: 5rem auto 5rem auto;
+    width: 75%; 
+}
+
+.title_footer > div {
+    margin: 1rem; 
 }

@@ -2,9 +2,83 @@
 
 {% block body %}
 
-<h1>The Labor in Vain</h1>
-<h2>A production company</h2>
-<h3>Chicago, IL USA</h3>
-<p>Bad news travels fast.</p>
+<div class="index_container">
+
+    <div class="title_splash">
+        <h1 class="brand_hero">
+            <div class="the">The</div>
+            <div class="labor">Labor</div>
+            <span class="in">in</span>
+            <span class="vain">Vain</span>
+        </h1>
+
+        <h2 class="brand_hero">A production company</h2>
+        <h3>Chicago, IL USA</h3>
+        <p>Bad news travels fast.</p>
+    </div>
+
+    <div class="title_nav">
+        <div
+            class="clickable"
+            ng-click="loadUrl('https://store.thelaborinvain.com')"
+        >
+            Store
+        </div>
+        <div
+            class="clickable"
+            ng-click="loadUrl('https://t.co/DVaNrhGSbi')"
+        >
+            Discord
+        </div>
+
+        <hr/>
+
+        <div
+            class="clickable"
+            ng-click="loadUrl('https://github.com/theLaborInVain')"
+        >
+            GitHub
+        </div>
+
+        <div
+            class="clickable"
+            ng-click="loadUrl('https://kdm-manager.com/')"
+        >
+            KD:M Manager
+        </div>
+        
+        <div
+            class="clickable"
+            ng-click="loadUrl('https://api.kdm-manager.com/')"
+        >
+            The KD:M API
+        </div>
+
+    </div>
+
+
+    <div class="title_footer font_small">
+
+        <img class="title_hero_logo" src="/static/images/the_labor_in_vain_logo-01.png" />
+
+        <div>
+            &#169; {a curDate|date: 'yyyy' a}
+            The Labor in Vain, Inc. All rights reserved.
+        </div>
+        <div
+            class="clickable"
+            ng-click="loadUrl('https://www.conornolan.com/')"
+        >
+            "Dead Man's Hands" Logo design by Conor Nolan.
+        </div>
+        <div
+            class="clickable"
+            ng-click="loadUrl('https://www.theleagueofmoveabletype.com/fanwood')"
+        >
+            'Fanwood' font by <i>The League of Moveable Type</i>.
+        </div>
+    </div>
+
+</div><!-- index_container -->
 
 {% endblock %}
