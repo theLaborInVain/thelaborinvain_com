@@ -51,7 +51,7 @@ button:active,
 .brand_hero .in {
     font-size: var(--font-large);
     font-style: italic;
-    margin: auto -0.4rem auto auto; 
+    margin: -0.1rem -0.4rem auto auto; 
 }
 .brand_hero .vain {
     font-size: var(--font-title);
